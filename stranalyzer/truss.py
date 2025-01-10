@@ -28,7 +28,7 @@ def strain_displacement(e_x, L):
     """
     Compute truss strain displacement matrix.
     """
-    return reshape(hstack([-e_x / L, e_x / L]), (2*len(e_x), 1))
+    return reshape(concatenate((-e_x / L, e_x / L)), (1, 2*len(e_x)))
 
 def assemble_stiffness(Kg, member, i, j):
     """

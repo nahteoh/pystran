@@ -19,7 +19,8 @@ import stranalyzer
 from stranalyzer import model
 from stranalyzer import property
 from stranalyzer import geometry
-from numpy import array, dot, outer
+from stranalyzer import truss
+from numpy import array, dot, outer, concatenate
 
 m = model.create()
 
@@ -51,5 +52,16 @@ model.solve(m)
 for j in m['joints'].values():
     print(j['displacements'])
     
-print('Correct solution: ', (-0.0033325938, -0.001591621))
+print('Correct displacements: ', (-0.0033325938, -0.001591621))
+
+for b in m['truss_members'].values():
+    connectivity = b['connectivity']
+    i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
+    e_x, L = truss.truss_member_geometry(i, j)
+    B = truss.strain_displacement(e_x, L)
+    u = concatenate((i['displacements'], j['displacements']))
+    eps = dot(B, u)
+    print('Bar ' + str(connectivity) + ' force = ', E * A * eps[0])
+    
+print('Reference forces: ', -0.656854250e4, -0.48528137e4, -0.15685425e4)
     
