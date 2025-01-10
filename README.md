@@ -1,2 +1,3 @@
 # StrAnalyzer
-Structural analyzer: beam and truss structures
+
+Structural analyzer: beam and truss structures.

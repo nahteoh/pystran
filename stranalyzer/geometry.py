@@ -11,4 +11,4 @@ def len(xi, xj):
     """
     Compute distance from the first to the second joint
     """
-    return  norm(delt(xj - xi))
+    return  norm(delt(xj, xi))

@@ -17,6 +17,8 @@ def add_joint(m, identifier, coordinates):
         raise Exception("Joint already exists")
     else:
         m['joints'][identifier] = {'coordinates' : array(coordinates)}
+    if m['joints'][identifier]['coordinates'].shape != (m['dim'], ):
+        raise Exception("Coordinate dimension mismatch")
     return None
         
 def add_truss_member(m, identifier, connectivity, properties):      
@@ -36,6 +38,15 @@ def add_support(j, dir, value = 0.0):
     if ('supports' not in j):
         j['supports'] = dict()
     j['supports'][dir] = value
+    return None
+
+def add_load(j, dir, value):
+    """
+    Add load to joint.
+    """
+    if ('loads' not in j):
+        j['loads'] = dict()
+    j['loads'][dir] = value
     return None
 
 def number_dofs(m):
@@ -58,3 +69,33 @@ def number_dofs(m):
     m['ntotaldof'] = n
     return None
     
+def solve(m):
+    nt, nf = m['ntotaldof'], m['nfreedof']
+    # Assemble global stiffness matrix
+    K = zeros((nt, nt))
+    for member in m['truss_members'].values():
+        connectivity = member['connectivity']
+        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
+        stranalyzer.truss.assemble_stiffness(K, member, i, j)
+
+    print(K[0:nf, 0:nf])
+
+    # Apply boundary conditions
+    F = zeros(m['ntotaldof'])
+    for joint in m['joints'].values():
+        if 'loads' in joint:
+            for dir, value in joint['loads'].items():
+                gr = joint['dof'][dir]
+                F[gr] += value
+
+    print(F[0:nf])
+    
+    U = zeros(m['ntotaldof'])
+    # # Solve for displacements
+    U[0:nf] = numpy.linalg.solve(K[0:nf, 0:nf], F[0:nf])
+
+    # # Assign displacements back to joints
+    for joint in m['joints'].values():
+        joint['displacements'] = U[joint['dof']]
+
+    return None
