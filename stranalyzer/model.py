@@ -56,13 +56,13 @@ def number_dofs(m):
     n = 0
     for j in m['joints'].values():
         j['dof'] = array([i for i in range(m['dim'])], dtype=numpy.int32)
-        for d in range(2):
+        for d in range(m['dim']):
             if ('supports' not in j or d not in j['supports']):
                 j['dof'][d] = n
                 n += 1
     m['nfreedof'] = n
     for j in m['joints'].values():
-        for d in range(2):
+        for d in range(m['dim']):
             if ('supports' in j and d in j['supports']):
                 j['dof'][d] = n
                 n += 1
