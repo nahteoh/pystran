@@ -104,8 +104,8 @@ def solve(m):
         i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
         stranalyzer.beam.assemble_stiffness(K, member, i, j)
         
-    print(K)
-        
+    m["K"] = K
+    
     # Apply boundary conditions
     F = zeros(m['ntotaldof'])
     for joint in m['joints'].values():
@@ -113,6 +113,8 @@ def solve(m):
             for dir, value in joint['loads'].items():
                 gr = joint['dof'][dir]
                 F[gr] += value
+                
+    m['F'] = F
 
     U = zeros(m['ntotaldof'])
     for joint in m['joints'].values():
@@ -123,6 +125,8 @@ def solve(m):
     # # Solve for displacements
     U[0:nf] = numpy.linalg.solve(K[0:nf, 0:nf], F[0:nf] - dot(K[0:nf, nf:nt], U[nf:nt]))
 
+    m['U'] = U
+    
     # # Assign displacements back to joints
     for joint in m['joints'].values():
         joint['displacements'] = U[joint['dof']]
