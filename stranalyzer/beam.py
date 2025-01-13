@@ -18,7 +18,7 @@ def beam_2d_member_geometry(i, j):
     e_y = array([-e_x[1], e_x[0]])
     return e_x, e_y, L
 
-def stiffness_2d(e_x, e_y, h, E, A):
+def stiffness_2d(e_x, e_y, h, E, I):
     """
     Compute beam stiffness matrix.
     """
@@ -29,7 +29,7 @@ def stiffness_2d(e_x, e_y, h, E, A):
     K = zeros((6, 6))
     for q in range(2):
         B = curvature_displacement_2d(e_x, e_y, h, xiG[q])
-        K += outer(B.T, B) * WG[q] * (h/2)
+        K += E * I * outer(B.T, B) * WG[q] * (h/2)
     return  K
     
 def curvature_displacement_2d(e_x, e_y, h, xi):
