@@ -69,5 +69,6 @@ print('Reference forces: ', -0.656854250e4, -0.48528137e4, -0.15685425e4)
 plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_deformations(m, 1000.0)
-plots.show()
+plots.plot_member_numbers(m)
+plots.show(m)
     
