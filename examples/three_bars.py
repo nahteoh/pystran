@@ -15,7 +15,7 @@ New Jersey Institute of Technology,
 
 Three bar example on page 32
 """
-import stranalyzer
+from context import stranalyzer
 from stranalyzer import model
 from stranalyzer import property
 from stranalyzer import geometry

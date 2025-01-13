@@ -2,6 +2,15 @@ import numpy
 from numpy import array, zeros, dot
 import stranalyzer.property
 
+# Designation of the degrees of freedom at a node
+U1 = 0
+U2 = 1
+U3 = 2
+UR1 = 3
+UR2 = 4
+UR3 = 5
+
+
 def create(dim = 2):
     m = dict()
     m['dim'] = dim # Dimension of the model

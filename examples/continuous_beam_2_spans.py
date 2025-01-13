@@ -2,10 +2,10 @@
 """
 Created on 01/12/2025
 
-@author: pkonl
+Example 7.1 from Structural Mechanics. Analytical and Numerical Approaches for
+Structural Analysis by Lingyi Lu, Junbo Jia, Zhuo Tang.
 """
-
-import stranalyzer
+from context import stranalyzer
 from stranalyzer import model
 from stranalyzer import property
 from stranalyzer import geometry
@@ -16,12 +16,12 @@ m = model.create(2)
 model.add_joint(m, 1, [0.0, 0.0])
 model.add_joint(m, 2, [5.0, 0.0])
 model.add_joint(m, 3, [12.0, 0.0])
-model.add_support(m['joints'][1], 0)
-model.add_support(m['joints'][1], 1)
-model.add_support(m['joints'][2], 0)
-model.add_support(m['joints'][2], 1)
-model.add_support(m['joints'][3], 0)
-model.add_support(m['joints'][3], 1)
+model.add_support(m['joints'][1], model.U1)
+model.add_support(m['joints'][1], model.U2)
+model.add_support(m['joints'][2], model.U1)
+model.add_support(m['joints'][2], model.U2)
+model.add_support(m['joints'][3], model.U1)
+model.add_support(m['joints'][3], model.U2)
 
 E = 3e10
 A = 0.001
