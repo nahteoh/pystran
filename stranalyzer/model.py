@@ -2,14 +2,6 @@ import numpy
 from numpy import array, zeros, dot
 import stranalyzer.property
 
-# Designation of the degrees of freedom at a node
-U1 = 0
-U2 = 1
-U3 = 2
-UR1 = 3
-UR2 = 4
-UR3 = 5
-
 
 def create(dim = 2):
     m = dict()
@@ -17,6 +9,23 @@ def create(dim = 2):
     m['joints'] = dict()
     m['truss_members'] = dict()
     m['beam_members'] = dict()
+    global U1
+    global U2
+    global U3
+    global UR1
+    global UR2
+    global UR3
+    if m['dim'] == 2:
+        U1 = 0
+        U2 = 1
+        UR3 = 2
+    else:
+        U1 = 0
+        U2 = 1
+        U3 = 2
+        UR1 = 3
+        UR2 = 4
+        UR3 = 5
     return m
 
 def add_joint(m, identifier, coordinates):
