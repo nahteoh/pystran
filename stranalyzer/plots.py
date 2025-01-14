@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from stranalyzer.beam import beam_2d_member_geometry, beam_shape_functions, beam_2d_moment
+from stranalyzer.beam import beam_2d_member_geometry, beam_shape_functions, beam_2d_moment, beam_2d_shear_force
 from numpy import linspace, dot, zeros
 
 def plot_setup(m):
@@ -134,6 +134,33 @@ def plot_moments(m, scale=1.0):
             raise Exception("3D not implemented")  
         else:
             line = _plot_2d_beam_moments(ax, member, i, j, scale)
+    return ax
+     
+def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
+    e_x, e_y, h = beam_2d_member_geometry(i, j)
+    ci, cj = i['coordinates'], j['coordinates']
+    n = 7
+    xs = zeros(2)
+    ys = zeros(2)
+    for (s, xi) in enumerate(linspace(-1, +1, n)):
+        V = beam_2d_shear_force(member, i, j, xi)
+        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        xs[0] = x[0]
+        xs[1] = x[0] + scale * V * e_y[0]
+        ys[0] = x[1]
+        ys[1] = x[1] + scale * V * e_y[1]
+        ax.plot(xs, ys, 'b-')
+    return ax
+        
+def plot_shear_forces(m, scale=1.0):
+    ax = plt.gca()
+    for member in m['beam_members'].values():
+        connectivity = member['connectivity']
+        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
+        if m['dim'] == 3:
+            raise Exception("3D not implemented")  
+        else:
+            line = _plot_2d_beam_shear_forces(ax, member, i, j, scale)
     return ax
      
 def show(m):
