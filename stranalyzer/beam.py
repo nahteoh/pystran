@@ -38,9 +38,9 @@ def curvature_displacement_2d(e_x, e_y, h, xi):
     """
     B = zeros((1, 6))
     B[0, 0:2] = 6*xi/h**2*e_y
-    B[0, 2] = (1 - 3*xi)/h
+    B[0, 2] = -(1 - 3*xi)/h
     B[0, 3:5] = -6*xi/h**2*e_y
-    B[0, 5] = -(3*xi + 1)/h
+    B[0, 5] = +(3*xi + 1)/h
     return B
 
 def _stiffness_2d(member, i, j):
