@@ -13,6 +13,7 @@ from stranalyzer import model
 from stranalyzer import property
 from stranalyzer import geometry
 from numpy import array, dot, outer
+from numpy.linalg import norm
 
 m = model.create(2)
 
@@ -55,5 +56,16 @@ print(m['U'][0:m['nfreedof']])
 
 print('Reference:     8.8622e-05  -2.2798e-04  -1.8971e-02')
 print('               4.4311e-05  -4.6696e-02   4.7854e-03')
+
+
+if norm(m['joints'][1]['displacements'] - [8.8622e-05,  -2.2798e-04,  -1.8971e-02]) > 1.e-3 * norm(m['joints'][1]['displacements']):
+    raise ValueError('Displacement calculation error')
+else:
+    print('Displacement calculation OK')
+
+if norm(m['joints'][3]['displacements'] - [4.4311e-05,  -4.6696e-02,   4.7854e-03]) > 1.e-3 * norm(m['joints'][3]['displacements']):
+    raise ValueError('Displacement calculation error')
+else:
+    print('Displacement calculation OK')
 
     

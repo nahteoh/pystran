@@ -2,14 +2,14 @@
 """
 Created on 01/12/2025
 
-Example 7.1 from Structural Mechanics. Analytical and Numerical Approaches for
+Introductory example 7.1 from Structural Mechanics. Analytical and Numerical Approaches for
 Structural Analysis by Lingyi Lu, Junbo Jia, Zhuo Tang.
 """
 from context import stranalyzer
 from stranalyzer import model
 from stranalyzer import property
 from stranalyzer import geometry
-from numpy import array, dot, outer
+from numpy.linalg import norm
 
 m = model.create(2)
 
@@ -50,4 +50,10 @@ model.solve(m)
 print(m['K'][0:3, 0:3])
 
 print(m['U'][0:3])
+
+if norm(m['U'][0:3] - [ 0.02969075,  0.02742406, -0.03952194]) > 1.e-3:
+    raise ValueError('Displacement calculation error')
+else:
+    print('Displacement calculation OK')
+
     
