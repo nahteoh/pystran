@@ -57,4 +57,8 @@ plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_deformations(m, 10.0)
 plots.show(m)
-    
+
+plots.plot_setup(m)
+plots.plot_members(m)
+plots.plot_moments(m, scale=1.0e-4)
+plots.show(m)

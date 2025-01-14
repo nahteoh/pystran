@@ -20,13 +20,13 @@ def beam_2d_member_geometry(i, j):
     Compute beam geometry.
     """
     e_x = geometry.delt(i['coordinates'], j['coordinates'])
-    L = geometry.len(i['coordinates'], j['coordinates'])
-    e_x /= L
+    h = geometry.len(i['coordinates'], j['coordinates'])
+    e_x /= h
     # The orientation here reflects the sign convention in the book.
     # The deflection is measured positive downwards, while the x coordinate is measured left to right.
     # So in two dimensions e_x and e_y form a left-handed coordinate system.
     e_y = array([e_x[1], -e_x[0]])
-    return e_x, e_y, L
+    return e_x, e_y, h
 
 def stiffness_2d(e_x, e_y, h, E, I):
     """
@@ -53,17 +53,26 @@ def curvature_displacement_2d(e_x, e_y, h, xi):
     B[0, 5] = -(3*xi + 1)/h
     return B
 
-def _stiffness_2d(member, i, j):
-    e_x, e_y, L = beam_2d_member_geometry(i, j)
+def beam_2d_moment(member, i, j, xi):
+    e_x, e_y, h = beam_2d_member_geometry(i, j)
     properties = member['properties']
     E, I = properties['E'], properties['I']
-    return stiffness_2d(e_x, e_y, L, E, I)
+    ui, uj = i['displacements'], j['displacements']
+    u = concatenate([ui, uj])
+    B = curvature_displacement_2d(e_x, e_y, h, xi)
+    return E * I * dot(B, u)
+
+def _stiffness_2d(member, i, j):
+    e_x, e_y, h = beam_2d_member_geometry(i, j)
+    properties = member['properties']
+    E, I = properties['E'], properties['I']
+    return stiffness_2d(e_x, e_y, h, E, I)
     
 def _stiffness_3d(member, i, j):
-    e_x, e_y, L = beam_3d_member_geometry(i, j)
+    e_x, e_y, h = beam_3d_member_geometry(i, j)
     properties = member['properties']
     E, I = properties['E'], properties['I']
-    return stiffness_3d(e_x, e_y, L, E, I)
+    return stiffness_3d(e_x, e_y, h, E, I)
 
 def _stiffness_truss(member, i, j):
     e_x, L = truss.truss_member_geometry(i, j)
