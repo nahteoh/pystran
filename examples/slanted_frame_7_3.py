@@ -4,33 +4,39 @@ Created on 01/12/2025
 
 Example 7.3 from Structural Mechanics. Analytical and Numerical Approaches for
 Structural Analysis by Lingyi Lu, Junbo Jia, Zhuo Tang.
+
+This reference does not appear to be correct.
+The calculation here verified with SA_tools.
 """
 from context import stranalyzer
 from stranalyzer import model
 from stranalyzer import property
 from stranalyzer import geometry
-from stranalyzer import plots
+from numpy import array, dot, outer
 
 m = model.create(2)
 
 model.add_joint(m, 1, [0.0, 0.0])
 model.add_joint(m, 2, [-5.65, -5.65])
+model.add_joint(m, 3, [4.0, 0.0])
 model.add_joint(m, 4, [8.0, 0.0])
 model.add_support(m['joints'][2], model.U1)
 model.add_support(m['joints'][2], model.U2)
 model.add_support(m['joints'][2], model.UR3)
 model.add_support(m['joints'][4], model.U1)
+model.add_support(m['joints'][4], model.U2)
 model.add_support(m['joints'][4], model.UR3)
 
 E = 2.06e11
-A = 9.6e-3
-I = 1.152e-5
+A = 1.5e-2
+I = 2.813e-5
 p2 = property.beam_2d_property('material_2', E, A, I)
 model.add_beam_member(m, 1, [1, 2], p2)
-model.add_beam_member(m, 2, [4, 1], p2)
+model.add_beam_member(m, 2, [3, 1], p2)
+model.add_beam_member(m, 3, [3, 4], p2)
 
-model.add_load(m['joints'][1], model.UR3, -40e3)
-model.add_load(m['joints'][1], model.U2, -50e3)
+model.add_load(m['joints'][1], model.UR3, -50e3)
+model.add_load(m['joints'][3], model.U2, -60e3)
 
 model.number_dofs(m)
 
@@ -45,16 +51,9 @@ print([j['displacements'] for j in m['joints'].values()])
 
 print(m['K'][0:m['nfreedof'], 0:m['nfreedof']])
 
-print(m['F'][0:m['nfreedof']])
-
 print(m['U'][0:m['nfreedof']])
-    
-print(m['joints'][1]['displacements'])
-print('Reference: ', [0.000236558620403,  -0.000674850902417,  -0.027039378483428])
 
+print('Reference:     8.8622e-05  -2.2798e-04  -1.8971e-02')
+print('               4.4311e-05  -4.6696e-02   4.7854e-03')
 
-plots.plot_setup(m)
-plots.plot_members(m)
-plots.plot_deformations(m, 10.0)
-plots.show(m)
     
