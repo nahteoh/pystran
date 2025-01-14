@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+from stranalyzer.beam import beam_2d_member_geometry, beam_shape_functions
+from numpy import linspace, dot, zeros
 
 def plot_setup(m):
     if m['dim'] == 3:
@@ -12,8 +14,13 @@ def _plot_members_2d(m):
     for member in m['truss_members'].values():
         connectivity = member['connectivity']
         i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        xi, xj = i['coordinates'], j['coordinates']
-        line = plt.plot([xi[0], xj[0]], [xi[1], xj[1]], 'k-')   
+        ci, cj = i['coordinates'], j['coordinates']
+        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], 'k-')  
+    for member in m['beam_members'].values():
+        connectivity = member['connectivity']
+        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
+        ci, cj = i['coordinates'], j['coordinates']
+        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], 'k-')  
     return ax
     
 def _plot_members_3d(m):
@@ -21,8 +28,8 @@ def _plot_members_3d(m):
     for member in m['truss_members'].values():
         connectivity = member['connectivity']
         i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        xi, xj = i['coordinates'], j['coordinates']
-        line = plt.plot([xi[0], xj[0]], [xi[1], xj[1]], [xi[2], xj[2]], 'k-')
+        ci, cj = i['coordinates'], j['coordinates']
+        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], 'k-')
     return ax
     
 def plot_members(m):
@@ -32,18 +39,43 @@ def plot_members(m):
         ax = _plot_members_2d(m) 
     return ax
     
-
+def _plot_2d_beam(ax, i, j, scale):
+    ui, uj = i['displacements'], j['displacements']
+    ci, cj = i['coordinates'], j['coordinates']
+    e_x, e_y, h = beam_2d_member_geometry(i, j)
+    uli = dot(ui[0:2], e_y)
+    thi = ui[2]
+    ulj = dot(uj[0:2], e_y)
+    thj = uj[2]
+    n = 20
+    xs = zeros(n)
+    ys = zeros(n)
+    for (s, xi) in enumerate(linspace(-1, +1, n)):
+        N = beam_shape_functions(xi, h)
+        w = N[0] * uli + (h/2) * N[1] * thi + N[2] * ulj + (h/2) * N[3] * thj
+        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        xs[s] = x[0] + scale * w * e_y[0]
+        ys[s] = x[1] + scale * w * e_y[1]
+    ax.plot(xs, ys, 'm-')
+        
 def plot_deformations(m, scale=1.0):
     ax = plt.gca()
     for member in m['truss_members'].values():
         connectivity = member['connectivity']
         i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
         ui, uj = i['displacements'], j['displacements']
-        xi, xj = i['coordinates'], j['coordinates']
+        ci, cj = i['coordinates'], j['coordinates']
         if m['dim'] == 3:
-            line = ax.plot([xi[0]+scale*ui[0], xj[0]+scale*uj[0]], [xi[1]+scale*ui[1], xj[1]+scale*uj[1]], [xi[2]+scale*ui[2], xj[2]+scale*uj[2]], 'm-')   
+            line = ax.plot([ci[0]+scale*ui[0], cj[0]+scale*uj[0]], [ci[1]+scale*ui[1], cj[1]+scale*uj[1]], [ci[2]+scale*ui[2], cj[2]+scale*uj[2]], 'm-')   
         else:
-            line = ax.plot([xi[0]+scale*ui[0], xj[0]+scale*uj[0]], [xi[1]+scale*ui[1], xj[1]+scale*uj[1]], 'm-')   
+            line = ax.plot([ci[0]+scale*ui[0], cj[0]+scale*uj[0]], [ci[1]+scale*ui[1], cj[1]+scale*uj[1]], 'm-')   
+    for member in m['beam_members'].values():
+        connectivity = member['connectivity']
+        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
+        if m['dim'] == 3:
+            raise Exception("3D not implemented")  
+        else:
+            line = _plot_2d_beam(ax, i, j, scale)
     return ax
      
 def _plot_member_numbers_2d(m):
@@ -52,8 +84,8 @@ def _plot_member_numbers_2d(m):
         member = m['truss_members'][id]
         connectivity = member['connectivity']
         i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        xi, xj = i['coordinates'], j['coordinates']
-        xm = (xi + xj) / 2.0
+        ci, cj = i['coordinates'], j['coordinates']
+        xm = (ci + cj) / 2.0
         line = ax.text(xm[0], xm[1], str(id))
     return ax
     
@@ -63,8 +95,8 @@ def _plot_member_numbers_3d(m):
         member = m['truss_members'][id]
         connectivity = member['connectivity']
         i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        xi, xj = i['coordinates'], j['coordinates']
-        xm = (xi + xj) / 2.0
+        ci, cj = i['coordinates'], j['coordinates']
+        xm = (ci + cj) / 2.0
         line = ax.text(xm[0], xm[1], xm[2], str(id), 'z')
     return ax
     
