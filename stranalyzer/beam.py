@@ -18,6 +18,11 @@ def beam_shape_functions(xi, h):
 def beam_2d_member_geometry(i, j):
     """
     Compute beam geometry.
+    
+    `e_x` is the direction vector along the axis of the beam. `e_y` is the
+    direction vector perpendicular to the axis of the beam. These two vectors
+    form a left-handed coordinate system (consistent with the sign convention in
+    the book).
     """
     e_x = geometry.delt(i['coordinates'], j['coordinates'])
     h = geometry.len(i['coordinates'], j['coordinates'])
@@ -30,7 +35,7 @@ def beam_2d_member_geometry(i, j):
 
 def stiffness_2d(e_x, e_y, h, E, I):
     """
-    Compute beam stiffness matrix.
+    Compute 2d beam stiffness matrix.
     """
     if abs(norm(e_x) - 1.0) > 1e-6:
         raise Exception("Direction vector must be a unit vector")
@@ -53,13 +58,41 @@ def curvature_displacement_2d(e_x, e_y, h, xi):
     B[0, 5] = -(3*xi + 1)/h
     return B
 
+def third_deriv_displacement_2d(e_x, e_y, h, xi):
+    """
+    Compute beam third derivative-displacement matrix.
+    """
+    B = zeros((1, 6))
+    B[0, 0:2] = 6/h**2*e_y/(h/2)
+    B[0, 2] = (-3)/h/(h/2)
+    B[0, 3:5] = -6/h**2*e_y/(h/2)
+    B[0, 5] = -(3)/h/(h/2)
+    return B
+
 def beam_2d_moment(member, i, j, xi):
+    """
+    Compute 2d beam moment based on the displacements stored at the joints.
+    The moment is computed at the parametric location `xi` along the beam.
+    """
     e_x, e_y, h = beam_2d_member_geometry(i, j)
     properties = member['properties']
     E, I = properties['E'], properties['I']
     ui, uj = i['displacements'], j['displacements']
     u = concatenate([ui, uj])
     B = curvature_displacement_2d(e_x, e_y, h, xi)
+    return E * I * dot(B, u)
+
+def beam_2d_shear_force(member, i, j, xi):
+    """
+    Compute 2d beam shear force based on the displacements stored at the joints.
+    The shear force is computed at the parametric location `xi` along the beam.
+    """
+    e_x, e_y, h = beam_2d_member_geometry(i, j)
+    properties = member['properties']
+    E, I = properties['E'], properties['I']
+    ui, uj = i['displacements'], j['displacements']
+    u = concatenate([ui, uj])
+    B = third_deriv_displacement_2d(e_x, e_y, h, xi)
     return E * I * dot(B, u)
 
 def _stiffness_2d(member, i, j):
@@ -84,6 +117,7 @@ def assemble_stiffness(Kg, member, i, j):
     """
     Assemble beam stiffness matrix.
     """
+    # Add stiffness in bending.
     beam_is_2d = len(i['coordinates']) == len(j['coordinates']) == 2
     if beam_is_2d:
         k = _stiffness_2d(member, i, j)
@@ -94,6 +128,7 @@ def assemble_stiffness(Kg, member, i, j):
         for c in arange(len(dof)):
             gr, gc = dof[r], dof[c]
             Kg[gr, gc] += k[r, c]
+    # Add stiffness in the axial direction.
     k = _stiffness_truss(member, i, j)
     if beam_is_2d:
         dof = concatenate([i['dof'][0:2], j['dof'][0:2]])
