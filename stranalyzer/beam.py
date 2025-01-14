@@ -8,6 +8,13 @@ from numpy import array, dot, reshape, transpose, hstack, vstack, arange, outer,
 from numpy.linalg import norm
 from math import sqrt
 
+def beam_shape_functions(xi, h):
+    return array([(2 - 3*xi + xi**3)/4,
+                  (-1 + xi + xi**2 - xi**3)/4, 
+                  (2 + 3*xi - xi**3)/4,
+                  (+1 + xi - xi**2 - xi**3)/4])
+    
+
 def beam_2d_member_geometry(i, j):
     """
     Compute beam geometry.
@@ -15,7 +22,10 @@ def beam_2d_member_geometry(i, j):
     e_x = geometry.delt(i['coordinates'], j['coordinates'])
     L = geometry.len(i['coordinates'], j['coordinates'])
     e_x /= L
-    e_y = array([-e_x[1], e_x[0]])
+    # The orientation here reflects the sign convention in the book.
+    # The deflection is measured positive downwards, while the x coordinate is measured left to right.
+    # So in two dimensions e_x and e_y form a left-handed coordinate system.
+    e_y = array([e_x[1], -e_x[0]])
     return e_x, e_y, L
 
 def stiffness_2d(e_x, e_y, h, E, I):
@@ -38,9 +48,9 @@ def curvature_displacement_2d(e_x, e_y, h, xi):
     """
     B = zeros((1, 6))
     B[0, 0:2] = 6*xi/h**2*e_y
-    B[0, 2] = -(1 - 3*xi)/h
+    B[0, 2] = (1 - 3*xi)/h
     B[0, 3:5] = -6*xi/h**2*e_y
-    B[0, 5] = +(3*xi + 1)/h
+    B[0, 5] = -(3*xi + 1)/h
     return B
 
 def _stiffness_2d(member, i, j):
