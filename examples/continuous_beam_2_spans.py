@@ -9,6 +9,7 @@ from context import stranalyzer
 from stranalyzer import model
 from stranalyzer import property
 from stranalyzer import geometry
+from stranalyzer import plots
 from numpy.linalg import norm
 
 m = model.create(2)
@@ -57,3 +58,7 @@ else:
     print('Displacement calculation OK')
 
     
+plots.plot_setup(m)
+plots.plot_members(m)
+plots.plot_deformations(m, 10.0)
+plots.show(m)

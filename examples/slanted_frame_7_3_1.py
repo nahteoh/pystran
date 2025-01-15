@@ -66,5 +66,6 @@ plots.show(m)
 
 plots.plot_setup(m)
 plots.plot_members(m)
-plots.plot_moments(m, scale=1.0e-4)
+ax = plots.plot_moments(m, scale=1.0e-4)
+ax.set_title('Bending moments')
 plots.show(m)

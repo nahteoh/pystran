@@ -59,7 +59,8 @@ print(m['U'][0:m['nfreedof']])
 plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_deformations(m, 100.0)
-plots.plot_shear_forces(m, scale=0.50e-3)
+ax = plots.plot_shear_forces(m, scale=0.50e-3)
+ax.set_title('Shear forces')
 plots.show(m)
     
 
