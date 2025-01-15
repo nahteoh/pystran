@@ -20,10 +20,12 @@ def create(dim = 2):
     global UR1
     global UR2
     global UR3
+    global CLAMPED
     if m['dim'] == 2:
         U1 = 0
         U2 = 1
         UR3 = 2
+        CLAMPED = 100
     else:
         U1 = 0
         U2 = 1
@@ -31,6 +33,7 @@ def create(dim = 2):
         UR1 = 3
         UR2 = 4
         UR3 = 5
+        CLAMPED = 100
     return m
 
 def add_joint(m, identifier, coordinates):
@@ -71,7 +74,10 @@ def add_support(j, dir, value = 0.0):
     """
     if ('supports' not in j):
         j['supports'] = dict()
-    j['supports'][dir] = value
+    if dir == CLAMPED:
+        j['supports'] = {U1 : 0.0, U2 : 0.0, U3 : 0.0, UR1 : 0.0, UR2 : 0.0, UR3 : 0.0}
+    else:
+        j['supports'][dir] = value
     return None
 
 def add_load(j, dir, value):
