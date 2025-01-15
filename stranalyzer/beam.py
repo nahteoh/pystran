@@ -201,10 +201,10 @@ def torsion_displacement(e_x, h):
     return B
 
 def _stiffness_torsion(member, i, j):
-    e_x, L = truss.truss_member_geometry(i, j)
+    e_x, h = truss.truss_member_geometry(i, j)
     properties = member['properties']
-    E, A = properties['E'], properties['A']
-    return truss.stiffness(e_x, L, E, A)
+    G, J = properties['G'], properties['J']
+    return torsion_stiffness(e_x, h, G, J)
     
 def assemble_stiffness(Kg, member, i, j):
     """
