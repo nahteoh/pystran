@@ -28,24 +28,26 @@ def beam_2d_property(name, E, A, I):
     p['I'] = I
     return p
 
-def beam_property(name, E, G, A, I1, I2, I3, J, x1x2_vector):
+def beam_property(name, E, G, A, Ix, Iy, Iz, J, xz_vector):
     """
     Define beam property.
     
     - `E`, `G`= Young's and shear modulus,
     - `A`= cross-sectional area,
-    - `I2`, `I3`= central moment of inertia of the cross-section about the x2 and x3
+    - `Ix`= central moment of inertia of the cross-section about the local x.
+    - `Iy`, `Iz`= central moment of inertia of the cross-section about the local y and local z
     coordinate axis,
     - `J`= St Venant torsion constant.
+    - `xz_vector`= vector that lies in the local x and z coordinate plane.
     """
     p = dict()
     p['name'] = name
     p['E'] = E
     p['G'] = G
     p['A'] = A
-    p['I1'] = I1
-    p['I2'] = I2
-    p['I3'] = I3
+    p['Ix'] = Ix
+    p['Iy'] = Iy
+    p['Iz'] = Iz
     p['J'] = J
-    p['x1x2_vector'] = x1x2_vector
+    p['xz_vector'] = xz_vector
     return p
