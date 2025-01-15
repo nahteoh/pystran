@@ -5,11 +5,11 @@ Created on 01/12/2025
 Introductory example 7.1 from Structural Mechanics. Analytical and Numerical Approaches for
 Structural Analysis by Lingyi Lu, Junbo Jia, Zhuo Tang.
 """
-from context import stranalyzer
-from stranalyzer import model
-from stranalyzer import property
-from stranalyzer import geometry
-from stranalyzer import plots
+from context import pystran
+from pystran import model
+from pystran import property
+from pystran import geometry
+from pystran import plots
 from numpy.linalg import norm
 
 m = model.create(2)

@@ -5,9 +5,9 @@ Created on Mon Nov 18 08:09:22 2024
 
 @author: pkonl
 """
-# import stranalyzer
-# from stranalyzer import model
-# from stranalyzer import property
+# import pystran
+# from pystran import model
+# from pystran import property
 # m = model.create()
 # model.add_joint(m, 1, [0.1, -0.2])
 # print(m['joints'])
@@ -17,27 +17,27 @@ Created on Mon Nov 18 08:09:22 2024
 # model.add_truss_member(m, 1, [1, 2], p1)
 # print(m['truss_members'])
   
-# import stranalyzer
-# from stranalyzer import model
-# from stranalyzer import property
+# import pystran
+# from pystran import model
+# from pystran import property
 # m = model.create()
 # model.add_joint(m, 1, [0.0, 0.0])
 # model.add_support(m['joints'][1], 0, 0.1)
 # print(m['joints'][1]['supports'])
 
-# from stranalyzer import model
-# from stranalyzer import property
-# from stranalyzer import geometry
+# from pystran import model
+# from pystran import property
+# from pystran import geometry
 # m = model.create()
 # model.add_joint(m, 1, [0.0, 0.0])
 # model.add_joint(m, 2, [1.0, 1.0])
 # d = geometry.delt(m['joints'][1]['coordinates'], m['joints'][2]['coordinates'])
 # geometry.delt(m['joints'][1]['coordinates'], m['joints'][2]['coordinates'])
 
-# import stranalyzer
-# from stranalyzer import model
-# from stranalyzer import property
-# from stranalyzer import geometry
+# import pystran
+# from pystran import model
+# from pystran import property
+# from pystran import geometry
 # m = model.create()
 # model.add_joint(m, 1, [0.0, 0.0])
 # model.add_joint(m, 2, [1.0, 2.0])
@@ -52,10 +52,10 @@ Created on Mon Nov 18 08:09:22 2024
 # L = geometry.len(m['joints'][i]['coordinates'], m['joints'][j]['coordinates'])
 # print(L)
 
-# import stranalyzer
-# from stranalyzer import model
-# from stranalyzer import property
-# from stranalyzer import geometry
+# import pystran
+# from pystran import model
+# from pystran import property
+# from pystran import geometry
 # from numpy import array, dot, outer
 # m = model.create()
 # model.add_joint(m, 1, [0.0, 0.0])
@@ -81,10 +81,10 @@ Created on Mon Nov 18 08:09:22 2024
 
 # model.solve(m)
 
-import stranalyzer
-from stranalyzer import model
-from stranalyzer import property
-from stranalyzer import geometry
+import pystran
+from pystran import model
+from pystran import property
+from pystran import geometry
 from numpy import array, dot, outer
 m = model.create(2)
 model.add_joint(m, 1, [0.0, 0.0])

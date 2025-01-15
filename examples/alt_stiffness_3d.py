@@ -6,11 +6,11 @@ Example 4.13 from
 Matrix Structural Analysis: Second Edition 2nd Edition
 by William McGuire, Richard H. Gallagher, Ronald D. Ziemian 
 """
-from context import stranalyzer
-from stranalyzer import model
-from stranalyzer import property
-from stranalyzer import geometry
-from stranalyzer import plots
+from context import pystran
+from pystran import model
+from pystran import property
+from pystran import geometry
+from pystran import plots
 from numpy import zeros, dot
 from numpy.linalg import norm
 from math import sqrt
@@ -47,7 +47,7 @@ K = zeros((nt, nt))
 for member in m['beam_members'].values():
     connectivity = member['connectivity']
     i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-    stranalyzer.beam.assemble_stiffness(K, member, i, j)
+    pystran.beam.assemble_stiffness(K, member, i, j)
 
 K1 = K.copy()
 
@@ -99,7 +99,7 @@ K[8, 10] = 6 * E * Iy / h**2
 
 
 i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-e_x, e_y, e_z, h = stranalyzer.beam.beam_3d_member_geometry(i, j, xz_vector)
+e_x, e_y, e_z, h = pystran.beam.beam_3d_member_geometry(i, j, xz_vector)
 
 # Transformation matrix
 T = zeros(K.shape)

@@ -6,11 +6,11 @@ Example 4.13 from
 Matrix Structural Analysis: Second Edition 2nd Edition
 by William McGuire, Richard H. Gallagher, Ronald D. Ziemian 
 """
-from context import stranalyzer
-from stranalyzer import model
-from stranalyzer import property
-from stranalyzer import geometry
-from stranalyzer import plots
+from context import pystran
+from pystran import model
+from pystran import property
+from pystran import geometry
+from pystran import plots
 from math import sqrt
 
 m = model.create(2)

@@ -8,10 +8,10 @@ Structural Analysis by Lingyi Lu, Junbo Jia, Zhuo Tang.
 This reference does not appear to be correct.
 The calculation here verified with SA_tools.
 """
-from context import stranalyzer
-from stranalyzer import model
-from stranalyzer import property
-from stranalyzer import geometry
+from context import pystran
+from pystran import model
+from pystran import property
+from pystran import geometry
 from numpy import array, dot, outer
 from numpy.linalg import norm
 

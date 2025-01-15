@@ -15,12 +15,12 @@ New Jersey Institute of Technology,
 
 Three bar example on page 32
 """
-from context import stranalyzer
-from stranalyzer import model
-from stranalyzer import property
-from stranalyzer import geometry
-from stranalyzer import truss
-from stranalyzer import plots
+from context import pystran
+from pystran import model
+from pystran import property
+from pystran import geometry
+from pystran import truss
+from pystran import plots
 from numpy import array, dot, outer, concatenate
 
 m = model.create()

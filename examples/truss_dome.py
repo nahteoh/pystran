@@ -18,12 +18,12 @@ Space truss dome in section 2.4.2
 
 Vertical deflection at the crown: -.20641184e+00 in (linear analysis)
 """
-from context import stranalyzer
-from stranalyzer import model
-from stranalyzer import property
-from stranalyzer import geometry
-from stranalyzer import truss
-from stranalyzer import plots
+from context import pystran
+from pystran import model
+from pystran import property
+from pystran import geometry
+from pystran import truss
+from pystran import plots
 from numpy import array, dot, outer, concatenate
 
 m = model.create(3)

@@ -5,14 +5,14 @@ Created on Mon Nov 18 08:09:22 2024
 @author: pkonl
 """
 
-from stranalyzer import model
-from stranalyzer import property
+from pystran import model
+from pystran import property
 
 def _test_1():
     """
-    >>> import stranalyzer
-    >>> from stranalyzer import model
-    >>> from stranalyzer import property
+    >>> import pystran
+    >>> from pystran import model
+    >>> from pystran import property
     >>> p = property.truss_property('steel', 200e9, 0.001)
     >>> p['name']
     'steel'
@@ -22,9 +22,9 @@ def _test_1():
 
 def _test_2():
     """
-    >>> import stranalyzer
-    >>> from stranalyzer import model
-    >>> from stranalyzer import property
+    >>> import pystran
+    >>> from pystran import model
+    >>> from pystran import property
     >>> m = model.create()
     >>> model.add_joint(m, 1, [0.1, -0.2])
     >>> print(m['joints'])
@@ -40,9 +40,9 @@ def _test_2():
 
 def _test_3():
     """
-    >>> import stranalyzer
-    >>> from stranalyzer import model
-    >>> from stranalyzer import property
+    >>> import pystran
+    >>> from pystran import model
+    >>> from pystran import property
     >>> m = model.create()
     >>> model.add_joint(m, 1, [0.0, 0.0])
     >>> model.add_support(m['joints'][1], 0, 0.1)
@@ -54,9 +54,9 @@ def _test_3():
 
 def _test_4():
     """
-    >>> from stranalyzer import model
-    >>> from stranalyzer import property
-    >>> from stranalyzer import geometry
+    >>> from pystran import model
+    >>> from pystran import property
+    >>> from pystran import geometry
     >>> m = model.create()
     >>> model.add_joint(m, 1, [0.0, 0.0])
     >>> model.add_joint(m, 2, [1.0, 1.0])
@@ -68,10 +68,10 @@ def _test_4():
 
 def _test_5():
     """
-    >>> import stranalyzer
-    >>> from stranalyzer import model
-    >>> from stranalyzer import property
-    >>> from stranalyzer import geometry
+    >>> import pystran
+    >>> from pystran import model
+    >>> from pystran import property
+    >>> from pystran import geometry
     >>> m = model.create()
     >>> model.add_joint(m, 1, [0.0, 0.0])
     >>> model.add_joint(m, 2, [1.0, 2.0])
@@ -89,10 +89,10 @@ def _test_5():
     
 def _test_6():
     """
-    >>> import stranalyzer
-    >>> from stranalyzer import model
-    >>> from stranalyzer import property
-    >>> from stranalyzer import geometry
+    >>> import pystran
+    >>> from pystran import model
+    >>> from pystran import property
+    >>> from pystran import geometry
     >>> m = model.create()
     >>> model.add_joint(m, 1, [0.0, 0.0])
     >>> model.add_joint(m, 2, [1.0, 2.0])
@@ -116,10 +116,10 @@ def _test_6():
     
 def _test_7():
     """
-    >>> import stranalyzer
-    >>> from stranalyzer import model
-    >>> from stranalyzer import property
-    >>> from stranalyzer import geometry
+    >>> import pystran
+    >>> from pystran import model
+    >>> from pystran import property
+    >>> from pystran import geometry
     >>> m = model.create()
     >>> model.add_joint(m, 1, [0.0, 0.0])
     >>> model.add_joint(m, 2, [1.0, 2.0])
@@ -140,10 +140,10 @@ def _test_7():
     
 def _test_8():
     """
-    >>> import stranalyzer
-    >>> from stranalyzer import model
-    >>> from stranalyzer import property
-    >>> from stranalyzer import geometry
+    >>> import pystran
+    >>> from pystran import model
+    >>> from pystran import property
+    >>> from pystran import geometry
     >>> from numpy import array, dot, outer
     >>> m = model.create()
     >>> model.add_joint(m, 1, [0.0, 0.0])
@@ -170,7 +170,7 @@ def _test_8():
     >>> print([j['dof'] for j in m['joints'].values()])
     [array([2, 3], dtype=int32), array([0, 1], dtype=int32), array([4, 5], dtype=int32), array([6, 7], dtype=int32)]
     >>> 
-    >>> from stranalyzer import truss
+    >>> from pystran import truss
     >>> d = geometry.delt(m['joints'][1]['coordinates'], m['joints'][2][\'coordinates'])
     >>> 
     >>> B = truss.strain_displacement(d, 2.0)
