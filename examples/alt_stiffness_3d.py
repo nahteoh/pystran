@@ -11,18 +11,19 @@ from stranalyzer import model
 from stranalyzer import property
 from stranalyzer import geometry
 from stranalyzer import plots
-from numpy import zeros
+from numpy import zeros, dot
 from numpy.linalg import norm
 from math import sqrt
 
 m = model.create(3)
 
 # General orientation
-# model.add_joint(m, 1, [-1.0, 2.0, 3.0])
+model.add_joint(m, 1, [-1.0, 2.0, 3.0])
 # model.add_joint(m, 2, [10.0, 7.0, 8.0])
+model.add_joint(m, 2, [-10.0, 7.0, -8.0])
 # Default orientation
-model.add_joint(m, 1, [0.0, 0.0, 0.0])
-model.add_joint(m, 2, [10.0, 0.0, 0.0])
+# model.add_joint(m, 1, [0.0, 0.0, 0.0])
+# model.add_joint(m, 2, [10.0, 0.0, 0.0])
 h = norm(m['joints'][1]['coordinates'] - m['joints'][2]['coordinates'])
 
 E = 2.0e6
@@ -96,9 +97,25 @@ K[8, 4] = 6 * E * Iy / h**2
 K[10, 8] = 6 * E * Iy / h**2
 K[8, 10] = 6 * E * Iy / h**2
 
+
+i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
+e_x, e_y, e_z, h = stranalyzer.beam.beam_3d_member_geometry(i, j, xz_vector)
+
+# Transformation matrix
+T = zeros(K.shape)
+T[0:3, 0] = e_x
+T[0:3, 1] = e_y
+T[0:3, 2] = e_z
+T[3:6, 3:6] = T[0:3, 0:3]
+T[6:9, 6:9] = T[0:3, 0:3]
+T[9:12, 9:12] = T[0:3, 0:3]
+
+# Transform stiffness matrix from default orientation to current orientation
+K = dot(T, dot(K, T.T))
+
 for r in range(12):
     for c in range(12):
-        if abs(K[r, c] - K1[r, c]) > 1e-6 * (abs(K1[r, c]) + abs(K[r, c])):
+        if abs(K[r, c] - K1[r, c]) > 1e-12 * (abs(K1[r, c]) + abs(K[r, c])):
             print(r, c, K[r, c], K1[r, c])
 
 # plots.plot_setup(m)
