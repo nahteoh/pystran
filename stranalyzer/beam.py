@@ -19,21 +19,22 @@ def beam_2d_member_geometry(i, j):
     """
     Compute beam geometry.
     
-    `e_x` is the direction vector along the axis of the beam. `e_y` is the
-    direction vector perpendicular to the axis of the beam. These two vectors
-    form a left-handed coordinate system (consistent with the sign convention in
-    the book).
+    The deformation of the beam is considered in the x-z plane. `e_x` is the
+    direction vector along the axis of the beam. `e_z` is the direction vector
+    perpendicular to the axis of the beam. These two vectors form a right-handed
+    coordinate system, considering `e_y` points out of the whiteboard
+    (consistent with the sign convention in the book).
     """
     e_x = geometry.delt(i['coordinates'], j['coordinates'])
     h = geometry.len(i['coordinates'], j['coordinates'])
     e_x /= h
     # The orientation here reflects the sign convention in the book.
     # The deflection is measured positive downwards, while the x coordinate is measured left to right.
-    # So in two dimensions e_x and e_y form a left-handed coordinate system.
-    e_y = array([e_x[1], -e_x[0]])
-    return e_x, e_y, h
+    # So in two dimensions e_x and e_z form a left-handed coordinate system.
+    e_z = array([e_x[1], -e_x[0]])
+    return e_x, e_z, h
 
-def stiffness_2d(e_x, e_y, h, E, I):
+def stiffness_2d(e_x, e_z, h, E, I):
     """
     Compute 2d beam stiffness matrix.
     """
@@ -43,29 +44,29 @@ def stiffness_2d(e_x, e_y, h, E, I):
     WG = [1, 1]
     K = zeros((6, 6))
     for q in range(2):
-        B = curvature_displacement_2d(e_x, e_y, h, xiG[q])
+        B = curvature_displacement_2d(e_x, e_z, h, xiG[q])
         K += E * I * outer(B.T, B) * WG[q] * (h/2)
     return  K
     
-def curvature_displacement_2d(e_x, e_y, h, xi):
+def curvature_displacement_2d(e_x, e_z, h, xi):
     """
     Compute beam curvature-displacement matrix.
     """
     B = zeros((1, 6))
-    B[0, 0:2] = 6*xi/h**2*e_y
+    B[0, 0:2] = 6*xi/h**2*e_z
     B[0, 2] = (1 - 3*xi)/h
-    B[0, 3:5] = -6*xi/h**2*e_y
+    B[0, 3:5] = -6*xi/h**2*e_z
     B[0, 5] = -(3*xi + 1)/h
     return B
 
-def third_deriv_displacement_2d(e_x, e_y, h, xi):
+def third_deriv_displacement_2d(e_x, e_z, h, xi):
     """
     Compute beam third derivative-displacement matrix.
     """
     B = zeros((1, 6))
-    B[0, 0:2] = 6/h**2*e_y/(h/2)
+    B[0, 0:2] = 6/h**2*e_z/(h/2)
     B[0, 2] = (-3)/h/(h/2)
-    B[0, 3:5] = -6/h**2*e_y/(h/2)
+    B[0, 3:5] = -6/h**2*e_z/(h/2)
     B[0, 5] = -(3)/h/(h/2)
     return B
 
@@ -74,12 +75,12 @@ def beam_2d_moment(member, i, j, xi):
     Compute 2d beam moment based on the displacements stored at the joints.
     The moment is computed at the parametric location `xi` along the beam.
     """
-    e_x, e_y, h = beam_2d_member_geometry(i, j)
+    e_x, e_z, h = beam_2d_member_geometry(i, j)
     properties = member['properties']
     E, I = properties['E'], properties['I']
     ui, uj = i['displacements'], j['displacements']
     u = concatenate([ui, uj])
-    B = curvature_displacement_2d(e_x, e_y, h, xi)
+    B = curvature_displacement_2d(e_x, e_z, h, xi)
     return E * I * dot(B, u)
 
 def beam_2d_shear_force(member, i, j, xi):
@@ -87,25 +88,25 @@ def beam_2d_shear_force(member, i, j, xi):
     Compute 2d beam shear force based on the displacements stored at the joints.
     The shear force is computed at the parametric location `xi` along the beam.
     """
-    e_x, e_y, h = beam_2d_member_geometry(i, j)
+    e_x, e_z, h = beam_2d_member_geometry(i, j)
     properties = member['properties']
     E, I = properties['E'], properties['I']
     ui, uj = i['displacements'], j['displacements']
     u = concatenate([ui, uj])
-    B = third_deriv_displacement_2d(e_x, e_y, h, xi)
+    B = third_deriv_displacement_2d(e_x, e_z, h, xi)
     return E * I * dot(B, u)
 
 def _stiffness_2d(member, i, j):
-    e_x, e_y, h = beam_2d_member_geometry(i, j)
+    e_x, e_z, h = beam_2d_member_geometry(i, j)
     properties = member['properties']
     E, I = properties['E'], properties['I']
-    return stiffness_2d(e_x, e_y, h, E, I)
+    return stiffness_2d(e_x, e_z, h, E, I)
     
 def _stiffness_3d(member, i, j):
-    e_x, e_y, h = beam_3d_member_geometry(i, j)
+    e_x, e_z, h = beam_3d_member_geometry(i, j)
     properties = member['properties']
     E, I = properties['E'], properties['I']
-    return stiffness_3d(e_x, e_y, h, E, I)
+    return stiffness_3d(e_x, e_z, h, E, I)
 
 def _stiffness_truss(member, i, j):
     e_x, L = truss.truss_member_geometry(i, j)
