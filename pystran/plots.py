@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-from stranalyzer.beam import beam_2d_member_geometry, beam_shape_functions_2d, beam_2d_moment, beam_2d_shear_force
-from stranalyzer.beam import beam_3d_member_geometry, beam_shape_functions_xz, beam_shape_functions_xy
+from pystran.beam import beam_2d_member_geometry, beam_shape_functions_2d, beam_2d_moment, beam_2d_shear_force
+from pystran.beam import beam_3d_member_geometry, beam_shape_functions_xz, beam_shape_functions_xy
 from numpy import linspace, dot, zeros
 
 def plot_setup(m):

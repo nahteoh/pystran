@@ -2,7 +2,7 @@
 Define truss mechanical quantities.
 """
 
-from stranalyzer import geometry
+from pystran import geometry
 from numpy import array, dot, reshape, transpose, hstack, vstack, arange, outer, concatenate
 from numpy.linalg import norm
 

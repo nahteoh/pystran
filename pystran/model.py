@@ -1,9 +1,14 @@
 import numpy
 from numpy import array, zeros, dot
-import stranalyzer.property
+import pystran.property
 
 
 def create(dim = 2):
+    """ 
+    Create a new model.
+    
+    Supply the dimension of the model (2 or 3).
+    """
     m = dict()
     m['dim'] = dim # Dimension of the model
     m['joints'] = dict()
@@ -30,7 +35,7 @@ def create(dim = 2):
 
 def add_joint(m, identifier, coordinates):
     """
-    Add joint to the model.
+    Add a joint to the model.
     """
     if (identifier in m['joints']):
         raise Exception("Joint already exists")
@@ -42,7 +47,7 @@ def add_joint(m, identifier, coordinates):
         
 def add_truss_member(m, identifier, connectivity, properties):      
     """
-    Add truss member to the model.
+    Add a truss member to the model.
     """
     if (identifier in m['truss_members']):
         raise Exception("Truss member already exists") 
@@ -52,7 +57,7 @@ def add_truss_member(m, identifier, connectivity, properties):
     
 def add_beam_member(m, identifier, connectivity, properties):      
     """
-    Add beam member to the model.
+    Add a beam member to the model.
     """
     if (identifier in m['beam_members']):
         raise Exception("Beam member already exists") 
@@ -62,7 +67,7 @@ def add_beam_member(m, identifier, connectivity, properties):
 
 def add_support(j, dir, value = 0.0):
     """
-    Add support to joint.
+    Add a support to joint.
     """
     if ('supports' not in j):
         j['supports'] = dict()
@@ -71,7 +76,7 @@ def add_support(j, dir, value = 0.0):
 
 def add_load(j, dir, value):
     """
-    Add load to joint.
+    Add a load to joint.
     """
     if ('loads' not in j):
         j['loads'] = dict()
@@ -107,8 +112,11 @@ def number_dofs(m):
     return None
     
 def solve(m):
+    return solve_statics(m)
+
+def solve_statics(m):
     """
-    Solve the discrete model.
+    Solve the static equilibrium of the discrete model.
     """
     nt, nf = m['ntotaldof'], m['nfreedof']
     # Assemble global stiffness matrix
@@ -116,11 +124,11 @@ def solve(m):
     for member in m['truss_members'].values():
         connectivity = member['connectivity']
         i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        stranalyzer.truss.assemble_stiffness(K, member, i, j)
+        pystran.truss.assemble_stiffness(K, member, i, j)
     for member in m['beam_members'].values():
         connectivity = member['connectivity']
         i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        stranalyzer.beam.assemble_stiffness(K, member, i, j)
+        pystran.beam.assemble_stiffness(K, member, i, j)
         
     m["K"] = K
     
