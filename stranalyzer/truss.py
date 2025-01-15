@@ -11,33 +11,33 @@ def truss_member_geometry(i, j):
     Compute truss geometry.
     """
     e_x = geometry.delt(i['coordinates'], j['coordinates'])
-    L = geometry.len(i['coordinates'], j['coordinates'])
-    e_x /= L
-    return e_x, L
+    h = geometry.len(i['coordinates'], j['coordinates'])
+    if h <= 0.0:
+        raise Exception("Length of element must be positive")
+    e_x /= h
+    return e_x, h
 
-def stiffness(e_x, L, E, A):
+def stiffness(e_x, h, E, A):
     """
     Compute truss stiffness matrix.
     """
-    if abs(norm(e_x) - 1.0) > 1e-6:
-        raise Exception("Direction vector must be a unit vector")
-    B = strain_displacement(e_x, L)
-    return  E*A*outer(B.T, B)*L
+    B = strain_displacement(e_x, h)
+    return  E*A*outer(B.T, B)*h
     
-def strain_displacement(e_x, L):
+def strain_displacement(e_x, h):
     """
     Compute truss strain displacement matrix.
     """
-    return reshape(concatenate((-e_x / L, e_x / L)), (1, 2*len(e_x)))
+    return reshape(concatenate((-e_x / h, e_x / h)), (1, 2*len(e_x)))
 
 def assemble_stiffness(Kg, member, i, j):
     """
     Assemble truss stiffness matrix.
     """
-    e_x, L = truss_member_geometry(i, j)
+    e_x, h = truss_member_geometry(i, j)
     properties = member['properties']
     E, A = properties['E'], properties['A']
-    k = stiffness(e_x, L, E, A)
+    k = stiffness(e_x, h, E, A)
     dof = concatenate([i['dof'], j['dof']])
     for r in arange(len(dof)):
         for c in arange(len(dof)):
