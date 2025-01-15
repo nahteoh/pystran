@@ -81,10 +81,10 @@ def curvature_displacement_xz(e_x, e_y, e_z, h, xi):
     Compute beam curvature-displacement matrix in the local x-z plane.
     """
     B = zeros((1, 12))
-    B[0, 0:3] = 6*xi/h**2*e_y
-    B[0, 3:6] = (1 - 3*xi)/h*e_z
-    B[0, 6:9] = -6*xi/h**2*e_y
-    B[0, 9:12] = -(3*xi + 1)/h*e_z
+    B[0, 0:3] = 6*xi/h**2*e_z
+    B[0, 3:6] = (1 - 3*xi)/h*e_y
+    B[0, 6:9] = -6*xi/h**2*e_z
+    B[0, 9:12] = -(3*xi + 1)/h*e_y
     return B
 
 def curvature_displacement_xy(e_x, e_y, e_z, h, xi):
@@ -92,10 +92,10 @@ def curvature_displacement_xy(e_x, e_y, e_z, h, xi):
     Compute beam curvature-displacement matrix in the local x-y plane.
     """
     B = zeros((1, 12))
-    B[0, 0:3] = 6*xi/h**2*e_z
-    B[0, 3:6] = -(1 - 3*xi)/h*e_y
-    B[0, 6:9] = -6*xi/h**2*e_z
-    B[0, 9:12] = (3*xi + 1)/h*e_y
+    B[0, 0:3] = 6*xi/h**2*e_y
+    B[0, 3:6] = -(1 - 3*xi)/h*e_z
+    B[0, 6:9] = -6*xi/h**2*e_y
+    B[0, 9:12] = (3*xi + 1)/h*e_z
     return B
 
 def bending_stiffness_3d(e_x, e_y, e_z, h, E, Iy, Iz):
