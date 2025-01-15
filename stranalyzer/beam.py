@@ -38,6 +38,8 @@ def beam_2d_member_geometry(i, j):
     """
     e_x = geometry.delt(i['coordinates'], j['coordinates'])
     h = geometry.len(i['coordinates'], j['coordinates'])
+    if h <= 0.0:
+        raise Exception("Length of element must be positive")
     e_x /= h
     # The orientation here reflects the sign convention in the book.
     # The deflection is measured positive downwards, while the x coordinate is measured left to right.
@@ -51,6 +53,8 @@ def beam_3d_member_geometry(i, j, xz_vector):
     """
     e_x = geometry.delt(i['coordinates'], j['coordinates'])
     h = geometry.len(i['coordinates'], j['coordinates'])
+    if h <= 0.0:
+        raise Exception("Length of element must be positive")
     e_x /= h
     # The orientation here reflects the sign convention in the book.
     # The deflection is measured positive downwards, while the x coordinate is measured left to right.
