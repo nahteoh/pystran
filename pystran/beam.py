@@ -3,6 +3,7 @@ Define beam mechanical quantities.
 """
 
 from pystran import geometry
+from pystran import assemble
 from pystran import truss
 from numpy import array, dot, reshape, transpose, hstack, vstack, arange, outer, concatenate, zeros
 from numpy.linalg import norm, cross
@@ -218,36 +219,24 @@ def assemble_stiffness(Kg, member, i, j):
         properties = member['properties']
         E, I = properties['E'], properties['I']
         k = beam_2d_bending_stiffness(e_x, e_z, h, E, I)
-        for r in arange(len(dof)):
-            for c in arange(len(dof)):
-                gr, gc = dof[r], dof[c]
-                Kg[gr, gc] += k[r, c]
+        Kg = assemble.assemble(Kg, dof, k)
     else:
         properties = member['properties']
         e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, properties['xz_vector'])
         E, Iy, Iz = properties['E'], properties['Iy'], properties['Iz']
         kxy, kxz = beam_3d_bending_stiffness(e_x, e_y, e_z, h, E, Iy, Iz)
-        for r in arange(len(dof)):
-            for c in arange(len(dof)):
-                gr, gc = dof[r], dof[c]
-                Kg[gr, gc] += kxy[r, c]
-                Kg[gr, gc] += kxz[r, c]
+        Kg = assemble.assemble(Kg, dof, kxy)
+        Kg = assemble.assemble(Kg, dof, kxz)
     # Add stiffness in the axial direction.
     k = _stiffness_truss(member, i, j)
     if beam_is_2d:
         dof = concatenate([i['dof'][0:2], j['dof'][0:2]])
     else:
         dof = concatenate([i['dof'][0:3], j['dof'][0:3]])
-    for r in arange(len(dof)):
-        for c in arange(len(dof)):
-            gr, gc = dof[r], dof[c]
-            Kg[gr, gc] += k[r, c]
+    Kg = assemble.assemble(Kg, dof, k)
     if not beam_is_2d:
         # Add stiffness in torsion.
         k = _stiffness_torsion(member, i, j)
         dof = concatenate([i['dof'][3:6], j['dof'][3:6]])
-        for r in arange(len(dof)):
-            for c in arange(len(dof)):
-                gr, gc = dof[r], dof[c]
-                Kg[gr, gc] += k[r, c]
+        Kg = assemble.assemble(Kg, dof, k)
     return Kg

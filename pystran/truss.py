@@ -3,6 +3,7 @@ Define truss mechanical quantities.
 """
 
 from pystran import geometry
+from pystran import assemble
 from numpy import array, dot, reshape, transpose, hstack, vstack, arange, outer, concatenate
 from numpy.linalg import norm
 
@@ -39,8 +40,4 @@ def assemble_stiffness(Kg, member, i, j):
     E, A = properties['E'], properties['A']
     k = stiffness(e_x, h, E, A)
     dof = concatenate([i['dof'], j['dof']])
-    for r in arange(len(dof)):
-        for c in arange(len(dof)):
-            gr, gc = dof[r], dof[c]
-            Kg[gr, gc] += k[r, c]
-    return Kg
+    return assemble.assemble(Kg, dof, k)
