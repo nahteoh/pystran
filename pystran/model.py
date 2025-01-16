@@ -70,7 +70,7 @@ def add_beam_member(m, identifier, connectivity, properties):
 
 def add_support(j, dir, value = 0.0):
     """
-    Add a support to joint.
+    Add a support to a joint.
     """
     if ('supports' not in j):
         j['supports'] = dict()
@@ -82,7 +82,7 @@ def add_support(j, dir, value = 0.0):
 
 def add_load(j, dir, value):
     """
-    Add a load to joint.
+    Add a load to a joint.
     """
     if ('loads' not in j):
         j['loads'] = dict()
@@ -93,6 +93,7 @@ def number_dofs(m):
     """
     Number degrees of freedom.
     """
+    # Determine the number of degrees of freedom per joint
     translation_only = (not m['beam_members'])
     if translation_only:
         ndof_per_joint = m['dim']
@@ -101,6 +102,7 @@ def number_dofs(m):
             ndof_per_joint = 3
         else:
             ndof_per_joint = 6
+    # Number the free degrees of freedom first
     n = 0
     for j in m['joints'].values():
         j['dof'] = array([i for i in range(ndof_per_joint)], dtype=numpy.int32)
@@ -109,6 +111,7 @@ def number_dofs(m):
                 j['dof'][d] = n
                 n += 1
     m['nfreedof'] = n
+    # Number all prescribed degrees of freedom
     for j in m['joints'].values():
         for d in range(ndof_per_joint):
             if ('supports' in j and d in j['supports']):
