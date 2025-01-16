@@ -8,23 +8,31 @@ from numpy import array, dot, reshape, transpose, hstack, vstack, arange, outer,
 from numpy.linalg import norm, cross
 from math import sqrt
 
-def beam_shape_functions_2d(xi, h):
+def beam_2d_shape_functions(xi, h):
+    """
+    Compute the beam shape functions for deflection in the x-z plane (i.e. in 2d).
+    """
     return array([(2 - 3*xi + xi**3)/4,
                   (-1 + xi + xi**2 - xi**3)/4, 
                   (2 + 3*xi - xi**3)/4,
                   (+1 + xi - xi**2 - xi**3)/4])
     
-def beam_shape_functions_xz(xi, h):
-    return array([(2 - 3*xi + xi**3)/4,
-                  (-1 + xi + xi**2 - xi**3)/4, 
-                  (2 + 3*xi - xi**3)/4,
-                  (+1 + xi - xi**2 - xi**3)/4])
+def beam_3d_xz_shape_functions(xi, h):
+    """
+    Compute the beam shape functions for deflection in the x-z plane.
+    """
+    return beam_2d_shape_functions(xi, h)
     
-def beam_shape_functions_xy(xi, h):
-    return array([(2 - 3*xi + xi**3)/4,
-                  -(-1 + xi + xi**2 - xi**3)/4, 
-                  (2 + 3*xi - xi**3)/4,
-                  -(+1 + xi - xi**2 - xi**3)/4])
+def beam_3d_xy_shape_functions(xi, h):
+    """
+    Compute the beam shape functions for deflection in the x-y plane.
+    
+    The signs of the shape functions that go with the rotations need to be reversed.
+    """
+    N = beam_2d_shape_functions(xi, h)
+    N[1] *= -1.0
+    N[3] *= -1.0
+    return N
     
 def beam_2d_member_geometry(i, j):
     """
@@ -66,7 +74,7 @@ def beam_3d_member_geometry(i, j, xz_vector):
     e_z = cross(e_x, e_y)
     return e_x, e_y, e_z, h
 
-def bending_stiffness_2d(e_x, e_z, h, E, I):
+def beam_2d_bending_stiffness(e_x, e_z, h, E, I):
     """
     Compute 2d beam stiffness matrix.
     """
@@ -76,11 +84,11 @@ def bending_stiffness_2d(e_x, e_z, h, E, I):
     WG = [1, 1]
     K = zeros((6, 6))
     for q in range(2):
-        B = curvature_displacement_2d(e_x, e_z, h, xiG[q])
+        B = beam_2d_curvature_displacement(e_x, e_z, h, xiG[q])
         K += E * I * outer(B.T, B) * WG[q] * (h/2)
     return  K
     
-def curvature_displacement_xz(e_x, e_y, e_z, h, xi):
+def beam_3d_xz_curvature_displacement(e_x, e_y, e_z, h, xi):
     """
     Compute beam curvature-displacement matrix in the local x-z plane.
     """
@@ -91,7 +99,7 @@ def curvature_displacement_xz(e_x, e_y, e_z, h, xi):
     B[0, 9:12] = -(3*xi + 1)/h*e_y
     return B
 
-def curvature_displacement_xy(e_x, e_y, e_z, h, xi):
+def beam_3d_xy_curvature_displacement(e_x, e_y, e_z, h, xi):
     """
     Compute beam curvature-displacement matrix in the local x-y plane.
     """
@@ -102,7 +110,7 @@ def curvature_displacement_xy(e_x, e_y, e_z, h, xi):
     B[0, 9:12] = (3*xi + 1)/h*e_z
     return B
 
-def bending_stiffness_3d(e_x, e_y, e_z, h, E, Iy, Iz):
+def beam_3d_bending_stiffness(e_x, e_y, e_z, h, E, Iy, Iz):
     """
     Compute 2d beam stiffness matrix.
     """
@@ -112,15 +120,15 @@ def bending_stiffness_3d(e_x, e_y, e_z, h, E, Iy, Iz):
     WG = [1, 1]
     Kxy = zeros((12, 12))
     for q in range(2):
-        B = curvature_displacement_xy(e_x, e_y, e_z, h, xiG[q])
+        B = beam_3d_xy_curvature_displacement(e_x, e_y, e_z, h, xiG[q])
         Kxy += E * Iz * outer(B.T, B) * WG[q] * (h/2)
     Kxz = zeros((12, 12))
     for q in range(2):
-        B = curvature_displacement_xz(e_x, e_y, e_z, h, xiG[q])
+        B = beam_3d_xz_curvature_displacement(e_x, e_y, e_z, h, xiG[q])
         Kxz += E * Iy * outer(B.T, B) * WG[q] * (h/2)
     return  Kxy, Kxz
     
-def curvature_displacement_2d(e_x, e_z, h, xi):
+def beam_2d_curvature_displacement(e_x, e_z, h, xi):
     """
     Compute beam curvature-displacement matrix.
     """
@@ -131,7 +139,7 @@ def curvature_displacement_2d(e_x, e_z, h, xi):
     B[0, 5] = -(3*xi + 1)/h
     return B
 
-def third_deriv_displacement_2d(e_x, e_z, h, xi):
+def beam_2d_3rd_deriv_displacement(e_x, e_z, h, xi):
     """
     Compute beam third derivative-displacement matrix.
     """
@@ -152,7 +160,7 @@ def beam_2d_moment(member, i, j, xi):
     E, I = properties['E'], properties['I']
     ui, uj = i['displacements'], j['displacements']
     u = concatenate([ui, uj])
-    B = curvature_displacement_2d(e_x, e_z, h, xi)
+    B = beam_2d_curvature_displacement(e_x, e_z, h, xi)
     return E * I * dot(B, u)
 
 def beam_2d_shear_force(member, i, j, xi):
@@ -165,20 +173,8 @@ def beam_2d_shear_force(member, i, j, xi):
     E, I = properties['E'], properties['I']
     ui, uj = i['displacements'], j['displacements']
     u = concatenate([ui, uj])
-    B = third_deriv_displacement_2d(e_x, e_z, h, xi)
+    B = beam_2d_3rd_deriv_displacement(e_x, e_z, h, xi)
     return E * I * dot(B, u)
-
-def _bending_stiffness_2d(member, i, j):
-    e_x, e_z, h = beam_2d_member_geometry(i, j)
-    properties = member['properties']
-    E, I = properties['E'], properties['I']
-    return bending_stiffness_2d(e_x, e_z, h, E, I)
-    
-def _bending_stiffness_3d(member, i, j):
-    properties = member['properties']
-    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, properties['xz_vector'])
-    E, Iy, Iz = properties['E'], properties['Iy'], properties['Iz']
-    return bending_stiffness_3d(e_x, e_y, e_z, h, E, Iy, Iz)
 
 def _stiffness_truss(member, i, j):
     e_x, L = truss.truss_member_geometry(i, j)
@@ -218,13 +214,19 @@ def assemble_stiffness(Kg, member, i, j):
     beam_is_2d = len(i['coordinates']) == len(j['coordinates']) == 2
     dof = concatenate([i['dof'], j['dof']])
     if beam_is_2d:
-        k = _bending_stiffness_2d(member, i, j)
+        e_x, e_z, h = beam_2d_member_geometry(i, j)
+        properties = member['properties']
+        E, I = properties['E'], properties['I']
+        k = beam_2d_bending_stiffness(e_x, e_z, h, E, I)
         for r in arange(len(dof)):
             for c in arange(len(dof)):
                 gr, gc = dof[r], dof[c]
                 Kg[gr, gc] += k[r, c]
     else:
-        kxy, kxz = _bending_stiffness_3d(member, i, j)
+        properties = member['properties']
+        e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, properties['xz_vector'])
+        E, Iy, Iz = properties['E'], properties['Iy'], properties['Iz']
+        kxy, kxz = beam_3d_bending_stiffness(e_x, e_y, e_z, h, E, Iy, Iz)
         for r in arange(len(dof)):
             for c in arange(len(dof)):
                 gr, gc = dof[r], dof[c]

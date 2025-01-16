@@ -22,6 +22,7 @@ from pystran import geometry
 from pystran import truss
 from pystran import plots
 from numpy import array, dot, outer, concatenate
+from numpy.linalg import norm
 
 m = model.create()
 
@@ -53,7 +54,11 @@ model.solve(m)
 for j in m['joints'].values():
     print(j['displacements'])
     
-print('Correct displacements: ', (-0.0033325938, -0.001591621))
+
+if norm(m['joints'][1]['displacements'] - [-0.0033325938, -0.001591621]) > 1.e-3:
+    raise ValueError('Displacement calculation error')
+else:
+    print('Displacement calculation OK')
 
 for b in m['truss_members'].values():
     connectivity = b['connectivity']

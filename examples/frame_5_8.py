@@ -15,6 +15,7 @@ from pystran import property
 from pystran import geometry
 from pystran import plots
 from math import sqrt
+from numpy.linalg import norm
 
 m = model.create(3)
 
@@ -67,7 +68,13 @@ print([j['displacements'] for j in m['joints'].values()])
 
 print(m['U'][0:m['nfreedof']])
 
-print('Reference: ', [-0.02238452,  0.00419677,  0.00593197])
+
+if norm(b['displacements'] - [ 0.,  0., -0.02238452,  0.00419677,  0.00593197,0.]) > 1.e-5:
+    raise ValueError('Displacement calculation error')
+else:
+    print('Displacement calculation OK')
+
+# print('Reference: ', [-0.02238452,  0.00419677,  0.00593197])
 
 plots.plot_setup(m)
 plots.plot_members(m)

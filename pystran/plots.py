@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-from pystran.beam import beam_2d_member_geometry, beam_shape_functions_2d, beam_2d_moment, beam_2d_shear_force
-from pystran.beam import beam_3d_member_geometry, beam_shape_functions_xz, beam_shape_functions_xy
+from pystran.beam import beam_2d_member_geometry, beam_2d_shape_functions, beam_2d_moment, beam_2d_shear_force
+from pystran.beam import beam_3d_member_geometry, beam_3d_xz_shape_functions, beam_3d_xy_shape_functions
 from numpy import linspace, dot, zeros
 
 def plot_setup(m):
@@ -56,7 +56,7 @@ def _plot_2d_beam(ax, member, i, j, scale):
     xs = zeros(n)
     ys = zeros(n)
     for (s, xi) in enumerate(linspace(-1, +1, n)):
-        N = beam_shape_functions_2d(xi, h)
+        N = beam_2d_shape_functions(xi, h)
         w = N[0] * wi + (h/2) * N[1] * thi + N[2] * wj + (h/2) * N[3] * thj
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         xs[s] = x[0] + scale * w * e_z[0]
@@ -89,12 +89,12 @@ def _plot_3d_beam(ax, member, i, j, scale):
         xs[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[0]
         ys[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[1]
         zs[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[2]
-        N = beam_shape_functions_xz(xi, h)
+        N = beam_3d_xz_shape_functions(xi, h)
         w = N[0] * wi + (h/2) * N[1] * thyi + N[2] * wj + (h/2) * N[3] * thyj
         xs[s] += scale * w * e_z[0]
         ys[s] += scale * w * e_z[1]
         zs[s] += scale * w * e_z[2]
-        N = beam_shape_functions_xy(xi, h)
+        N = beam_3d_xy_shape_functions(xi, h)
         v = N[0] * vi + (h/2) * N[1] * thzi + N[2] * vj + (h/2) * N[3] * thzj
         xs[s] += scale * v * e_y[0]
         ys[s] += scale * v * e_y[1]
