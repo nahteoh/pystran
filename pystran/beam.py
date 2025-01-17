@@ -37,7 +37,7 @@ def beam_3d_xy_shape_functions(xi, h):
     
 def beam_2d_member_geometry(i, j):
     """
-    Compute beam geometry.
+    Compute 2d beam geometry.
     
     The deformation of the beam is considered in the x-z plane. `e_x` is the
     direction vector along the axis of the beam. `e_z` is the direction vector
@@ -58,7 +58,7 @@ def beam_2d_member_geometry(i, j):
 
 def beam_3d_member_geometry(i, j, xz_vector):
     """
-    Compute beam geometry.
+    Compute 3d beam geometry.
     """
     e_x = geometry.delt(i['coordinates'], j['coordinates'])
     h = geometry.len(i['coordinates'], j['coordinates'])
@@ -95,7 +95,7 @@ def beam_3d_xz_curvature_displacement(e_x, e_y, e_z, h, xi):
     """
     B = zeros((1, 12))
     B[0, 0:3] = 6*xi/h**2*e_z
-    B[0, 3:6] = (1 - 3*xi)/h*e_y
+    B[0, 3:6] = +(1 - 3*xi)/h*e_y
     B[0, 6:9] = -6*xi/h**2*e_z
     B[0, 9:12] = -(3*xi + 1)/h*e_y
     return B
@@ -108,7 +108,7 @@ def beam_3d_xy_curvature_displacement(e_x, e_y, e_z, h, xi):
     B[0, 0:3] = 6*xi/h**2*e_y
     B[0, 3:6] = -(1 - 3*xi)/h*e_z
     B[0, 6:9] = -6*xi/h**2*e_y
-    B[0, 9:12] = (3*xi + 1)/h*e_z
+    B[0, 9:12] = +(3*xi + 1)/h*e_z
     return B
 
 def beam_3d_bending_stiffness(e_x, e_y, e_z, h, E, Iy, Iz):
@@ -162,7 +162,7 @@ def beam_2d_moment(member, i, j, xi):
     ui, uj = i['displacements'], j['displacements']
     u = concatenate([ui, uj])
     B = beam_2d_curvature_displacement(e_x, e_z, h, xi)
-    return E * I * dot(B, u)
+    return (- E * I * dot(B, u))
 
 def beam_2d_shear_force(member, i, j, xi):
     """
@@ -175,7 +175,7 @@ def beam_2d_shear_force(member, i, j, xi):
     ui, uj = i['displacements'], j['displacements']
     u = concatenate([ui, uj])
     B = beam_2d_3rd_deriv_displacement(e_x, e_z, h, xi)
-    return E * I * dot(B, u)
+    return (- E * I * dot(B, u))
 
 def _stiffness_truss(member, i, j):
     e_x, L = truss.truss_member_geometry(i, j)
