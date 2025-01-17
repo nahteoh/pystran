@@ -35,6 +35,11 @@ def _plot_members_3d(m):
         i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
         ci, cj = i['coordinates'], j['coordinates']
         line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], 'k-')
+    for member in m['beam_members'].values():
+        connectivity = member['connectivity']
+        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
+        ci, cj = i['coordinates'], j['coordinates']
+        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], 'k-')
     return ax
     
 def plot_members(m):
@@ -86,6 +91,7 @@ def _plot_3d_beam_deflection(ax, member, i, j, scale):
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         xs[s] = x[0]
         ys[s] = x[1]
+        zs[s] = x[2]
         xs[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[0]
         ys[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[1]
         zs[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[2]
@@ -130,12 +136,26 @@ def _plot_member_numbers_2d(m):
         ci, cj = i['coordinates'], j['coordinates']
         xm = (ci + cj) / 2.0
         line = ax.text(xm[0], xm[1], str(id))
+    for id in m['beam_members'].keys():
+        member = m['beam_members'][id]
+        connectivity = member['connectivity']
+        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
+        ci, cj = i['coordinates'], j['coordinates']
+        xm = (ci + cj) / 2.0
+        line = ax.text(xm[0], xm[1], str(id))
     return ax
     
 def _plot_member_numbers_3d(m):
     ax = plt.gca()
     for id in m['truss_members'].keys():
         member = m['truss_members'][id]
+        connectivity = member['connectivity']
+        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
+        ci, cj = i['coordinates'], j['coordinates']
+        xm = (ci + cj) / 2.0
+        line = ax.text(xm[0], xm[1], xm[2], str(id), 'z')
+    for id in m['beam_members'].keys():
+        member = m['beam_members'][id]
         connectivity = member['connectivity']
         i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
         ci, cj = i['coordinates'], j['coordinates']
