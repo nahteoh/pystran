@@ -71,6 +71,11 @@ else:
     
 plots.plot_setup(m)
 plots.plot_members(m)
+plots.plot_beam_orientation(m, 1.0)
+plots.show(m)
+
+plots.plot_setup(m)
+plots.plot_members(m)
 plots.plot_deformations(m, 10.0)
 plots.show(m)
 

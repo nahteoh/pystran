@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-from pystran.beam import beam_2d_member_geometry, beam_2d_shape_functions, beam_2d_moment, beam_2d_shear_force
-from pystran.beam import beam_3d_member_geometry, beam_3d_xz_shape_functions, beam_3d_xy_shape_functions
+from pystran.beam import beam_2d_member_geometry, beam_2d_shape_fun, beam_2d_moment, beam_2d_shear_force
+from pystran.beam import beam_3d_member_geometry, beam_3d_xz_shape_fun, beam_3d_xy_shape_fun
 from numpy import linspace, dot, zeros
 
 def plot_setup(m):
@@ -56,7 +56,7 @@ def _plot_2d_beam_deflection(ax, member, i, j, scale):
     xs = zeros(n)
     ys = zeros(n)
     for (s, xi) in enumerate(linspace(-1, +1, n)):
-        N = beam_2d_shape_functions(xi, h)
+        N = beam_2d_shape_fun(xi)
         w = N[0] * wi + (h/2) * N[1] * thi + N[2] * wj + (h/2) * N[3] * thj
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         xs[s] = x[0] + scale * w * e_z[0]
@@ -89,12 +89,12 @@ def _plot_3d_beam_deflection(ax, member, i, j, scale):
         xs[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[0]
         ys[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[1]
         zs[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[2]
-        N = beam_3d_xz_shape_functions(xi, h)
+        N = beam_3d_xz_shape_fun(xi)
         w = N[0] * wi + (h/2) * N[1] * thyi + N[2] * wj + (h/2) * N[3] * thyj
         xs[s] += scale * w * e_z[0]
         ys[s] += scale * w * e_z[1]
         zs[s] += scale * w * e_z[2]
-        N = beam_3d_xy_shape_functions(xi, h)
+        N = beam_3d_xy_shape_fun(xi)
         v = N[0] * vi + (h/2) * N[1] * thzi + N[2] * vj + (h/2) * N[3] * thzj
         xs[s] += scale * v * e_y[0]
         ys[s] += scale * v * e_y[1]
@@ -211,6 +211,31 @@ def plot_shear_forces(m, scale=1.0):
             line = _plot_2d_beam_shear_forces(ax, member, i, j, scale)
     return ax
      
+def plot_beam_orientation(m, scale = 1.0):
+    ax = plt.gca()
+    for member in m['beam_members'].values():
+        connectivity = member['connectivity']
+        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
+        ci, cj = i['coordinates'], j['coordinates']
+        xm = (ci + cj) / 2.0
+        if m['dim'] == 3:
+            raise Exception("3D not implemented")
+        else:
+            e_x, e_z, h = beam_2d_member_geometry(i, j)
+            xs = zeros(2)
+            ys = zeros(2)
+            xs[0] = xm[0]
+            xs[1] = xm[0] + scale * e_x[0]
+            ys[0] = xm[1]
+            ys[1] = xm[1] + scale * e_x[1]
+            ax.plot(xs, ys, 'r-')
+            xs[0] = xm[0]
+            xs[1] = xm[0] + scale * e_z[0]
+            ys[0] = xm[1]
+            ys[1] = xm[1] + scale * e_z[1]
+            ax.plot(xs, ys, 'b-')
+    return ax
+        
 def show(m):
     """
     Show the plot.

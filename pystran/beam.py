@@ -9,7 +9,7 @@ from numpy import array, dot, reshape, transpose, hstack, vstack, arange, outer,
 from numpy.linalg import norm, cross
 from math import sqrt
 
-def beam_2d_shape_functions(xi, h):
+def beam_2d_shape_fun(xi):
     """
     Compute the beam shape functions for deflection in the x-z plane (i.e. in 2d).
     """
@@ -18,22 +18,91 @@ def beam_2d_shape_functions(xi, h):
                   (2 + 3*xi - xi**3)/4,
                   (+1 + xi - xi**2 - xi**3)/4])
     
-def beam_3d_xz_shape_functions(xi, h):
+def beam_2d_shape_fun_xi(xi):
+    """
+    Compute the first derivative of the beam shape functions for deflection in the x-z plane (i.e. in 2d).
+    
+    The quantity computed is
+    ```math
+    \frac{d^1 N(\\xi)}{d \\xi^1} 
+    ```
+    """
+    return array([(- 3 + 3*xi**2)/4,
+                  (+1 + 2*xi - 3*xi**2)/4, 
+                  (3 - 3*xi**2)/4,
+                  (+1 - 2*xi - 3*xi**2)/4])
+    
+def beam_2d_shape_fun_xi2(xi):
+    """
+    Compute the second derivative of the beam shape functions for deflection in the x-z plane (i.e. in 2d).
+    
+    The quantity computed is
+    ```math
+    \frac{d^2 N(\\xi)}{d \\xi^2} 
+    ```
+    """
+    return array([(6*xi)/4,
+                  (2 - 6*xi)/4, 
+                  ( - 6*xi)/4,
+                  (-2 - 6*xi)/4])
+    
+def beam_2d_shape_fun_xi3(xi):
+    """
+    Compute the third derivative of the beam shape functions for deflection in the x-z plane (i.e. in 2d).
+    
+    The quantity computed is
+    ```math
+    \frac{d^3 N(\\xi)}{d \\xi^3} 
+    ```
+    """
+    return array([(6)/4,
+                  (-6)/4, 
+                  (-6)/4,
+                  (-6)/4])
+    
+def beam_3d_xz_shape_fun(xi):
     """
     Compute the beam shape functions for deflection in the x-z plane.
     """
-    return beam_2d_shape_functions(xi, h)
+    return beam_2d_shape_fun(xi)
+
+def beam_3d_xz_shape_fun_xi2(xi):
+    """
+    Compute the second derivative of the beam shape functions for deflection in the x-z plane.
+    """
+    return beam_2d_shape_fun_xi2(xi)
     
-def beam_3d_xy_shape_functions(xi, h):
+def beam_3d_xy_shape_fun(xi):
     """
     Compute the beam shape functions for deflection in the x-y plane.
     
-    The signs of the shape functions that go with the rotations need to be reversed.
+    The quantity computed is
+    ```math
+    \frac{d^2 N(\\xi)}{d \\xi^2} 
+    ```
+    
+    The signs of the shape functions that go with the rotations (i.e. the second and fourth) need to be reversed.
     """
-    N = beam_2d_shape_functions(xi, h)
+    N = beam_2d_shape_fun(xi)
     N[1] *= -1.0
     N[3] *= -1.0
     return N
+
+def beam_3d_xy_shape_fun_xi2(xi):
+    """
+    Compute the second derivative of the beam shape functions for deflection in the x-y plane.
+    
+    The quantity computed is
+    ```math
+    \frac{d^2 N(\\xi)}{d \\xi^2} 
+    ```
+    
+    The signs of the shape functions that go with the rotations (i.e. the second and fourth) need to be reversed.
+    """
+    d2Ndxi2 = beam_2d_shape_fun_xi2(xi)
+    d2Ndxi2[1] *= -1.0
+    d2Ndxi2[3] *= -1.0
+    return d2Ndxi2
     
 def beam_2d_member_geometry(i, j):
     """
@@ -92,17 +161,28 @@ def beam_2d_bending_stiffness(e_x, e_z, h, E, I):
 def beam_3d_xz_curvature_displacement(e_x, e_y, e_z, h, xi):
     """
     Compute beam curvature-displacement matrix in the local x-z plane.
+    
+    The quantity computed is
+    ```math
+    \\frac{d^2 N(x)}{d x^2} =  \\frac{d^2 N(\\xi)}{d \\xi^2} (2/h)^2 
+    ```
     """
+    d2Ndxi2 = beam_2d_shape_fun_xi2(xi)
     B = zeros((1, 12))
-    B[0, 0:3] = 6*xi/h**2*e_z
-    B[0, 3:6] = +(1 - 3*xi)/h*e_y
-    B[0, 6:9] = -6*xi/h**2*e_z
-    B[0, 9:12] = -(3*xi + 1)/h*e_y
+    B[0, 0:3] = d2Ndxi2[0]*(2/h)**2 * e_z
+    B[0, 3:6] = (h/2) * d2Ndxi2[1]*(2/h)**2 * e_y
+    B[0, 6:9] = d2Ndxi2[2]*(2/h)**2 * e_z
+    B[0, 9:12] = (h/2) * d2Ndxi2[3]*(2/h)**2 * e_y
     return B
 
 def beam_3d_xy_curvature_displacement(e_x, e_y, e_z, h, xi):
     """
     Compute beam curvature-displacement matrix in the local x-y plane.
+    
+    The quantity computed is
+    ```math
+    \\frac{d^2 N(x)}{d x^2} =  \\frac{d^2 N(\\xi)}{d \\xi^2} (2/h)^2 
+    ```
     """
     B = zeros((1, 12))
     B[0, 0:3] = 6*xi/h**2*e_y
@@ -133,22 +213,24 @@ def beam_2d_curvature_displacement(e_x, e_z, h, xi):
     """
     Compute beam curvature-displacement matrix.
     """
+    d2Ndxi2 = beam_2d_shape_fun_xi2(xi)
     B = zeros((1, 6))
-    B[0, 0:2] = 6*xi/h**2*e_z
-    B[0, 2] = (1 - 3*xi)/h
-    B[0, 3:5] = -6*xi/h**2*e_z
-    B[0, 5] = -(3*xi + 1)/h
+    B[0, 0:2] = d2Ndxi2[0]*(2/h)**2 * e_z
+    B[0, 2] = (h/2) * d2Ndxi2[1]*(2/h)**2 
+    B[0, 3:5] = d2Ndxi2[2]*(2/h)**2 * e_z
+    B[0, 5] = (h/2) * d2Ndxi2[3]*(2/h)**2 
     return B
 
 def beam_2d_3rd_deriv_displacement(e_x, e_z, h, xi):
     """
     Compute beam third derivative-displacement matrix.
     """
+    d2Ndxi3 = beam_2d_shape_fun_xi3(xi)
     B = zeros((1, 6))
-    B[0, 0:2] = 6/h**2*e_z/(h/2)
-    B[0, 2] = (-3)/h/(h/2)
-    B[0, 3:5] = -6/h**2*e_z/(h/2)
-    B[0, 5] = -(3)/h/(h/2)
+    B[0, 0:2] = d2Ndxi3[0]*(2/h)**3 * e_z
+    B[0, 2] = (h/2) * d2Ndxi3[1]*(2/h)**3 
+    B[0, 3:5] = d2Ndxi3[2]*(2/h)**3 * e_z
+    B[0, 5] = (h/2) * d2Ndxi3[3]*(2/h)**3 
     return B
 
 def beam_2d_moment(member, i, j, xi):
