@@ -44,7 +44,7 @@ def plot_members(m):
         ax = _plot_members_2d(m) 
     return ax
     
-def _plot_2d_beam(ax, member, i, j, scale):
+def _plot_2d_beam_deflection(ax, member, i, j, scale):
     di, dj = i['displacements'], j['displacements']
     ci, cj = i['coordinates'], j['coordinates']
     e_x, e_z, h = beam_2d_member_geometry(i, j)
@@ -63,7 +63,7 @@ def _plot_2d_beam(ax, member, i, j, scale):
         ys[s] = x[1] + scale * w * e_z[1]
     ax.plot(xs, ys, 'm-')
         
-def _plot_3d_beam(ax, member, i, j, scale):
+def _plot_3d_beam_deflection(ax, member, i, j, scale):
     properties = member['properties']
     di, dj = i['displacements'], j['displacements']
     ci, cj = i['coordinates'], j['coordinates']
@@ -116,9 +116,9 @@ def plot_deformations(m, scale=1.0):
         connectivity = member['connectivity']
         i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
         if m['dim'] == 3:
-            line = _plot_3d_beam(ax, member, i, j, scale)
+            line = _plot_3d_beam_deflection(ax, member, i, j, scale)
         else:
-            line = _plot_2d_beam(ax, member, i, j, scale)
+            line = _plot_2d_beam_deflection(ax, member, i, j, scale)
     return ax
      
 def _plot_member_numbers_2d(m):
@@ -159,12 +159,16 @@ def _plot_2d_beam_moments(ax, member, i, j, scale):
     for (s, xi) in enumerate(linspace(-1, +1, n)):
         M = beam_2d_moment(member, i, j, xi)
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
-        #The US convention: moment next to fibers in compression
+        # The convention: moment is plotted next to fibers in tension
         xs[0] = x[0]
         xs[1] = x[0] + scale * M * e_z[0]
         ys[0] = x[1]
         ys[1] = x[1] + scale * M * e_z[1]
         ax.plot(xs, ys, 'b-')
+        if xi == -1.0:
+            line = ax.text(xs[1], ys[1], str("{:.5}".format(M[0])))
+        elif xi == +1.0:
+            line = ax.text(xs[1], ys[1], str("{:.5}".format(M[0])))
     return ax
         
 def plot_moments(m, scale=1.0):
@@ -192,6 +196,8 @@ def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
         ys[0] = x[1]
         ys[1] = x[1] + scale * V * e_z[1]
         ax.plot(xs, ys, 'b-')
+        if xi == 0.0:
+            line = ax.text(xs[1], ys[1], str("{:.5}".format(V[0])))
     return ax
         
 def plot_shear_forces(m, scale=1.0):
