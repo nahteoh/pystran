@@ -34,7 +34,7 @@ E = 2.06e11
 A = 0.001
 I = 1.152e-5
 p2 = property.beam_2d_property('material_2', E, A, I)
-model.add_beam_member(m, 2, [2, 3], p2)
+model.add_beam_member(m, 2, [3, 2], p2)
 
 model.add_load(m['joints'][1], 2, -15e3)
 model.add_load(m['joints'][2], 2, -25e3)
