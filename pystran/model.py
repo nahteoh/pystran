@@ -3,7 +3,8 @@ Define the functions for defining and manipulating a model.
 """
 
 import numpy
-from numpy import array, zeros, dot
+from numpy import array, zeros, dot, identity
+import scipy
 import pystran.section
 
 # These are the designations of degrees of freedom (directions in space), plus a
@@ -200,4 +201,54 @@ def solve_statics(m):
     for joint in m["joints"].values():
         joint["displacements"] = U[joint["dof"]]
 
+    return None
+
+
+def solve_free_vibration(m):
+    """
+    Solve the free vibration of the discrete model.
+    """
+    nt, nf = m["ntotaldof"], m["nfreedof"]
+    # Assemble global stiffness matrix
+    K = zeros((nt, nt))
+    for member in m["truss_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        pystran.truss.assemble_stiffness(K, member, i, j)
+    for member in m["beam_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        pystran.beam.assemble_stiffness(K, member, i, j)
+
+    m["K"] = K
+
+    M = identity(nt)
+    m["M"] = M
+
+    U = zeros(m["ntotaldof"])
+    for joint in m["joints"].values():
+        if "supports" in joint:
+            for dof, value in joint["supports"].items():
+                gr = joint["dof"][dof]
+                U[gr] = 0.0
+    m["U"] = U
+
+    # Solved the eigenvalue problem
+    eigvals, eigvecs = scipy.linalg.eigh(K[0:nf, 0:nf], M[0:nf, 0:nf])
+    print(eigvals)
+
+    m["eigvals"] = eigvals
+    m["eigvecs"] = eigvecs
+
+    return
+
+
+def copy_mode(m, mode):
+    """
+    Copy a mode to the displacement field of the model.
+    """
+    nf = m["nfreedof"]
+    m["U"][0:nf] = m["eigvecs"][:, mode]
+    for joint in m["joints"].values():
+        joint["displacements"] = m["U"][joint["dof"]]
     return None
