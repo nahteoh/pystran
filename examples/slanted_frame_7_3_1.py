@@ -61,8 +61,8 @@ if (
     > 1.0e-3
 ):
     raise ValueError("Displacement calculation error")
-else:
-    print("Displacement calculation OK")
+
+print("Displacement calculation OK")
 
 plots.plot_setup(m)
 plots.plot_members(m)

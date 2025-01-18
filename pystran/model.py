@@ -50,11 +50,11 @@ def add_joint(m, identifier, coordinates):
     Add a joint to the model.
     """
     if identifier in m["joints"]:
-        raise Exception("Joint already exists")
+        raise RuntimeError("Joint already exists")
     else:
         m["joints"][identifier] = {"coordinates": array(coordinates)}
     if m["joints"][identifier]["coordinates"].shape != (m["dim"],):
-        raise Exception("Coordinate dimension mismatch")
+        raise RuntimeError("Coordinate dimension mismatch")
     return None
 
 
@@ -63,7 +63,7 @@ def add_truss_member(m, identifier, connectivity, sect):
     Add a truss member to the model.
     """
     if identifier in m["truss_members"]:
-        raise Exception("Truss member already exists")
+        raise RuntimeError("Truss member already exists")
     else:
         m["truss_members"][identifier] = {
             "connectivity": array(connectivity, dtype=numpy.int32),
@@ -77,7 +77,7 @@ def add_beam_member(m, identifier, connectivity, sect):
     Add a beam member to the model.
     """
     if identifier in m["beam_members"]:
-        raise Exception("Beam member already exists")
+        raise RuntimeError("Beam member already exists")
     else:
         m["beam_members"][identifier] = {
             "connectivity": array(connectivity, dtype=numpy.int32),

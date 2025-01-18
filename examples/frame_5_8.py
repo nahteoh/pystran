@@ -73,8 +73,8 @@ if (
     > 1.0e-5
 ):
     raise ValueError("Displacement calculation error")
-else:
-    print("Displacement calculation OK")
+
+print("Displacement calculation OK")
 
 # print('Reference: ', [-0.02238452,  0.00419677,  0.00593197])
 

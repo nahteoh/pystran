@@ -287,7 +287,7 @@ def plot_shear_forces(m, scale=1.0):
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         if m["dim"] == 3:
-            raise Exception("3D not implemented")
+            raise NotImplementedError("3D not implemented")
         else:
             line = _plot_2d_beam_shear_forces(ax, member, i, j, scale)
     return ax
@@ -301,7 +301,7 @@ def plot_beam_orientation(m, scale=1.0):
         ci, cj = i["coordinates"], j["coordinates"]
         xm = (ci + cj) / 2.0
         if m["dim"] == 3:
-            raise Exception("3D not implemented")
+            raise NotImplementedError("3D not implemented")
         else:
             e_x, e_z, h = beam_2d_member_geometry(i, j)
             xs = zeros(2)

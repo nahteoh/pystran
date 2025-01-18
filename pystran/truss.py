@@ -19,7 +19,7 @@ def truss_member_geometry(i, j):
     e_x = geometry.delt(i["coordinates"], j["coordinates"])
     h = geometry.len(i["coordinates"], j["coordinates"])
     if h <= 0.0:
-        raise Exception("Length of element must be positive")
+        raise ZeroDivisionError("Length of element must be positive")
     e_x /= h
     return e_x, h
 
