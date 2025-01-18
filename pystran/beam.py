@@ -246,6 +246,24 @@ def beam_2d_moment(member, i, j, xi):
     B = beam_2d_curvature_displacement(e_x, e_z, h, xi)
     return (- E * I * dot(B, u))
 
+def beam_3d_moment(member, i, j, axis, xi):
+    """
+    Compute 3d beam moment based on the displacements stored at the joints.
+    The moment is computed at the parametric location `xi` along the beam.
+    """
+    properties = member['properties']
+    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, properties['xz_vector'])
+    E, Iy, Iz = properties['E'], properties['Iy'], properties['Iz']
+    ui, uj = i['displacements'], j['displacements']
+    u = concatenate([ui, uj])
+    if axis == 'y':
+        B = beam_3d_xz_curvature_displacement(e_x, e_y, e_z, h, xi)
+        M = (- E * Iy * dot(B, u))
+    else:
+        B = beam_3d_xy_curvature_displacement(e_x, e_y, e_z, h, xi)
+        M = (- E * Iz * dot(B, u))
+    return M
+
 def beam_2d_shear_force(member, i, j, xi):
     """
     Compute 2d beam shear force based on the displacements stored at the joints.

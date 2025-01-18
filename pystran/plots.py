@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from pystran.beam import beam_2d_member_geometry, beam_2d_shape_fun, beam_2d_moment, beam_2d_shear_force
-from pystran.beam import beam_3d_member_geometry, beam_3d_xz_shape_fun, beam_3d_xy_shape_fun
+from pystran.beam import beam_3d_member_geometry, beam_3d_xz_shape_fun, beam_3d_xy_shape_fun, beam_3d_moment
 from numpy import linspace, dot, zeros
 
 def plot_setup(m):
@@ -190,14 +190,41 @@ def _plot_2d_beam_moments(ax, member, i, j, scale):
         elif xi == +1.0:
             line = ax.text(xs[1], ys[1], str("{:.5}".format(M[0])))
     return ax
-        
-def plot_moments(m, scale=1.0):
+       
+def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
+    properties = member['properties']
+    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, properties['xz_vector'])
+    ci, cj = i['coordinates'], j['coordinates']
+    n = 13
+    xs = zeros(2)
+    ys = zeros(2)
+    zs = zeros(2)
+    dir = e_y
+    if axis == 'y':
+        dir = e_z
+    for (s, xi) in enumerate(linspace(-1, +1, n)):
+        M = beam_3d_moment(member, i, j, axis, xi)
+        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        xs[0] = x[0]
+        xs[1] = x[0] + scale * M * dir[0]
+        ys[0] = x[1]
+        ys[1] = x[1] + scale * M * dir[1]
+        zs[0] = x[2]
+        zs[1] = x[2] + scale * M * dir[1]
+        ax.plot(xs, ys, zs, 'b-')
+        if xi == -1.0:
+            line = ax.text(xs[1], ys[1], zs[1], str("{:.5}".format(M[0])))
+        elif xi == +1.0:
+            line = ax.text(xs[1], ys[1], zs[1], str("{:.5}".format(M[0])))
+    return ax
+         
+def plot_moments(m, scale=1.0, axis='y'):
     ax = plt.gca()
     for member in m['beam_members'].values():
         connectivity = member['connectivity']
         i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
         if m['dim'] == 3:
-            raise Exception("3D not implemented")  
+            line = _plot_3d_beam_moments(ax, member, i, j, axis, scale) 
         else:
             line = _plot_2d_beam_moments(ax, member, i, j, scale)
     return ax
