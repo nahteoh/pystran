@@ -10,11 +10,11 @@ def truss_section(name, E, A):
     """
     Define truss section.
     """
-    p = dict()
-    p["name"] = name
-    p["E"] = E
-    p["A"] = A
-    return p
+    s = dict()
+    s["name"] = name
+    s["E"] = E
+    s["A"] = A
+    return s
 
 
 def beam_2d_section(name, E, A, I):
@@ -26,12 +26,12 @@ def beam_2d_section(name, E, A, I):
     - `I`= central moment of inertia of the cross-section about the x3
     coordinate axis (i.e. the axis perpendicular to the plane of the beam).
     """
-    p = dict()
-    p["name"] = name
-    p["E"] = E
-    p["A"] = A
-    p["I"] = I
-    return p
+    s = dict()
+    s["name"] = name
+    s["E"] = E
+    s["A"] = A
+    s["I"] = I
+    return s
 
 
 def beam_3d_section(name, E, G, A, Ix, Iy, Iz, J, xz_vector):
@@ -46,14 +46,14 @@ def beam_3d_section(name, E, G, A, Ix, Iy, Iz, J, xz_vector):
     - `J`= St Venant torsion constant.
     - `xz_vector`= vector that lies in the local x and z coordinate plane.
     """
-    p = dict()
-    p["name"] = name
-    p["E"] = E
-    p["G"] = G
-    p["A"] = A
-    p["Ix"] = Ix
-    p["Iy"] = Iy
-    p["Iz"] = Iz
-    p["J"] = J
-    p["xz_vector"] = xz_vector
-    return p
+    s = dict()
+    s["name"] = name
+    s["E"] = E
+    s["G"] = G
+    s["A"] = A
+    s["Ix"] = Ix
+    s["Iy"] = Iy
+    s["Iz"] = Iz
+    s["J"] = J
+    s["xz_vector"] = xz_vector
+    return s
