@@ -1,3 +1,7 @@
+"""
+Define the functions for defining and manipulating a model.
+"""
+
 import numpy
 from numpy import array, zeros, dot
 import pystran.section
@@ -89,26 +93,26 @@ def add_beam_member(m, identifier, connectivity, sect):
     return None
 
 
-def add_support(j, dir, value=0.0):
+def add_support(j, dof, value=0.0):
     """
     Add a support to a joint.
     """
     if "supports" not in j:
         j["supports"] = dict()
-    if dir == CLAMPED:
+    if dof == CLAMPED:
         j["supports"] = {U1: 0.0, U2: 0.0, U3: 0.0, UR1: 0.0, UR2: 0.0, UR3: 0.0}
     else:
-        j["supports"][dir] = value
+        j["supports"][dof] = value
     return None
 
 
-def add_load(j, dir, value):
+def add_load(j, dof, value):
     """
     Add a load to a joint.
     """
     if "loads" not in j:
         j["loads"] = dict()
-    j["loads"][dir] = value
+    j["loads"][dof] = value
     return None
 
 
@@ -145,6 +149,9 @@ def number_dofs(m):
 
 
 def solve(m):
+    """
+    The default solve procedure of the discrete model.
+    """
     return solve_statics(m)
 
 
@@ -170,8 +177,8 @@ def solve_statics(m):
     F = zeros(m["ntotaldof"])
     for joint in m["joints"].values():
         if "loads" in joint:
-            for dir, value in joint["loads"].items():
-                gr = joint["dof"][dir]
+            for dof, value in joint["loads"].items():
+                gr = joint["dof"][dof]
                 F[gr] += value
 
     m["F"] = F
@@ -179,8 +186,8 @@ def solve_statics(m):
     U = zeros(m["ntotaldof"])
     for joint in m["joints"].values():
         if "supports" in joint:
-            for dir, value in joint["supports"].items():
-                gr = joint["dof"][dir]
+            for dof, value in joint["supports"].items():
+                gr = joint["dof"][dof]
                 U[gr] = value
     # # Solve for displacements
     U[0:nf] = numpy.linalg.solve(K[0:nf, 0:nf], F[0:nf] - dot(K[0:nf, nf:nt], U[nf:nt]))

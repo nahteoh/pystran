@@ -6,9 +6,8 @@ Example 4.13 from
 Matrix Structural Analysis: Second Edition 2nd Edition
 by William McGuire, Richard H. Gallagher, Ronald D. Ziemian 
 """
-from math import sqrt
+
 from numpy import array, dot
-from numpy import linalg
 from numpy.linalg import cross
 from context import pystran
 from pystran import model

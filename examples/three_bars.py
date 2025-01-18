@@ -15,7 +15,7 @@ New Jersey Institute of Technology,
 
 Three bar example on page 32
 """
-from numpy import array, dot, outer, concatenate
+from numpy import dot, concatenate
 from numpy.linalg import norm
 from context import pystran
 from pystran import model

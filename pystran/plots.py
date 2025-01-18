@@ -72,6 +72,7 @@ def plot_members(m):
 
 
 def _plot_2d_beam_deflection(ax, member, i, j, scale):
+    sect = member["section"]
     di, dj = i["displacements"], j["displacements"]
     ci, cj = i["coordinates"], j["coordinates"]
     e_x, e_z, h = beam_2d_member_geometry(i, j)
@@ -166,39 +167,39 @@ def plot_deformations(m, scale=1.0):
 
 def _plot_member_numbers_2d(m):
     ax = plt.gca()
-    for id in m["truss_members"].keys():
-        member = m["truss_members"][id]
+    for jid in m["truss_members"].keys():
+        member = m["truss_members"][jid]
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         ci, cj = i["coordinates"], j["coordinates"]
         xm = (ci + cj) / 2.0
-        line = ax.text(xm[0], xm[1], str(id))
-    for id in m["beam_members"].keys():
-        member = m["beam_members"][id]
+        ax.text(xm[0], xm[1], str(jid))
+    for jid in m["beam_members"].keys():
+        member = m["beam_members"][jid]
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         ci, cj = i["coordinates"], j["coordinates"]
         xm = (ci + cj) / 2.0
-        line = ax.text(xm[0], xm[1], str(id))
+        ax.text(xm[0], xm[1], str(jid))
     return ax
 
 
 def _plot_member_numbers_3d(m):
     ax = plt.gca()
-    for id in m["truss_members"].keys():
-        member = m["truss_members"][id]
+    for jid in m["truss_members"].keys():
+        member = m["truss_members"][jid]
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         ci, cj = i["coordinates"], j["coordinates"]
         xm = (ci + cj) / 2.0
-        line = ax.text(xm[0], xm[1], xm[2], str(id), "z")
-    for id in m["beam_members"].keys():
-        member = m["beam_members"][id]
+        ax.text(xm[0], xm[1], xm[2], str(jid), "z")
+    for jid in m["beam_members"].keys():
+        member = m["beam_members"][jid]
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         ci, cj = i["coordinates"], j["coordinates"]
         xm = (ci + cj) / 2.0
-        line = ax.text(xm[0], xm[1], xm[2], str(id), "z")
+        ax.text(xm[0], xm[1], xm[2], str(jid), "z")
     return ax
 
 
@@ -229,9 +230,9 @@ def _plot_2d_beam_moments(ax, member, i, j, scale):
         ys[1] = x[1] + scale * M * e_z[1]
         ax.plot(xs, ys, "b-")
         if xi == -1.0:
-            line = ax.text(xs[1], ys[1], str("{:.5}".format(M[0])))
+            ax.text(xs[1], ys[1], str(f"{M[0]:.5}"))
         elif xi == +1.0:
-            line = ax.text(xs[1], ys[1], str("{:.5}".format(M[0])))
+            ax.text(xs[1], ys[1], str(f"{M[0]:.5}"))
     return ax
 
 
@@ -257,9 +258,9 @@ def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
         zs[1] = x[2] + scale * M * dirv[1]
         ax.plot(xs, ys, zs, "b-")
         if xi == -1.0:
-            line = ax.text(xs[1], ys[1], zs[1], str("{:.5}".format(M[0])))
+            ax.text(xs[1], ys[1], zs[1], str(f"{M[0]:.5}"))
         elif xi == +1.0:
-            line = ax.text(xs[1], ys[1], zs[1], str("{:.5}".format(M[0])))
+            ax.text(xs[1], ys[1], zs[1], str(f"{M[0]:.5}"))
     return ax
 
 
@@ -274,9 +275,9 @@ def plot_moments(m, scale=1.0, axis="y"):
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         if m["dim"] == 3:
-            line = _plot_3d_beam_moments(ax, member, i, j, axis, scale)
+            _plot_3d_beam_moments(ax, member, i, j, axis, scale)
         else:
-            line = _plot_2d_beam_moments(ax, member, i, j, scale)
+            _plot_2d_beam_moments(ax, member, i, j, scale)
     return ax
 
 
@@ -295,7 +296,7 @@ def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
         ys[1] = x[1] + scale * V * e_z[1]
         ax.plot(xs, ys, "b-")
         if xi == 0.0:
-            line = ax.text(xs[1], ys[1], str("{:.5}".format(V[0])))
+            ax.text(xs[1], ys[1], str(f"{V[0]:.5}"))
     return ax
 
 
@@ -310,7 +311,7 @@ def plot_shear_forces(m, scale=1.0):
         if m["dim"] == 3:
             raise NotImplementedError("3D not implemented")
         else:
-            line = _plot_2d_beam_shear_forces(ax, member, i, j, scale)
+            _plot_2d_beam_shear_forces(ax, member, i, j, scale)
     return ax
 
 

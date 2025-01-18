@@ -7,7 +7,6 @@ from numpy import (
     outer,
     concatenate,
 )
-from numpy.linalg import norm
 from pystran import geometry
 from pystran import assemble
 
