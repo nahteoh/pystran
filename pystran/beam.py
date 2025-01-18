@@ -26,12 +26,10 @@ def beam_2d_shape_fun(xi):
 
 def beam_2d_shape_fun_xi(xi):
     """
-    Compute the first derivative of the beam shape functions for deflection in the x-z plane (i.e. in 2d).
+    Compute the first derivative of the beam shape functions for deflection in
+    the x-z plane (i.e. in 2d).
 
-    The quantity computed is
-    ```math
-    \frac{d^1 N(\\xi)}{d \\xi^1}
-    ```
+    The quantity computed is ```math \frac{d^1 N(\\xi)}{d \\xi^1} ```
     """
     return array(
         [
@@ -45,24 +43,20 @@ def beam_2d_shape_fun_xi(xi):
 
 def beam_2d_shape_fun_xi2(xi):
     """
-    Compute the second derivative of the beam shape functions for deflection in the x-z plane (i.e. in 2d).
+    Compute the second derivative of the beam shape functions for deflection in
+    the x-z plane (i.e. in 2d).
 
-    The quantity computed is
-    ```math
-    \frac{d^2 N(\\xi)}{d \\xi^2}
-    ```
+    The quantity computed is ```math \frac{d^2 N(\\xi)}{d \\xi^2} ```
     """
     return array([(6 * xi) / 4, (2 - 6 * xi) / 4, (-6 * xi) / 4, (-2 - 6 * xi) / 4])
 
 
 def beam_2d_shape_fun_xi3(xi):
     """
-    Compute the third derivative of the beam shape functions for deflection in the x-z plane (i.e. in 2d).
+    Compute the third derivative of the beam shape functions for deflection in
+    the x-z plane (i.e. in 2d).
 
-    The quantity computed is
-    ```math
-    \frac{d^3 N(\\xi)}{d \\xi^3}
-    ```
+    The quantity computed is ```math \frac{d^3 N(\\xi)}{d \\xi^3} ```
     """
     return array([(6) / 4, (-6) / 4, (-6) / 4, (-6) / 4])
 
@@ -76,7 +70,8 @@ def beam_3d_xz_shape_fun(xi):
 
 def beam_3d_xz_shape_fun_xi2(xi):
     """
-    Compute the second derivative of the beam shape functions for deflection in the x-z plane.
+    Compute the second derivative of the beam shape functions for deflection in
+    the x-z plane.
     """
     return beam_2d_shape_fun_xi2(xi)
 
@@ -85,12 +80,10 @@ def beam_3d_xy_shape_fun(xi):
     """
     Compute the beam shape functions for deflection in the x-y plane.
 
-    The quantity computed is
-    ```math
-    \frac{d^2 N(\\xi)}{d \\xi^2}
-    ```
+    The quantity computed is ```math \frac{d^2 N(\\xi)}{d \\xi^2} ```
 
-    The signs of the shape functions that go with the rotations (i.e. the second and fourth) need to be reversed.
+    The signs of the shape functions that go with the rotations (i.e. the second
+    and fourth) need to be reversed.
     """
     N = beam_2d_shape_fun(xi)
     N[1] *= -1.0
@@ -100,14 +93,13 @@ def beam_3d_xy_shape_fun(xi):
 
 def beam_3d_xy_shape_fun_xi2(xi):
     """
-    Compute the second derivative of the beam shape functions for deflection in the x-y plane.
+    Compute the second derivative of the beam shape functions for deflection in
+    the x-y plane.
 
-    The quantity computed is
-    ```math
-    \frac{d^2 N(\\xi)}{d \\xi^2}
-    ```
+    The quantity computed is ```math \frac{d^2 N(\\xi)}{d \\xi^2} ```
 
-    The signs of the shape functions that go with the rotations (i.e. the second and fourth) need to be reversed.
+    The signs of the shape functions that go with the rotations (i.e. the second
+    and fourth) need to be reversed.
     """
     d2Ndxi2 = beam_2d_shape_fun_xi2(xi)
     d2Ndxi2[1] *= -1.0
@@ -130,9 +122,10 @@ def beam_2d_member_geometry(i, j):
     if h <= 0.0:
         raise ZeroDivisionError("Length of element must be positive")
     e_x /= h
-    # The orientation here reflects the sign convention in the book.
-    # The deflection is measured positive downwards, while the x coordinate is measured left to right.
-    # So in two dimensions e_x and e_z form a left-handed coordinate system.
+    # The orientation here reflects the sign convention in the book. The
+    # deflection is measured positive downwards, while the x coordinate is
+    # measured left to right. So in two dimensions e_x and e_z form a
+    # left-handed coordinate system.
     e_z = array([e_x[1], -e_x[0]])
     return e_x, e_z, h
 
@@ -146,9 +139,10 @@ def beam_3d_member_geometry(i, j, xz_vector):
     if h <= 0.0:
         raise ZeroDivisionError("Length of element must be positive")
     e_x /= h
-    # The orientation here reflects the sign convention in the book.
-    # The deflection is measured positive downwards, while the x coordinate is measured left to right.
-    # So in two dimensions e_x and e_z form a left-handed coordinate system.
+    # The orientation here reflects the sign convention in the book. The
+    # deflection is measured positive downwards, while the x coordinate is
+    # measured left to right. So in two dimensions e_x and e_z form a
+    # left-handed coordinate system.
     if abs(dot(e_x, xz_vector)) > 0.99 * norm(xz_vector):
         raise ZeroDivisionError("xz_vector must not be parallel to the beam axis")
     e_y = cross(xz_vector, e_x)
