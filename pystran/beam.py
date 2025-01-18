@@ -128,7 +128,7 @@ def beam_2d_member_geometry(i, j):
     e_x = geometry.delt(i["coordinates"], j["coordinates"])
     h = geometry.len(i["coordinates"], j["coordinates"])
     if h <= 0.0:
-        raise Exception("Length of element must be positive")
+        raise ZeroDivisionError("Length of element must be positive")
     e_x /= h
     # The orientation here reflects the sign convention in the book.
     # The deflection is measured positive downwards, while the x coordinate is measured left to right.
@@ -144,13 +144,13 @@ def beam_3d_member_geometry(i, j, xz_vector):
     e_x = geometry.delt(i["coordinates"], j["coordinates"])
     h = geometry.len(i["coordinates"], j["coordinates"])
     if h <= 0.0:
-        raise Exception("Length of element must be positive")
+        raise ZeroDivisionError("Length of element must be positive")
     e_x /= h
     # The orientation here reflects the sign convention in the book.
     # The deflection is measured positive downwards, while the x coordinate is measured left to right.
     # So in two dimensions e_x and e_z form a left-handed coordinate system.
     if abs(dot(e_x, xz_vector)) > 0.99 * norm(xz_vector):
-        raise Exception("xz_vector must not be parallel to the beam axis")
+        raise ZeroDivisionError("xz_vector must not be parallel to the beam axis")
     e_y = cross(xz_vector, e_x)
     e_y = e_y / norm(e_y)
     e_z = cross(e_x, e_y)
@@ -161,8 +161,6 @@ def beam_2d_bending_stiffness(e_x, e_z, h, E, I):
     """
     Compute 2d beam stiffness matrix.
     """
-    if abs(norm(e_x) - 1.0) > 1e-6:
-        raise Exception("Direction vector must be a unit vector")
     xiG = [-1 / sqrt(3), 1 / sqrt(3)]
     WG = [1, 1]
     K = zeros((6, 6))
@@ -211,8 +209,6 @@ def beam_3d_bending_stiffness(e_x, e_y, e_z, h, E, Iy, Iz):
     """
     Compute 2d beam stiffness matrix.
     """
-    if abs(norm(e_x) - 1.0) > 1e-6:
-        raise Exception("Direction vector must be a unit vector")
     xiG = [-1 / sqrt(3), 1 / sqrt(3)]
     WG = [1, 1]
     Kxy = zeros((12, 12))
@@ -310,8 +306,6 @@ def torsion_stiffness(e_x, h, G, J):
     """
     Compute torsion stiffness matrix.
     """
-    if abs(norm(e_x) - 1.0) > 1e-6:
-        raise Exception("Direction vector must be a unit vector")
     B = torsion_displacement(e_x, h)
     return G * J * outer(B.T, B) * h
 
