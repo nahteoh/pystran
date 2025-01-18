@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Analysis of Geometrically 
 Nonlinear Structures 
@@ -18,6 +17,7 @@ Space truss dome in section 2.4.2
 
 Vertical deflection at the crown: -.20641184e+00 in (linear analysis)
 """
+
 from numpy import array, dot, outer, concatenate
 from numpy.linalg import norm
 from context import pystran

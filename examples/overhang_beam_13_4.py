@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 """
 Created on 01/12/2025
 
 Introductory example 7.1 from Structural Mechanics. Analytical and Numerical Approaches for
 Structural Analysis by Lingyi Lu, Junbo Jia, Zhuo Tang.
 """
+
 from context import pystran
 from pystran import model
 from pystran import section

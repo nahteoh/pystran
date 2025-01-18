@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on 01/12/2025
 
@@ -6,6 +5,7 @@ Example 4.13 from
 Matrix Structural Analysis: Second Edition 2nd Edition
 by William McGuire, Richard H. Gallagher, Ronald D. Ziemian 
 """
+
 from math import sqrt
 from context import pystran
 from pystran import model

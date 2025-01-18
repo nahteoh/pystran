@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on 01/12/2025
 
@@ -9,6 +8,7 @@ The section properties are not completely defined in the book.  They are
 taken from example 4.8, which does not provide both second moments of area.
 They are taken here as both the same.
 """
+
 from math import sqrt
 from numpy.linalg import norm
 from context import pystran

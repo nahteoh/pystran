@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on 01/12/2025
 
@@ -8,6 +7,7 @@ Structural Analysis by Lingyi Lu, Junbo Jia, Zhuo Tang.
 This reference does not appear to be correct.
 The calculation here verified with SA_tools.
 """
+
 from numpy import array, dot, outer
 from numpy.linalg import norm
 from context import pystran
