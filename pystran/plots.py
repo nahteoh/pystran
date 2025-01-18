@@ -1,3 +1,7 @@
+"""
+Implement simple plots for truss and beam structures.
+"""
+
 import matplotlib.pyplot as plt
 from numpy import linspace, dot, zeros
 from pystran.beam import (
@@ -32,12 +36,12 @@ def _plot_members_2d(m):
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         ci, cj = i["coordinates"], j["coordinates"]
-        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], "k-")
+        plt.plot([ci[0], cj[0]], [ci[1], cj[1]], "k-")
     for member in m["beam_members"].values():
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         ci, cj = i["coordinates"], j["coordinates"]
-        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], "k-")
+        plt.plot([ci[0], cj[0]], [ci[1], cj[1]], "k-")
     return ax
 
 
@@ -47,16 +51,19 @@ def _plot_members_3d(m):
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         ci, cj = i["coordinates"], j["coordinates"]
-        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], "k-")
+        plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], "k-")
     for member in m["beam_members"].values():
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         ci, cj = i["coordinates"], j["coordinates"]
-        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], "k-")
+        plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], "k-")
     return ax
 
 
 def plot_members(m):
+    """
+    Plot the members of the structure.
+    """
     if m["dim"] == 3:
         ax = _plot_members_3d(m)
     else:
@@ -125,6 +132,9 @@ def _plot_3d_beam_deflection(ax, member, i, j, scale):
 
 
 def plot_deformations(m, scale=1.0):
+    """
+    Plot the deformations in the truss and beam members.
+    """
     ax = plt.gca()
     for member in m["truss_members"].values():
         connectivity = member["connectivity"]
@@ -132,14 +142,14 @@ def plot_deformations(m, scale=1.0):
         di, dj = i["displacements"], j["displacements"]
         ci, cj = i["coordinates"], j["coordinates"]
         if m["dim"] == 3:
-            line = ax.plot(
+            ax.plot(
                 [ci[0] + scale * di[0], cj[0] + scale * dj[0]],
                 [ci[1] + scale * di[1], cj[1] + scale * dj[1]],
                 [ci[2] + scale * di[2], cj[2] + scale * dj[2]],
                 "m-",
             )
         else:
-            line = ax.plot(
+            ax.plot(
                 [ci[0] + scale * di[0], cj[0] + scale * dj[0]],
                 [ci[1] + scale * di[1], cj[1] + scale * dj[1]],
                 "m-",
@@ -148,9 +158,9 @@ def plot_deformations(m, scale=1.0):
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         if m["dim"] == 3:
-            line = _plot_3d_beam_deflection(ax, member, i, j, scale)
+            _plot_3d_beam_deflection(ax, member, i, j, scale)
         else:
-            line = _plot_2d_beam_deflection(ax, member, i, j, scale)
+            _plot_2d_beam_deflection(ax, member, i, j, scale)
     return ax
 
 
@@ -193,6 +203,9 @@ def _plot_member_numbers_3d(m):
 
 
 def plot_member_numbers(m):
+    """
+    Plot the member numbers.
+    """
     if m["dim"] == 3:
         ax = _plot_member_numbers_3d(m)
     else:
@@ -251,6 +264,11 @@ def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
 
 
 def plot_moments(m, scale=1.0, axis="y"):
+    """
+    Plot the moments in the beam members.
+
+    Optional: axis = "y" or "z" (default is "y", which is suitable for 2d beams).
+    """
     ax = plt.gca()
     for member in m["beam_members"].values():
         connectivity = member["connectivity"]
@@ -282,6 +300,9 @@ def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
 
 
 def plot_shear_forces(m, scale=1.0):
+    """
+    Plot the shear forces in the beam members.
+    """
     ax = plt.gca()
     for member in m["beam_members"].values():
         connectivity = member["connectivity"]
@@ -294,6 +315,9 @@ def plot_shear_forces(m, scale=1.0):
 
 
 def plot_beam_orientation(m, scale=1.0):
+    """
+    Plot the beam orientations as cartesian triplets.
+    """
     ax = plt.gca()
     for member in m["beam_members"].values():
         connectivity = member["connectivity"]
