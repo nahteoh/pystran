@@ -34,6 +34,9 @@ def create(dim=2):
         U2 = 1
         UR3 = 2
         CLAMPED = 100
+        U3 = -1000  # invalid
+        UR1 = -1000  # invalid
+        UR2 = -1000  # invalid
     else:
         U1 = 0
         U2 = 1

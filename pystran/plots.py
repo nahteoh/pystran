@@ -243,18 +243,18 @@ def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
     xs = zeros(2)
     ys = zeros(2)
     zs = zeros(2)
-    dir = e_y
+    dirv = e_y
     if axis == "y":
-        dir = e_z
+        dirv = e_z
     for s, xi in enumerate(linspace(-1, +1, n)):
         M = beam_3d_moment(member, i, j, axis, xi)
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         xs[0] = x[0]
-        xs[1] = x[0] + scale * M * dir[0]
+        xs[1] = x[0] + scale * M * dirv[0]
         ys[0] = x[1]
-        ys[1] = x[1] + scale * M * dir[1]
+        ys[1] = x[1] + scale * M * dirv[1]
         zs[0] = x[2]
-        zs[1] = x[2] + scale * M * dir[1]
+        zs[1] = x[2] + scale * M * dirv[1]
         ax.plot(xs, ys, zs, "b-")
         if xi == -1.0:
             line = ax.text(xs[1], ys[1], zs[1], str("{:.5}".format(M[0])))
