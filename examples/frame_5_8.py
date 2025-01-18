@@ -35,8 +35,8 @@ Iz = 50e6 / 1e12
 Ix = Iy + Iz
 J = 100e3 / 1e12
 xz_vector = [0, 0, 1]
-p1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
-model.add_beam_member(m, 1, [1, 2], p1)
+s1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
+model.add_beam_member(m, 1, [1, 2], s1)
 E = 2.0e11
 G = E / (2 * (1 + 0.3))
 A = 6e3 / 1e6
@@ -46,8 +46,8 @@ Ix = Iy + Iz
 J = 300e3 / 1e12
 xz_vector = [0, 0, 1]
 xz_vector = [0, 0, 1]
-p2 = section.beam_3d_section("property_2", E, G, A, Ix, Iy, Iz, J, xz_vector)
-model.add_beam_member(m, 2, [2, 3], p2)
+s2 = section.beam_3d_section("property_2", E, G, A, Ix, Iy, Iz, J, xz_vector)
+model.add_beam_member(m, 2, [2, 3], s2)
 
 model.add_load(b, model.U3, -5e3 - 7.5e3)
 model.add_load(b, model.UR2, -6.25e3)

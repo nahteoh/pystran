@@ -41,8 +41,8 @@ I3 = I2 / 2
 I1 = I2 / 2
 J = 300e3 / 10**12
 xz_vector = [0, 0, 1]
-p1 = section.beam_3d_section("property_1", E, G, A, I1, I2, I3, J, xz_vector)
-model.add_beam_member(m, 1, [1, 2], p1)
+s1 = section.beam_3d_section("property_1", E, G, A, I1, I2, I3, J, xz_vector)
+model.add_beam_member(m, 1, [1, 2], s1)
 E = 2.0e11
 A = 4000 / 10**6
 I2 = 50e6 / 10**12
@@ -50,8 +50,8 @@ I3 = I2 / 2
 I1 = I2 / 2
 J = 100e3 / 10**12
 xz_vector = [0, 0, 1]
-p2 = section.beam_3d_section("property_2", E, G, A, I1, I2, I3, J, xz_vector)
-model.add_beam_member(m, 2, [3, 2], p2)
+s2 = section.beam_3d_section("property_2", E, G, A, I1, I2, I3, J, xz_vector)
+model.add_beam_member(m, 2, [3, 2], s2)
 E = 2.0e11
 A = 4000 / 10**6
 I2 = 5000e6 / 10**12
@@ -59,8 +59,8 @@ I3 = I2 / 2
 I1 = I2 / 2
 J = 10000e3 / 10**12
 xz_vector = [0, 1, 0]
-p3 = section.beam_3d_section("property_3", E, G, A, I1, I2, I3, J, xz_vector)
-model.add_beam_member(m, 3, [4, 2], p3)
+s3 = section.beam_3d_section("property_3", E, G, A, I1, I2, I3, J, xz_vector)
+model.add_beam_member(m, 3, [4, 2], s3)
 
 d = m["joints"][4]
 model.add_load(d, model.U2, -10e3)

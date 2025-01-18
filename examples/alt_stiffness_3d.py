@@ -6,7 +6,7 @@ Example 4.13 from
 Matrix Structural Analysis: Second Edition 2nd Edition
 by William McGuire, Richard H. Gallagher, Ronald D. Ziemian 
 """
-from math import sqrt
+
 from numpy import zeros, dot
 from numpy.linalg import norm
 from context import pystran
@@ -34,8 +34,8 @@ Iz = H**3 * B / 12
 Ix = Iy + Iz
 J = Ix
 xz_vector = [0, 0, 1]
-p1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
-model.add_beam_member(m, 1, [1, 2], p1)
+s1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
+model.add_beam_member(m, 1, [1, 2], s1)
 
 model.number_dofs(m)
 

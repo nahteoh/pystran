@@ -40,8 +40,8 @@ def test(e_x, e_y, e_z, F, refdefl, refslope):
     model.add_support(clamped, model.UR2)
     model.add_support(clamped, model.UR3)
 
-    p1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, e_z)
-    model.add_beam_member(m, 1, [1, 2], p1)
+    s1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, e_z)
+    model.add_beam_member(m, 1, [1, 2], s1)
 
     model.add_load(freeend, model.U1, F[0])
     model.add_load(freeend, model.U2, F[1])

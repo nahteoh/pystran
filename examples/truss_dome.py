@@ -43,7 +43,7 @@ model.add_joint(m, 13, [0.17047200e02, 0.98425000e1, 0.0])
 
 E = 30000000.0
 A = 0.0155
-p1 = section.truss_section("steel", E, A)
+s1 = section.truss_section("steel", E, A)
 
 for id, j in enumerate(
     [
@@ -73,7 +73,7 @@ for id, j in enumerate(
         [7, 2],
     ]
 ):
-    model.add_truss_member(m, id, j, p1)
+    model.add_truss_member(m, id, j, s1)
 
 for i in [8, 9, 10, 11, 12, 13]:
     for d in range(m["dim"]):

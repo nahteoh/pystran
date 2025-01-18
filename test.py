@@ -31,8 +31,8 @@ def _test_2():
     {1: {'coordinates': array([ 0.1, -0.2])}}
     >>> E = 200e9
     >>> A = 0.001
-    >>> p1 = section.truss_section('steel', E, A)
-    >>> model.add_truss_member(m, 1, [1, 2], p1)
+    >>> s1 = section.truss_section('steel', E, A)
+    >>> model.add_truss_member(m, 1, [1, 2], s1)
     >>> print(m['truss_members'])
     {1: {'connectivity': array([1, 2], dtype=int32), 'section': {'name': 'steel', 'E': 200000000000.0, 'A': 0.001}}}
     """
@@ -77,8 +77,8 @@ def _test_5():
     >>> model.add_joint(m, 2, [1.0, 2.0])
     >>> E = 200e9
     >>> A = 0.001
-    >>> p1 = section.truss_section('steel', E, A)
-    >>> model.add_truss_member(m, 1, [1, 2], p1)
+    >>> s1 = section.truss_section('steel', E, A)
+    >>> model.add_truss_member(m, 1, [1, 2], s1)
     >>> i = m['truss_members'][1]['connectivity'][0]
     >>> j = m['truss_members'][1]['connectivity'][1]
     >>> d = geometry.delt(m['joints'][i]['coordinates'], m['joints'][j]['coordinates'])
@@ -101,9 +101,9 @@ def _test_6():
     >>> model.add_support(m['joints'][1], 1)
     >>> E = 200e9
     >>> A = 0.001
-    >>> p1 = section.truss_section('steel', E, A)
-    >>> model.add_truss_member(m, 1, [1, 2], p1)
-    >>> model.add_truss_member(m, 2, [3, 2], p1)
+    >>> s1 = section.truss_section('steel', E, A)
+    >>> model.add_truss_member(m, 1, [1, 2], s1)
+    >>> model.add_truss_member(m, 2, [3, 2], s1)
     >>> model.number_dofs(m)
     >>> print(m['nfreedof'])
     4
@@ -126,8 +126,8 @@ def _test_7():
     >>> model.add_joint(m, 2, [1.0, 2.0])
     >>> E = 200e9
     >>> A = 0.001
-    >>> p1 = section.truss_section('steel', E, A)
-    >>> model.add_truss_member(m, 1, [1, 2], p1)
+    >>> s1 = section.truss_section('steel', E, A)
+    >>> model.add_truss_member(m, 1, [1, 2], s1)
     >>> i = m['truss_members'][1]['connectivity'][0]
     >>> j = m['truss_members'][1]['connectivity'][1]
     >>> d = geometry.delt(m['joints'][i]['coordinates'], m['joints'][j]['coordinates'])
@@ -160,10 +160,10 @@ def _test_8():
     >>> model.add_support(m['joints'][4], 1)
     >>> E = 200e9
     >>> A = 0.001
-    >>> p1 = section.truss_section('steel', E, A)
-    >>> model.add_truss_member(m, 1, [1, 2], p1)
-    >>> model.add_truss_member(m, 2, [3, 2], p1)
-    >>> model.add_truss_member(m, 3, [4, 2], p1)
+    >>> s1 = section.truss_section('steel', E, A)
+    >>> model.add_truss_member(m, 1, [1, 2], s1)
+    >>> model.add_truss_member(m, 2, [3, 2], s1)
+    >>> model.add_truss_member(m, 3, [4, 2], s1)
     >>> model.number_dofs(m)
     >>> print(m['nfreedof'])
     2

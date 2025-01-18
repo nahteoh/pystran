@@ -40,13 +40,13 @@ model.add_support(m["joints"][jA], model.CLAMPED)
 model.add_support(m["joints"][jD], model.CLAMPED)
 
 xz_vector = [1, 0, 0]
-p1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
-model.add_beam_member(m, 1, [jA, jB], p1)
+s1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
+model.add_beam_member(m, 1, [jA, jB], s1)
 xz_vector = [0, 1, 0]
-p2 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
-model.add_beam_member(m, 2, [jE, jB], p2)
-model.add_beam_member(m, 3, [jE, jC], p2)
-model.add_beam_member(m, 4, [jC, jD], p1)
+s2 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
+model.add_beam_member(m, 2, [jE, jB], s2)
+model.add_beam_member(m, 3, [jE, jC], s2)
+model.add_beam_member(m, 4, [jC, jD], s1)
 
 model.add_load(m["joints"][jB], model.U1, 2 * P)
 model.add_load(m["joints"][jE], model.U3, 4 * P)

@@ -37,10 +37,10 @@ model.add_joint(m, 4, [0.0, L, -L])
 model.add_support(m["joints"][1], model.CLAMPED)
 
 xz_vector = [1, 0, 0]
-p1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
-model.add_beam_member(m, 1, [1, 2], p1)
-model.add_beam_member(m, 2, [2, 3], p1)
-model.add_beam_member(m, 3, [2, 4], p1)
+s1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
+model.add_beam_member(m, 1, [1, 2], s1)
+model.add_beam_member(m, 2, [2, 3], s1)
+model.add_beam_member(m, 3, [2, 4], s1)
 
 model.add_load(m["joints"][3], model.U1, -P)
 

@@ -32,10 +32,10 @@ model.add_joint(m, 4, [+10.0, 0.0])
 
 E = 30000000.0
 A = 0.65700000
-p1 = section.truss_section("steel", E, A)
-model.add_truss_member(m, 1, [1, 2], p1)
-model.add_truss_member(m, 2, [1, 3], p1)
-model.add_truss_member(m, 3, [1, 4], p1)
+s1 = section.truss_section("steel", E, A)
+model.add_truss_member(m, 1, [1, 2], s1)
+model.add_truss_member(m, 2, [1, 3], s1)
+model.add_truss_member(m, 3, [1, 4], s1)
 
 for i in [2, 3, 4]:
     for d in range(2):

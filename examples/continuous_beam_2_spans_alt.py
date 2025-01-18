@@ -27,13 +27,13 @@ model.add_support(m["joints"][3], model.U2)
 E = 3e10
 A = 0.001
 I = 1.44e-5
-p1 = section.beam_2d_section("material_1", E, A, I)
-model.add_beam_member(m, 1, [2, 1], p1)
+s1 = section.beam_2d_section("material_1", E, A, I)
+model.add_beam_member(m, 1, [2, 1], s1)
 E = 2.06e11
 A = 0.001
 I = 1.152e-5
-p2 = section.beam_2d_section("material_2", E, A, I)
-model.add_beam_member(m, 2, [3, 2], p2)
+s2 = section.beam_2d_section("material_2", E, A, I)
+model.add_beam_member(m, 2, [3, 2], s2)
 
 model.add_load(m["joints"][1], 2, -15e3)
 model.add_load(m["joints"][2], 2, -25e3)
