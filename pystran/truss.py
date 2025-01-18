@@ -46,5 +46,6 @@ def assemble_stiffness(Kg, member, i, j):
     sect = member["section"]
     E, A = sect["E"], sect["A"]
     k = stiffness(e_x, h, E, A)
-    dof = concatenate([i["dof"], j["dof"]])
+    dim = len(e_x)
+    dof = concatenate([i["dof"][0:dim], j["dof"][0:dim]])
     return assemble.assemble(Kg, dof, k)
