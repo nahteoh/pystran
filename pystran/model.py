@@ -6,6 +6,8 @@ import numpy
 from numpy import array, zeros, dot
 import pystran.section
 
+# These are the designations of degrees of freedom (directions in space), plus a
+# special designation for a clamped support.
 U1 = 0
 U2 = 1
 U3 = 2
@@ -13,6 +15,7 @@ UR1 = 3
 UR2 = 4
 UR3 = 5
 CLAMPED = 100
+PINNED = 200
 
 
 def create(dim=2):
@@ -32,12 +35,10 @@ def create(dim=2):
     global UR1
     global UR2
     global UR3
-    global CLAMPED
     if m["dim"] == 2:
         U1 = 0
         U2 = 1
         UR3 = 2
-        CLAMPED = 100
         U3 = -1000  # invalid
         UR1 = -1000  # invalid
         UR2 = -1000  # invalid
@@ -48,7 +49,6 @@ def create(dim=2):
         UR1 = 3
         UR2 = 4
         UR3 = 5
-        CLAMPED = 100
     return m
 
 
@@ -101,6 +101,8 @@ def add_support(j, dof, value=0.0):
         j["supports"] = dict()
     if dof == CLAMPED:
         j["supports"] = {U1: 0.0, U2: 0.0, U3: 0.0, UR1: 0.0, UR2: 0.0, UR3: 0.0}
+    elif dof == PINNED:
+        j["supports"] = {U1: 0.0, U2: 0.0, U3: 0.0}
     else:
         j["supports"][dof] = value
     return None
