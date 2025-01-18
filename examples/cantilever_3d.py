@@ -8,7 +8,7 @@ by William McGuire, Richard H. Gallagher, Ronald D. Ziemian
 """
 from context import pystran
 from pystran import model
-from pystran import property
+from pystran import section
 from pystran import geometry
 from pystran import plots
 from math import sqrt
@@ -18,14 +18,14 @@ m = model.create(3)
 h = 8.0
 model.add_joint(m, 1, [0.0, 0.0, 0.0])
 model.add_joint(m, 2, [h, 0.0, 0.0])
-a = m['joints'][1]
+a = m["joints"][1]
 model.add_support(a, model.U1)
 model.add_support(a, model.U2)
 model.add_support(a, model.U3)
 model.add_support(a, model.UR1)
 model.add_support(a, model.UR2)
 model.add_support(a, model.UR3)
-a = m['joints'][2]
+a = m["joints"][2]
 model.add_support(a, model.U1)
 model.add_support(a, model.U2)
 model.add_support(a, model.UR1)
@@ -39,29 +39,29 @@ Iz = Iy / 5
 Ix = Iy / 5
 J = 300e3 / 10**12
 xz_vector = [0, 0, 1]
-p1 = property.beam_property('property_1', E, G, A, Ix, Iy, Iz, J, xz_vector)
+p1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
 model.add_beam_member(m, 1, [1, 2], p1)
 
-d = m['joints'][2]
+d = m["joints"][2]
 F = 10e3
 model.add_load(d, model.U3, F)
 
 model.number_dofs(m)
 
-print('Number of free degrees of freedom = ', m['nfreedof'])
-print('Number of all degrees of freedom = ', m['ntotaldof'])
+print("Number of free degrees of freedom = ", m["nfreedof"])
+print("Number of all degrees of freedom = ", m["ntotaldof"])
 
-print([j['dof'] for j in m['joints'].values()])
+print([j["dof"] for j in m["joints"].values()])
 
 model.solve(m)
 
-print([j['displacements'] for j in m['joints'].values()])
+print([j["displacements"] for j in m["joints"].values()])
 
-print(m['K'][0:m['nfreedof'], 0:m['nfreedof']])
+print(m["K"][0 : m["nfreedof"], 0 : m["nfreedof"]])
 
-print(m['U'][0:m['nfreedof']])
+print(m["U"][0 : m["nfreedof"]])
 
-print('Reference: ', F*h**3/(3*E*Iy))
+print("Reference: ", F * h**3 / (3 * E * Iy))
 
 plots.plot_setup(m)
 plots.plot_members(m)
@@ -69,7 +69,3 @@ plots.plot_deformations(m, 10.0)
 # ax = plots.plot_shear_forces(m, scale=0.50e-3)
 # ax.set_title('Shear forces')
 plots.show(m)
-    
-
-
-    

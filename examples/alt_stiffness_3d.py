@@ -6,14 +6,12 @@ Example 4.13 from
 Matrix Structural Analysis: Second Edition 2nd Edition
 by William McGuire, Richard H. Gallagher, Ronald D. Ziemian 
 """
-from context import pystran
-from pystran import model
-from pystran import property
-from pystran import geometry
-from pystran import plots
+from math import sqrt
 from numpy import zeros, dot
 from numpy.linalg import norm
-from math import sqrt
+from context import pystran
+from pystran import model
+from pystran import section
 
 m = model.create(3)
 
@@ -24,29 +22,29 @@ model.add_joint(m, 2, [-10.0, 7.0, -8.0])
 # Default orientation
 # model.add_joint(m, 1, [0.0, 0.0, 0.0])
 # model.add_joint(m, 2, [10.0, 0.0, 0.0])
-h = norm(m['joints'][1]['coordinates'] - m['joints'][2]['coordinates'])
+h = norm(m["joints"][1]["coordinates"] - m["joints"][2]["coordinates"])
 
 E = 2.0e6
 G = E / (2 * (1 + 0.3))
 H = 0.13
 B = 0.5
 A = H * B
-Iy = H*B**3/12
-Iz = H**3*B/12
+Iy = H * B**3 / 12
+Iz = H**3 * B / 12
 Ix = Iy + Iz
 J = Ix
 xz_vector = [0, 0, 1]
-p1 = property.beam_property('property_1', E, G, A, Ix, Iy, Iz, J, xz_vector)
+p1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
 model.add_beam_member(m, 1, [1, 2], p1)
 
 model.number_dofs(m)
 
-nt, nf = m['ntotaldof'], m['nfreedof']
-    # Assemble global stiffness matrix
+nt, nf = m["ntotaldof"], m["nfreedof"]
+# Assemble global stiffness matrix
 K = zeros((nt, nt))
-for member in m['beam_members'].values():
-    connectivity = member['connectivity']
-    i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
+for member in m["beam_members"].values():
+    connectivity = member["connectivity"]
+    i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
     pystran.beam.assemble_stiffness(K, member, i, j)
 
 K1 = K.copy()
@@ -98,7 +96,7 @@ K[10, 8] = 6 * E * Iy / h**2
 K[8, 10] = 6 * E * Iy / h**2
 
 
-i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
+i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
 e_x, e_y, e_z, h = pystran.beam.beam_3d_member_geometry(i, j, xz_vector)
 
 # Transformation matrix
@@ -124,4 +122,3 @@ for r in range(12):
 # # ax = plots.plot_shear_forces(m, scale=0.50e-3)
 # # ax.set_title('Shear forces')
 # plots.show(m)
-    

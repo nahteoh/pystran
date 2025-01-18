@@ -1,57 +1,72 @@
 import matplotlib.pyplot as plt
-from pystran.beam import beam_2d_member_geometry, beam_2d_shape_fun, beam_2d_moment, beam_2d_shear_force
-from pystran.beam import beam_3d_member_geometry, beam_3d_xz_shape_fun, beam_3d_xy_shape_fun, beam_3d_moment
 from numpy import linspace, dot, zeros
+from pystran.beam import (
+    beam_2d_member_geometry,
+    beam_2d_shape_fun,
+    beam_2d_moment,
+    beam_2d_shear_force,
+)
+from pystran.beam import (
+    beam_3d_member_geometry,
+    beam_3d_xz_shape_fun,
+    beam_3d_xy_shape_fun,
+    beam_3d_moment,
+)
+
 
 def plot_setup(m):
     """
     Setup the plot.
     """
     fig = plt.figure()
-    if m['dim'] == 3:
-        ax = fig.add_subplot(projection='3d')
+    if m["dim"] == 3:
+        ax = fig.add_subplot(projection="3d")
     else:
         ax = fig.gca()
     return ax
 
+
 def _plot_members_2d(m):
     ax = plt.gca()
-    for member in m['truss_members'].values():
-        connectivity = member['connectivity']
-        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        ci, cj = i['coordinates'], j['coordinates']
-        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], 'k-')  
-    for member in m['beam_members'].values():
-        connectivity = member['connectivity']
-        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        ci, cj = i['coordinates'], j['coordinates']
-        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], 'k-')  
+    for member in m["truss_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        ci, cj = i["coordinates"], j["coordinates"]
+        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], "k-")
+    for member in m["beam_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        ci, cj = i["coordinates"], j["coordinates"]
+        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], "k-")
     return ax
-    
+
+
 def _plot_members_3d(m):
     ax = plt.gca()
-    for member in m['truss_members'].values():
-        connectivity = member['connectivity']
-        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        ci, cj = i['coordinates'], j['coordinates']
-        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], 'k-')
-    for member in m['beam_members'].values():
-        connectivity = member['connectivity']
-        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        ci, cj = i['coordinates'], j['coordinates']
-        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], 'k-')
+    for member in m["truss_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        ci, cj = i["coordinates"], j["coordinates"]
+        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], "k-")
+    for member in m["beam_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        ci, cj = i["coordinates"], j["coordinates"]
+        line = plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], "k-")
     return ax
-    
+
+
 def plot_members(m):
-    if m['dim'] == 3:
+    if m["dim"] == 3:
         ax = _plot_members_3d(m)
     else:
-        ax = _plot_members_2d(m) 
+        ax = _plot_members_2d(m)
     return ax
-    
+
+
 def _plot_2d_beam_deflection(ax, member, i, j, scale):
-    di, dj = i['displacements'], j['displacements']
-    ci, cj = i['coordinates'], j['coordinates']
+    di, dj = i["displacements"], j["displacements"]
+    ci, cj = i["coordinates"], j["coordinates"]
     e_x, e_z, h = beam_2d_member_geometry(i, j)
     wi = dot(di[0:2], e_z)
     thi = di[2]
@@ -60,19 +75,20 @@ def _plot_2d_beam_deflection(ax, member, i, j, scale):
     n = 20
     xs = zeros(n)
     ys = zeros(n)
-    for (s, xi) in enumerate(linspace(-1, +1, n)):
+    for s, xi in enumerate(linspace(-1, +1, n)):
         N = beam_2d_shape_fun(xi)
-        w = N[0] * wi + (h/2) * N[1] * thi + N[2] * wj + (h/2) * N[3] * thj
+        w = N[0] * wi + (h / 2) * N[1] * thi + N[2] * wj + (h / 2) * N[3] * thj
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         xs[s] = x[0] + scale * w * e_z[0]
         ys[s] = x[1] + scale * w * e_z[1]
-    ax.plot(xs, ys, 'm-')
-        
+    ax.plot(xs, ys, "m-")
+
+
 def _plot_3d_beam_deflection(ax, member, i, j, scale):
-    properties = member['properties']
-    di, dj = i['displacements'], j['displacements']
-    ci, cj = i['coordinates'], j['coordinates']
-    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, properties['xz_vector'])
+    sect = member["section"]
+    di, dj = i["displacements"], j["displacements"]
+    ci, cj = i["coordinates"], j["coordinates"]
+    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
     ui = dot(di[0:3], e_x)
     uj = dot(dj[0:3], e_x)
     wi = dot(di[0:3], e_z)
@@ -87,7 +103,7 @@ def _plot_3d_beam_deflection(ax, member, i, j, scale):
     xs = zeros(n)
     ys = zeros(n)
     zs = zeros(n)
-    for (s, xi) in enumerate(linspace(-1, +1, n)):
+    for s, xi in enumerate(linspace(-1, +1, n)):
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         xs[s] = x[0]
         ys[s] = x[1]
@@ -96,87 +112,101 @@ def _plot_3d_beam_deflection(ax, member, i, j, scale):
         ys[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[1]
         zs[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[2]
         N = beam_3d_xz_shape_fun(xi)
-        w = N[0] * wi + (h/2) * N[1] * thyi + N[2] * wj + (h/2) * N[3] * thyj
+        w = N[0] * wi + (h / 2) * N[1] * thyi + N[2] * wj + (h / 2) * N[3] * thyj
         xs[s] += scale * w * e_z[0]
         ys[s] += scale * w * e_z[1]
         zs[s] += scale * w * e_z[2]
         N = beam_3d_xy_shape_fun(xi)
-        v = N[0] * vi + (h/2) * N[1] * thzi + N[2] * vj + (h/2) * N[3] * thzj
+        v = N[0] * vi + (h / 2) * N[1] * thzi + N[2] * vj + (h / 2) * N[3] * thzj
         xs[s] += scale * v * e_y[0]
         ys[s] += scale * v * e_y[1]
         zs[s] += scale * v * e_y[2]
-    ax.plot(xs, ys, zs, 'm-')
-        
+    ax.plot(xs, ys, zs, "m-")
+
+
 def plot_deformations(m, scale=1.0):
     ax = plt.gca()
-    for member in m['truss_members'].values():
-        connectivity = member['connectivity']
-        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        di, dj = i['displacements'], j['displacements']
-        ci, cj = i['coordinates'], j['coordinates']
-        if m['dim'] == 3:
-            line = ax.plot([ci[0]+scale*di[0], cj[0]+scale*dj[0]], [ci[1]+scale*di[1], cj[1]+scale*dj[1]], [ci[2]+scale*di[2], cj[2]+scale*dj[2]], 'm-')   
+    for member in m["truss_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        di, dj = i["displacements"], j["displacements"]
+        ci, cj = i["coordinates"], j["coordinates"]
+        if m["dim"] == 3:
+            line = ax.plot(
+                [ci[0] + scale * di[0], cj[0] + scale * dj[0]],
+                [ci[1] + scale * di[1], cj[1] + scale * dj[1]],
+                [ci[2] + scale * di[2], cj[2] + scale * dj[2]],
+                "m-",
+            )
         else:
-            line = ax.plot([ci[0]+scale*di[0], cj[0]+scale*dj[0]], [ci[1]+scale*di[1], cj[1]+scale*dj[1]], 'm-')   
-    for member in m['beam_members'].values():
-        connectivity = member['connectivity']
-        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        if m['dim'] == 3:
+            line = ax.plot(
+                [ci[0] + scale * di[0], cj[0] + scale * dj[0]],
+                [ci[1] + scale * di[1], cj[1] + scale * dj[1]],
+                "m-",
+            )
+    for member in m["beam_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        if m["dim"] == 3:
             line = _plot_3d_beam_deflection(ax, member, i, j, scale)
         else:
             line = _plot_2d_beam_deflection(ax, member, i, j, scale)
     return ax
-     
+
+
 def _plot_member_numbers_2d(m):
     ax = plt.gca()
-    for id in m['truss_members'].keys():
-        member = m['truss_members'][id]
-        connectivity = member['connectivity']
-        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        ci, cj = i['coordinates'], j['coordinates']
+    for id in m["truss_members"].keys():
+        member = m["truss_members"][id]
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        ci, cj = i["coordinates"], j["coordinates"]
         xm = (ci + cj) / 2.0
         line = ax.text(xm[0], xm[1], str(id))
-    for id in m['beam_members'].keys():
-        member = m['beam_members'][id]
-        connectivity = member['connectivity']
-        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        ci, cj = i['coordinates'], j['coordinates']
+    for id in m["beam_members"].keys():
+        member = m["beam_members"][id]
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        ci, cj = i["coordinates"], j["coordinates"]
         xm = (ci + cj) / 2.0
         line = ax.text(xm[0], xm[1], str(id))
     return ax
-    
+
+
 def _plot_member_numbers_3d(m):
     ax = plt.gca()
-    for id in m['truss_members'].keys():
-        member = m['truss_members'][id]
-        connectivity = member['connectivity']
-        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        ci, cj = i['coordinates'], j['coordinates']
+    for id in m["truss_members"].keys():
+        member = m["truss_members"][id]
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        ci, cj = i["coordinates"], j["coordinates"]
         xm = (ci + cj) / 2.0
-        line = ax.text(xm[0], xm[1], xm[2], str(id), 'z')
-    for id in m['beam_members'].keys():
-        member = m['beam_members'][id]
-        connectivity = member['connectivity']
-        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        ci, cj = i['coordinates'], j['coordinates']
+        line = ax.text(xm[0], xm[1], xm[2], str(id), "z")
+    for id in m["beam_members"].keys():
+        member = m["beam_members"][id]
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        ci, cj = i["coordinates"], j["coordinates"]
         xm = (ci + cj) / 2.0
-        line = ax.text(xm[0], xm[1], xm[2], str(id), 'z')
+        line = ax.text(xm[0], xm[1], xm[2], str(id), "z")
     return ax
-    
+
+
 def plot_member_numbers(m):
-    if m['dim'] == 3:
+    if m["dim"] == 3:
         ax = _plot_member_numbers_3d(m)
     else:
-        ax = _plot_member_numbers_2d(m) 
+        ax = _plot_member_numbers_2d(m)
     return ax
-     
+
+
 def _plot_2d_beam_moments(ax, member, i, j, scale):
     e_x, e_z, h = beam_2d_member_geometry(i, j)
-    ci, cj = i['coordinates'], j['coordinates']
+    ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     xs = zeros(2)
     ys = zeros(2)
-    for (s, xi) in enumerate(linspace(-1, +1, n)):
+    for s, xi in enumerate(linspace(-1, +1, n)):
         M = beam_2d_moment(member, i, j, xi)
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         # The convention: moment is plotted next to fibers in tension
@@ -184,25 +214,26 @@ def _plot_2d_beam_moments(ax, member, i, j, scale):
         xs[1] = x[0] + scale * M * e_z[0]
         ys[0] = x[1]
         ys[1] = x[1] + scale * M * e_z[1]
-        ax.plot(xs, ys, 'b-')
+        ax.plot(xs, ys, "b-")
         if xi == -1.0:
             line = ax.text(xs[1], ys[1], str("{:.5}".format(M[0])))
         elif xi == +1.0:
             line = ax.text(xs[1], ys[1], str("{:.5}".format(M[0])))
     return ax
-       
+
+
 def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
-    properties = member['properties']
-    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, properties['xz_vector'])
-    ci, cj = i['coordinates'], j['coordinates']
+    sect = member["section"]
+    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+    ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     xs = zeros(2)
     ys = zeros(2)
     zs = zeros(2)
     dir = e_y
-    if axis == 'y':
+    if axis == "y":
         dir = e_z
-    for (s, xi) in enumerate(linspace(-1, +1, n)):
+    for s, xi in enumerate(linspace(-1, +1, n)):
         M = beam_3d_moment(member, i, j, axis, xi)
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         xs[0] = x[0]
@@ -211,61 +242,65 @@ def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
         ys[1] = x[1] + scale * M * dir[1]
         zs[0] = x[2]
         zs[1] = x[2] + scale * M * dir[1]
-        ax.plot(xs, ys, zs, 'b-')
+        ax.plot(xs, ys, zs, "b-")
         if xi == -1.0:
             line = ax.text(xs[1], ys[1], zs[1], str("{:.5}".format(M[0])))
         elif xi == +1.0:
             line = ax.text(xs[1], ys[1], zs[1], str("{:.5}".format(M[0])))
     return ax
-         
-def plot_moments(m, scale=1.0, axis='y'):
+
+
+def plot_moments(m, scale=1.0, axis="y"):
     ax = plt.gca()
-    for member in m['beam_members'].values():
-        connectivity = member['connectivity']
-        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        if m['dim'] == 3:
-            line = _plot_3d_beam_moments(ax, member, i, j, axis, scale) 
+    for member in m["beam_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        if m["dim"] == 3:
+            line = _plot_3d_beam_moments(ax, member, i, j, axis, scale)
         else:
             line = _plot_2d_beam_moments(ax, member, i, j, scale)
     return ax
-     
+
+
 def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
     e_x, e_z, h = beam_2d_member_geometry(i, j)
-    ci, cj = i['coordinates'], j['coordinates']
+    ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     xs = zeros(2)
     ys = zeros(2)
-    for (s, xi) in enumerate(linspace(-1, +1, n)):
+    for s, xi in enumerate(linspace(-1, +1, n)):
         V = beam_2d_shear_force(member, i, j, xi)
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         xs[0] = x[0]
         xs[1] = x[0] + scale * V * e_z[0]
         ys[0] = x[1]
         ys[1] = x[1] + scale * V * e_z[1]
-        ax.plot(xs, ys, 'b-')
+        ax.plot(xs, ys, "b-")
         if xi == 0.0:
             line = ax.text(xs[1], ys[1], str("{:.5}".format(V[0])))
     return ax
-        
+
+
 def plot_shear_forces(m, scale=1.0):
     ax = plt.gca()
-    for member in m['beam_members'].values():
-        connectivity = member['connectivity']
-        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        if m['dim'] == 3:
-            raise Exception("3D not implemented")  
+    for member in m["beam_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        if m["dim"] == 3:
+            raise Exception("3D not implemented")
         else:
             line = _plot_2d_beam_shear_forces(ax, member, i, j, scale)
     return ax
-     
-def plot_beam_orientation(m, scale = 1.0):
+
+
+def plot_beam_orientation(m, scale=1.0):
     ax = plt.gca()
-    for member in m['beam_members'].values():
-        connectivity = member['connectivity']
-        i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        ci, cj = i['coordinates'], j['coordinates']
+    for member in m["beam_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        ci, cj = i["coordinates"], j["coordinates"]
         xm = (ci + cj) / 2.0
-        if m['dim'] == 3:
+        if m["dim"] == 3:
             raise Exception("3D not implemented")
         else:
             e_x, e_z, h = beam_2d_member_geometry(i, j)
@@ -275,22 +310,23 @@ def plot_beam_orientation(m, scale = 1.0):
             xs[1] = xm[0] + scale * e_x[0]
             ys[0] = xm[1]
             ys[1] = xm[1] + scale * e_x[1]
-            ax.plot(xs, ys, 'r-')
+            ax.plot(xs, ys, "r-")
             xs[0] = xm[0]
             xs[1] = xm[0] + scale * e_z[0]
             ys[0] = xm[1]
             ys[1] = xm[1] + scale * e_z[1]
-            ax.plot(xs, ys, 'b-')
+            ax.plot(xs, ys, "b-")
     return ax
-        
+
+
 def show(m):
     """
     Show the plot.
     """
     ax = plt.gca()
-    ax.set_aspect('equal')
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    if m['dim'] == 3:
-        ax.set_zlabel('Z')
+    ax.set_aspect("equal")
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    if m["dim"] == 3:
+        ax.set_zlabel("Z")
     plt.show()

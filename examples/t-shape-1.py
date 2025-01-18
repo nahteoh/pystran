@@ -9,23 +9,22 @@ The section properties are not completely defined in the book.  They are
 taken from example 4.8, which does not provide both second moments of area.
 They are taken here as both the same.
 """
-from context import pystran
-from pystran import model
-from pystran import property
-from pystran import geometry
-from pystran import plots
 from math import sqrt
 from numpy.linalg import norm
+from context import pystran
+from pystran import model
+from pystran import section
+from pystran import plots
 
 # SI units
-L = 3.0 
+L = 3.0
 E = 200e9
 G = 80e9
 A = 0.01
 Iz = 1e-3
 Iy = 1e-3
 Ix = 2e-3
-J = Ix # Torsional constant
+J = Ix  # Torsional constant
 P = 60000
 
 m = model.create(3)
@@ -35,28 +34,28 @@ model.add_joint(m, 2, [0.0, L, 0.0])
 model.add_joint(m, 3, [0.0, L, L])
 model.add_joint(m, 4, [0.0, L, -L])
 
-model.add_support(m['joints'][1], model.CLAMPED)
+model.add_support(m["joints"][1], model.CLAMPED)
 
 xz_vector = [1, 0, 0]
-p1 = property.beam_property('property_1', E, G, A, Ix, Iy, Iz, J, xz_vector)
+p1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
 model.add_beam_member(m, 1, [1, 2], p1)
 model.add_beam_member(m, 2, [2, 3], p1)
 model.add_beam_member(m, 3, [2, 4], p1)
 
-model.add_load(m['joints'][3], model.U1, -P)
+model.add_load(m["joints"][3], model.U1, -P)
 
 model.number_dofs(m)
 
-print('Number of free degrees of freedom = ', m['nfreedof'])
-print('Number of all degrees of freedom = ', m['ntotaldof'])
+print("Number of free degrees of freedom = ", m["nfreedof"])
+print("Number of all degrees of freedom = ", m["ntotaldof"])
 
 # print([j['dof'] for j in m['joints'].values()])
 
 model.solve(m)
 
 for id in [2, 3, 4]:
-    j = m['joints'][id]
-    print(id, j['displacements'])
+    j = m["joints"][id]
+    print(id, j["displacements"])
 
 # print(m['K'][0:m['nfreedof'], 0:m['nfreedof']])
 
@@ -77,12 +76,8 @@ plots.plot_setup(m)
 plots.plot_members(m)
 # plots.plot_member_numbers(m)
 plots.plot_deformations(m, 100.0)
-plots.plot_moments(m, 0.00001, 'y')
-plots.plot_moments(m, 0.00001, 'z')
+plots.plot_moments(m, 0.00001, "y")
+plots.plot_moments(m, 0.00001, "z")
 # ax = plots.plot_shear_forces(m, scale=0.50e-3)
 # ax.set_title('Shear forces')
 plots.show(m)
-    
-
-
-    

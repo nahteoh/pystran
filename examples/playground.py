@@ -13,10 +13,10 @@ Created on Mon Nov 18 08:09:22 2024
 # print(m['joints'])
 # E = 200e9
 # A = 0.001
-# p1 = property.truss_property('steel', E, A)
+# p1 = property.truss_section('steel', E, A)
 # model.add_truss_member(m, 1, [1, 2], p1)
 # print(m['truss_members'])
-  
+
 # import pystran
 # from pystran import model
 # from pystran import property
@@ -43,10 +43,10 @@ Created on Mon Nov 18 08:09:22 2024
 # model.add_joint(m, 2, [1.0, 2.0])
 # E = 200e9
 # A = 0.001
-# p1 = property.truss_property('steel', E, A)
+# p1 = property.truss_section('steel', E, A)
 # model.add_truss_member(m, 1, [1, 2], p1)
-# i = m['truss_members'][1]['connectivity'][0]  
-# j = m['truss_members'][1]['connectivity'][1]  
+# i = m['truss_members'][1]['connectivity'][0]
+# j = m['truss_members'][1]['connectivity'][1]
 # d = geometry.delt(m['joints'][i]['coordinates'], m['joints'][j]['coordinates'])
 # print(d)
 # L = geometry.len(m['joints'][i]['coordinates'], m['joints'][j]['coordinates'])
@@ -70,7 +70,7 @@ Created on Mon Nov 18 08:09:22 2024
 # model.add_support(m['joints'][4], 1)
 # E = 200e9
 # A = 0.001
-# p1 = property.truss_property('steel', E, A)
+# p1 = property.truss_section('steel', E, A)
 # model.add_truss_member(m, 1, [1, 2], p1)
 # model.add_truss_member(m, 2, [3, 2], p1)
 # model.add_truss_member(m, 3, [4, 2], p1)
@@ -83,25 +83,25 @@ Created on Mon Nov 18 08:09:22 2024
 
 import pystran
 from pystran import model
-from pystran import property
+from pystran import section
 from pystran import geometry
 from numpy import array, dot, outer
+
 m = model.create(2)
 model.add_joint(m, 1, [0.0, 0.0])
 model.add_joint(m, 2, [10.0, 0.0])
-model.add_support(m['joints'][1], 0)
-model.add_support(m['joints'][1], 1)
-model.add_support(m['joints'][1], 2)
+model.add_support(m["joints"][1], 0)
+model.add_support(m["joints"][1], 1)
+model.add_support(m["joints"][1], 2)
 E = 200e9
 A = 0.001
 I = 0.001
-p1 = property.beam_2d_property('steel', E, A, I)
+p1 = section.beam_2d_section("steel", E, A, I)
 model.add_beam_member(m, 1, [1, 2], p1)
-model.add_load(m['joints'][2], 2, -1000)
+model.add_load(m["joints"][2], 2, -1000)
 model.number_dofs(m)
-print(m['nfreedof'])
-print(m['ntotaldof'])
-print([j['dof'] for j in m['joints'].values()])
+print(m["nfreedof"])
+print(m["ntotaldof"])
+print([j["dof"] for j in m["joints"].values()])
 
 model.solve(m)
-    

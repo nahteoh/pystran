@@ -18,36 +18,35 @@ Space truss dome in section 2.4.2
 
 Vertical deflection at the crown: -.20641184e+00 in (linear analysis)
 """
-from context import pystran
-from pystran import model
-from pystran import property
-from pystran import geometry
-from pystran import truss
-from pystran import plots
 from numpy import array, dot, outer, concatenate
 from numpy.linalg import norm
+from context import pystran
+from pystran import model
+from pystran import section
+from pystran import plots
 
 m = model.create(3)
 
-model.add_joint(m, 1, [0.0, 0.0, .32346000e1])
-model.add_joint(m, 2, [.49212500e1, .85239000e1, .24472000e1])
-model.add_joint(m, 3, [-.49212500e1, .85239000e1, .24472000e1])
-model.add_joint(m, 4, [-.98425000e1, 0.0, .24472000e1])
-model.add_joint(m, 5, [-.49212500e1, -.85239000e1, .24472000e1])
-model.add_joint(m, 6, [.49212500e1, -.85239000e1, .24472000e1])
-model.add_joint(m, 7, [.98425000e1, 0.0, .24472000e1])
-model.add_joint(m, 8, [0.0, .19685000e02, 0.0])
-model.add_joint(m, 9, [-.17047200e02, .98425000e1, 0.0])
-model.add_joint(m, 10, [-.17047200e02, -.98425000e1, 0.0])
-model.add_joint(m, 11, [0.0, -.19685000e02, 0.0])
-model.add_joint(m, 12, [.17047200e02, -.98425000e1, 0.0])
-model.add_joint(m, 13, [.17047200e02, .98425000e1, 0.0])
+model.add_joint(m, 1, [0.0, 0.0, 0.32346000e1])
+model.add_joint(m, 2, [0.49212500e1, 0.85239000e1, 0.24472000e1])
+model.add_joint(m, 3, [-0.49212500e1, 0.85239000e1, 0.24472000e1])
+model.add_joint(m, 4, [-0.98425000e1, 0.0, 0.24472000e1])
+model.add_joint(m, 5, [-0.49212500e1, -0.85239000e1, 0.24472000e1])
+model.add_joint(m, 6, [0.49212500e1, -0.85239000e1, 0.24472000e1])
+model.add_joint(m, 7, [0.98425000e1, 0.0, 0.24472000e1])
+model.add_joint(m, 8, [0.0, 0.19685000e02, 0.0])
+model.add_joint(m, 9, [-0.17047200e02, 0.98425000e1, 0.0])
+model.add_joint(m, 10, [-0.17047200e02, -0.98425000e1, 0.0])
+model.add_joint(m, 11, [0.0, -0.19685000e02, 0.0])
+model.add_joint(m, 12, [0.17047200e02, -0.98425000e1, 0.0])
+model.add_joint(m, 13, [0.17047200e02, 0.98425000e1, 0.0])
 
 E = 30000000.0
 A = 0.0155
-p1 = property.truss_property('steel', E, A)
+p1 = section.truss_section("steel", E, A)
 
-for id, j in enumerate([
+for id, j in enumerate(
+    [
         [1, 2],
         [1, 3],
         [1, 4],
@@ -71,30 +70,32 @@ for id, j in enumerate([
         [4, 5],
         [5, 6],
         [6, 7],
-        [7, 2]
-    ]):
+        [7, 2],
+    ]
+):
     model.add_truss_member(m, id, j, p1)
 
 for i in [8, 9, 10, 11, 12, 13]:
-    for d in range(m['dim']):
-        model.add_support(m['joints'][i], d)
-        
-model.add_load(m['joints'][1], 2, -220.46)
+    for d in range(m["dim"]):
+        model.add_support(m["joints"][i], d)
+
+model.add_load(m["joints"][1], 2, -220.46)
 
 model.number_dofs(m)
-print('Total Degrees of Freedom = ', m['ntotaldof'])
-print('Free Degrees of Freedom = ', m['nfreedof'])
+print("Total Degrees of Freedom = ", m["ntotaldof"])
+print("Free Degrees of Freedom = ", m["nfreedof"])
 
 model.solve(m)
 
-for j in m['joints'].values():
-    print(j['displacements'])
-    
-if norm(m['joints'][1]['displacements'][2] - (-0.20641184e+00)) > 1.e-3 * abs(-0.20641184e+00):
-    raise ValueError('Displacement calculation error')
-else:
-    print('Displacement calculation OK')
+for j in m["joints"].values():
+    print(j["displacements"])
 
+if norm(m["joints"][1]["displacements"][2] - (-0.20641184e00)) > 1.0e-3 * abs(
+    -0.20641184e00
+):
+    raise ValueError("Displacement calculation error")
+else:
+    print("Displacement calculation OK")
 
 
 # for b in m['truss_members'].values():
@@ -105,11 +106,9 @@ else:
 #     u = concatenate((i['displacements'], j['displacements']))
 #     eps = dot(B, u)
 #     print('Bar ' + str(connectivity) + ' force = ', E * A * eps[0])
-    
 
 
 plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_deformations(m, 10.0)
 plots.show(m)
-    
