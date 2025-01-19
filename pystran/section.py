@@ -92,7 +92,7 @@ def close_points(points):
     return numpy.append(p, [p[0]], axis=0)
 
 
-def hollow_circle(innerradius, outerradius):
+def circular_tube(innerradius, outerradius):
     """
     Returns the area, moments of inertia and torsion constant for a hollow circle (tube).
     """
@@ -109,6 +109,8 @@ def hollow_circle(innerradius, outerradius):
 def i_beam(H, B, tf, tw):
     """
     Returns the area, moments of inertia and torsion constant for an I-beam.
+
+    The axis parallel to the flanges is y, the axis parallel to the web is z.
     """
     A = B * H - (B - tw) * (H - 2 * tf)
     Iy = (B / 12) * H**3 - ((B - tw) / 12) * (H - 2 * tf) ** 3
@@ -119,4 +121,20 @@ def i_beam(H, B, tf, tw):
     )
     Ix = Iy + Iz
     J = (2 * B * tf**3 + (H - 2 * tf) * tw**3) / 3
+    return A, Ix, Iy, Iz, J
+
+
+def square_tube(H, B, th, tb):
+    """
+    Returns the area, moments of inertia and torsion constant for a square tube.
+
+    The axis parallel to the B dimension is y, the axis parallel to the H
+    dimension is z.
+    """
+    Bi, Hi = (B - 2 * tb), (H - 2 * th)
+    A = B * H - Bi * Hi
+    Iy = (B / 12) * H**3 - (Bi / 12) * Hi**3
+    Iz = (B**3 / 12) * H - (Bi**3 / 12) * Hi
+    Ix = Iy + Iz
+    J = 2 * tb * th * Hi**2 * Bi**2 / (H * tb + B * th - tb**2 - th**2)
     return A, Ix, Iy, Iz, J
