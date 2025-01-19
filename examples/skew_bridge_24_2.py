@@ -1,12 +1,10 @@
 """
 Created on 01/12/2025
 
-Example 5.8 from Matrix Structural Analysis: Second Edition 2nd Edition by
-William McGuire, Richard H. Gallagher, Ronald D. Ziemian 
+Structural Analysis: A Unified Classical and Matrix, Ghali, Amin; Neville,
+Adam -- Edition 7, 2017, Taylor and Francis
 
-The section properties are not completely defined in the book.  They are
-taken from example 4.8, which does not provide both second moments of area.
-They are taken here as both the same.
+Example 24.2 - Skew Bridge
 """
 
 from context import pystran
@@ -15,14 +13,15 @@ from pystran import section
 from pystran import plots
 
 L = 6.0
-E = 2.0e11
+E = 2.0e10
 G = E / (2 * (1 + 0.3))
-h = 0.4
+h = 0.2
 b = 0.2
 Iz = b * h**3 / 12
 Iy = h * b**3 / 12
 Ix = Iy + Iz
-J = E * Iz / G
+J = 0.6 * E * Iy / G
+q = 1.0e3
 
 m = model.create(3)
 
@@ -57,7 +56,7 @@ model.add_beam_member(m, 6, [H, I], s1)
 model.add_beam_member(m, 7, [H, O], s1)
 model.add_beam_member(m, 8, [O, B], s1)
 
-model.add_load(m["joints"][O], model.U3, -100e3)
+model.add_load(m["joints"][O], model.U3, -L * q)
 
 model.number_dofs(m)
 
@@ -68,11 +67,12 @@ print([j["dof"] for j in m["joints"].values()])
 
 model.solve(m)
 
-print([j["displacements"] for j in m["joints"].values()])
+print(m["joints"][O]["displacements"])
+print(m["joints"][B]["displacements"])
 
 # print(m['K'][0:m['nfreedof'], 0:m['nfreedof']])
 
-print(m["U"][0 : m["nfreedof"]])
+# print(m["U"][0 : m["nfreedof"]])
 
 
 # if norm(b['displacements'] - [ 0.,  0., -0.02238452,  0.00419677,  0.00593197,0.]) > 1.e-5:
@@ -80,11 +80,14 @@ print(m["U"][0 : m["nfreedof"]])
 # else:
 #     print('Displacement calculation OK')
 
-# print('Reference: ', [-0.02238452,  0.00419677,  0.00593197])
+print("Deflection: ", 10.68 * L * (q * L**3) / (1000 * E * Iy))
+print("Deflection: ", 20.31 * L * (q * L**3) / (1000 * E * Iy))
+# print("Reference: ", -7.45 * (q * L**3) / (1000 * E * Iy))
+# print("Reference: ", 21.13 * (q * L**3) / (1000 * E * Iy))
 
 plots.plot_setup(m)
 plots.plot_members(m)
-plots.plot_deformations(m, 300.0)
+plots.plot_deformations(m, 100.0)
 # ax = plots.plot_shear_forces(m, scale=0.50e-3)
 # ax.set_title('Shear forces')
 plots.show(m)
