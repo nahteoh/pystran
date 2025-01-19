@@ -2,8 +2,9 @@
 Define the functions for defining and manipulating a model.
 """
 
+from math import sqrt
 import numpy
-from numpy import array, zeros, dot, identity
+from numpy import array, zeros, dot
 import scipy
 import pystran.section
 
@@ -30,6 +31,7 @@ def create(dim=2):
     m["joints"] = dict()
     m["truss_members"] = dict()
     m["beam_members"] = dict()
+
     global U1
     global U2
     global U3
@@ -100,10 +102,17 @@ def add_support(j, dof, value=0.0):
     """
     if "supports" not in j:
         j["supports"] = dict()
+    dim = len(j["coordinates"])
     if dof == CLAMPED:
-        j["supports"] = {U1: 0.0, U2: 0.0, U3: 0.0, UR1: 0.0, UR2: 0.0, UR3: 0.0}
+        if dim == 2:
+            j["supports"] = {U1: 0.0, U2: 0.0, UR3: 0.0}
+        else:
+            j["supports"] = {U1: 0.0, U2: 0.0, U3: 0.0, UR1: 0.0, UR2: 0.0, UR3: 0.0}
     elif dof == PINNED:
-        j["supports"] = {U1: 0.0, U2: 0.0, U3: 0.0}
+        if dim == 2:
+            j["supports"] = {U1: 0.0, U2: 0.0}
+        else:
+            j["supports"] = {U1: 0.0, U2: 0.0, U3: 0.0}
     else:
         j["supports"][dof] = value
     return None
@@ -116,6 +125,16 @@ def add_load(j, dof, value):
     if "loads" not in j:
         j["loads"] = dict()
     j["loads"][dof] = value
+    return None
+
+
+def add_mass(j, dof, value):
+    """
+    Add a mass to a joint.
+    """
+    if "mass" not in j:
+        j["mass"] = dict()
+    j["mass"][dof] = value
     return None
 
 
@@ -222,6 +241,11 @@ def solve_free_vibration(m):
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         pystran.beam.assemble_stiffness(K, member, i, j)
         pystran.beam.assemble_mass(M, member, i, j)
+    for j in m["joints"].values():
+        if "mass" in j:
+            for dof, value in j["mass"].items():
+                gr = j["dof"][dof]
+                M[gr, gr] += value
 
     m["K"] = K
     m["M"] = M
@@ -236,9 +260,9 @@ def solve_free_vibration(m):
 
     # Solved the eigenvalue problem
     eigvals, eigvecs = scipy.linalg.eigh(K[0:nf, 0:nf], M[0:nf, 0:nf])
-    print(eigvals)
 
     m["eigvals"] = eigvals
+    m["frequencies"] = [sqrt(ev) / 2 / numpy.pi for ev in eigvals]
     m["eigvecs"] = eigvecs
 
     return

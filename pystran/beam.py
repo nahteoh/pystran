@@ -366,7 +366,8 @@ def assemble_mass(Mg, member, i, j):
     rho, A = sect["rho"], sect["A"]
     if beam_is_2d:
         e_x, e_z, h = beam_2d_member_geometry(i, j)
-        m = beam_2d_mass(e_x, e_z, h, rho, A)
+        I = sect["I"]
+        m = beam_2d_mass(e_x, e_z, h, rho, A, I)
     else:
         e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
         Ix, Iy, Iz = sect["Ix"], sect["Iy"], sect["Iz"]
@@ -375,15 +376,18 @@ def assemble_mass(Mg, member, i, j):
     return Mg
 
 
-def beam_2d_mass(e_x, e_z, h, rho, A):
+def beam_2d_mass(e_x, e_z, h, rho, A, I):
     """
     Compute beam mass matrix.
     """
+    HLIy = rho * I * h / 2.0
     n1 = len(e_x) + 1
     m = zeros((2 * n1, 2 * n1))
     for i in range(len(e_x)):
         m[i, i] = rho * A * h / 2
         m[i + n1, i + n1] = rho * A * h / 2
+    m[n1 - 1, n1 - 1] = HLIy
+    m[2 * n1 - 1, 2 * n1 - 1] = HLIy
     return m
 
 
