@@ -6,18 +6,19 @@ second moment of area, and also orientation of the cross section profile.
 """
 
 
-def truss_section(name, E, A):
+def truss_section(name, E=0.0, A=0.0, rho=0.0):
     """
     Define truss section.
     """
     s = dict()
     s["name"] = name
     s["E"] = E
+    s["rho"] = rho
     s["A"] = A
     return s
 
 
-def beam_2d_section(name, E, A, I):
+def beam_2d_section(name, E=0.0, A=0.0, I=0.0, rho=0.0):
     """
     Define 2d beam section.
 
@@ -29,12 +30,24 @@ def beam_2d_section(name, E, A, I):
     s = dict()
     s["name"] = name
     s["E"] = E
+    s["rho"] = rho
     s["A"] = A
     s["I"] = I
     return s
 
 
-def beam_3d_section(name, E, G, A, Ix, Iy, Iz, J, xz_vector):
+def beam_3d_section(
+    name,
+    E=0.0,
+    G=0.0,
+    A=0.0,
+    Ix=0.0,
+    Iy=0.0,
+    Iz=0.0,
+    J=0.0,
+    rho=0.0,
+    xz_vector=[0, 0, 1],
+):
     """
     Define 3d beam section.
 
@@ -50,6 +63,7 @@ def beam_3d_section(name, E, G, A, Ix, Iy, Iz, J, xz_vector):
     s["name"] = name
     s["E"] = E
     s["G"] = G
+    s["rho"] = rho
     s["A"] = A
     s["Ix"] = Ix
     s["Iy"] = Iy

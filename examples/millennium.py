@@ -9,6 +9,7 @@ from pystran import plots
 
 E = 2.0e11
 G = E / (2 * (1 + 0.3))
+rho = 7.85e3
 
 h = 0.2
 b = 3.0
@@ -18,7 +19,9 @@ Iz = h * b**3 / 12
 Ix = Iy + Iz
 J = Ix
 xz_vector = [0, 0, 1]
-sdeck = section.beam_3d_section("sdeck", E, G, A, Ix, Iy, Iz, J, xz_vector)
+sdeck = section.beam_3d_section(
+    "sdeck", E=E, rho=rho, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
+)
 
 h = 0.6
 b = 0.6
@@ -28,7 +31,9 @@ Iz = h * b**3 / 12
 Ix = Iy + Iz
 J = Ix
 xz_vector = [0, 1, 0]
-spylon = section.beam_3d_section("spylon", E, G, A, Ix, Iy, Iz, J, xz_vector)
+spylon = section.beam_3d_section(
+    "spylon", E=E, rho=rho, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
+)
 
 h = 0.3
 b = 0.3
@@ -38,13 +43,15 @@ Iz = h * b**3 / 12
 Ix = Iy + Iz
 J = Ix
 xz_vector = [0, 1, 0]
-scross = section.beam_3d_section("scross", E, G, A, Ix, Iy, Iz, J, xz_vector)
+scross = section.beam_3d_section(
+    "scross", E=E, rho=rho, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
+)
 
 
 h = 0.05
 b = 0.05
 A = b * h
-scable = section.truss_section("scable", E, A)
+scable = section.truss_section("scable", E=E, A=A, rho=rho)
 
 m = model.create(3)
 
@@ -144,8 +151,8 @@ model.solve_free_vibration(m)
 
 plots.plot_setup(m)
 plots.plot_members(m)
-model.copy_mode(m, 3)
-plots.plot_deformations(m, 2.0)
+model.copy_mode(m, 0)
+plots.plot_deformations(m, 500.0)
 # ax = plots.plot_shear_forces(m, scale=0.50e-3)
 # ax.set_title('Shear forces')
 plots.show(m)

@@ -209,20 +209,21 @@ def solve_free_vibration(m):
     Solve the free vibration of the discrete model.
     """
     nt, nf = m["ntotaldof"], m["nfreedof"]
-    # Assemble global stiffness matrix
+    # Assemble global stiffness matrix and mass matrix
     K = zeros((nt, nt))
+    M = zeros((nt, nt))
     for member in m["truss_members"].values():
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         pystran.truss.assemble_stiffness(K, member, i, j)
+        pystran.truss.assemble_mass(M, member, i, j)
     for member in m["beam_members"].values():
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         pystran.beam.assemble_stiffness(K, member, i, j)
+        pystran.beam.assemble_mass(M, member, i, j)
 
     m["K"] = K
-
-    M = identity(nt)
     m["M"] = M
 
     U = zeros(m["ntotaldof"])

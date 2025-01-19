@@ -354,3 +354,82 @@ def assemble_stiffness(Kg, member, i, j):
         dof = concatenate([i["dof"][3:6], j["dof"][3:6]])
         Kg = assemble.assemble(Kg, dof, k)
     return Kg
+
+
+def assemble_mass(Mg, member, i, j):
+    """
+    Assemble beam mass matrix.
+    """
+    beam_is_2d = len(i["coordinates"]) == len(j["coordinates"]) == 2
+    dof = concatenate([i["dof"], j["dof"]])
+    sect = member["section"]
+    rho, A = sect["rho"], sect["A"]
+    if beam_is_2d:
+        e_x, e_z, h = beam_2d_member_geometry(i, j)
+        m = beam_2d_mass(e_x, e_z, h, rho, A)
+    else:
+        e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+        Ix, Iy, Iz = sect["Ix"], sect["Iy"], sect["Iz"]
+        m = beam_3d_mass(e_x, e_y, e_z, h, rho, A, Ix, Iy, Iz)
+    Mg = assemble.assemble(Mg, dof, m)
+    return Mg
+
+
+def beam_2d_mass(e_x, e_z, h, rho, A):
+    """
+    Compute beam mass matrix.
+    """
+    n1 = len(e_x) + 1
+    m = zeros((2 * n1, 2 * n1))
+    for i in range(len(e_x)):
+        m[i, i] = rho * A * h / 2
+        m[i + n1, i + n1] = rho * A * h / 2
+    return m
+
+
+def beam_3d_mass(e_x, e_y, e_z, h, rho, A, Ix, Iy, Iz):
+    """
+    Compute beam mass matrix.
+
+    The matrix is lumped and rotation inertias are included.
+    """
+    n1 = len(e_x)
+    m = zeros((4 * n1, 4 * n1))
+    HLM = A * rho * h / 2.0
+    HLIx = rho * Ix * h / 2.0
+    HLIy = rho * Iy * h / 2.0
+    HLIz = rho * Iz * h / 2.0
+    m[0, 0] = HLM
+    m[1, 1] = HLM
+    m[2, 2] = HLM
+    # m[3, 3] = HLIx
+    # m[4, 4] = HLIy
+    # m[5, 5] = HLIz
+    m[6, 6] = HLM
+    m[7, 7] = HLM
+    m[8, 8] = HLM
+    # m[9, 9] = +HLIx
+    # m[10, 10] = +HLIy
+    # m[11, 11] = +HLIz
+    # T = zeros(m.shape)
+    # T[0:3, 0] = e_x
+    # T[0:3, 1] = e_y
+    # T[0:3, 2] = e_z
+    # T[3:6, 3:6] = T[0:3, 0:3]
+    # T[6:9, 6:9] = T[0:3, 0:3]
+    # T[9:12, 9:12] = T[0:3, 0:3]
+    # m1 = dot(dot(T, m), T.T)
+    # print(norm(m1 - m1.T))
+    R = zeros((3, 3))
+    R[0:3, 0] = e_x
+    R[0:3, 1] = e_y
+    R[0:3, 2] = e_z
+    msub = zeros((3, 3))
+    msub[0, 0] = +HLIx
+    msub[1, 1] = +HLIy
+    msub[2, 2] = +HLIz
+    msub = dot(dot(R, msub), R.T)
+    m[3:6, 3:6] = msub
+    m[9:12, 9:12] = msub
+    # print(norm(m - m1))
+    return m

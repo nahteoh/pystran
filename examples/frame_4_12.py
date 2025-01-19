@@ -35,30 +35,36 @@ model.add_support(c, model.UR3)
 E = 2.0e11
 G = E / (2 * (1 + 0.3))
 A = 6000 / 10**6
-I2 = 200e6 / 10**12
-I3 = I2 / 2
-I1 = I2 / 2
+Iy = 200e6 / 10**12
+Iz = Iy / 2
+Ix = Iy / 2
 J = 300e3 / 10**12
 xz_vector = [0, 0, 1]
-s1 = section.beam_3d_section("property_1", E, G, A, I1, I2, I3, J, xz_vector)
+s1 = section.beam_3d_section(
+    "property_1", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
+)
 model.add_beam_member(m, 1, [1, 2], s1)
 E = 2.0e11
 A = 4000 / 10**6
-I2 = 50e6 / 10**12
-I3 = I2 / 2
-I1 = I2 / 2
+Iy = 50e6 / 10**12
+Iz = Iy / 2
+Ix = Iy / 2
 J = 100e3 / 10**12
 xz_vector = [0, 0, 1]
-s2 = section.beam_3d_section("property_2", E, G, A, I1, I2, I3, J, xz_vector)
+s2 = section.beam_3d_section(
+    "property_2", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
+)
 model.add_beam_member(m, 2, [3, 2], s2)
 E = 2.0e11
 A = 4000 / 10**6
-I2 = 5000e6 / 10**12
-I3 = I2 / 2
-I1 = I2 / 2
+Iy = 5000e6 / 10**12
+Iz = Iy / 2
+Ix = Iy / 2
 J = 10000e3 / 10**12
 xz_vector = [0, 1, 0]
-s3 = section.beam_3d_section("property_3", E, G, A, I1, I2, I3, J, xz_vector)
+s3 = section.beam_3d_section(
+    "property_3", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
+)
 model.add_beam_member(m, 3, [4, 2], s3)
 
 d = m["joints"][4]
@@ -83,6 +89,6 @@ print(m["U"][0 : m["nfreedof"]])
 plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_deformations(m, 100.0)
-ax = plots.plot_shear_forces(m, scale=0.50e-3)
-ax.set_title("Shear forces")
+# ax = plots.plot_shear_forces(m, scale=0.50e-3)
+# ax.set_title("Shear forces")
 plots.show(m)
