@@ -34,7 +34,7 @@ Ix = Iy + Iz
 J = Ix
 xz_vector = [0, 0, 1]
 s1 = section.beam_3d_section(
-    "property_1", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
+    "sect_1", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
 )
 model.add_beam_member(m, 1, [1, 2], s1)
 

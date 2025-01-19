@@ -39,7 +39,9 @@ Iz = Iy / 5
 Ix = Iy / 5
 J = 300e3 / 10**12
 xz_vector = [0, 0, 1]
-s1 = section.beam_3d_section("property_1", E, G, A, Ix, Iy, Iz, J, xz_vector)
+s1 = section.beam_3d_section(
+    "sect_1", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
+)
 model.add_beam_member(m, 1, [1, 2], s1)
 
 d = m["joints"][2]
