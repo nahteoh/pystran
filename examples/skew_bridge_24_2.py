@@ -63,17 +63,10 @@ model.number_dofs(m)
 print("Number of free degrees of freedom = ", m["nfreedof"])
 print("Number of all degrees of freedom = ", m["ntotaldof"])
 
-print([j["dof"] for j in m["joints"].values()])
-
 model.solve(m)
 
 print(m["joints"][O]["displacements"])
 print(m["joints"][B]["displacements"])
-
-# print(m['K'][0:m['nfreedof'], 0:m['nfreedof']])
-
-# print(m["U"][0 : m["nfreedof"]])
-
 
 # if norm(b['displacements'] - [ 0.,  0., -0.02238452,  0.00419677,  0.00593197,0.]) > 1.e-5:
 #     raise ValueError('Displacement calculation error')

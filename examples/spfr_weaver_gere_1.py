@@ -9,7 +9,6 @@ taken from example 4.8, which does not provide both second moments of area.
 They are taken here as both the same.
 """
 
-from math import sqrt
 from numpy.linalg import norm
 from context import pystran
 from pystran import model
@@ -66,9 +65,9 @@ print("Number of all degrees of freedom = ", m["ntotaldof"])
 
 model.solve(m)
 
-for id in [jB, jC, jE]:
-    j = m["joints"][id]
-    print(id, j["displacements"])
+for jid in [jB, jC, jE]:
+    j = m["joints"][jid]
+    print(jid, j["displacements"])
 
 # print(m['K'][0:m['nfreedof'], 0:m['nfreedof']])
 
