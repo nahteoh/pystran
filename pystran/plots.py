@@ -321,26 +321,59 @@ def plot_beam_orientation(m, scale=1.0):
     """
     ax = plt.gca()
     for member in m["beam_members"].values():
+        sect = member["section"]
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         ci, cj = i["coordinates"], j["coordinates"]
         xm = (ci + cj) / 2.0
         if m["dim"] == 3:
-            raise NotImplementedError("3D not implemented")
+            e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+            xs = zeros(2)
+            ys = zeros(2)
+            zs = zeros(2)
+            xs[0] = xm[0]
+            ys[0] = xm[1]
+            zs[0] = xm[2]
+            xs[1] = xs[0] + scale * e_x[0]
+            ys[1] = ys[0] + scale * e_x[1]
+            zs[1] = zs[0] + scale * e_x[2]
+            ax.plot(xs, ys, zs, "r-", lw=3)
+            xs = zeros(2)
+            ys = zeros(2)
+            zs = zeros(2)
+            xs[0] = xm[0]
+            ys[0] = xm[1]
+            zs[0] = xm[2]
+            xs[1] = xs[0] + scale * e_y[0]
+            ys[1] = ys[0] + scale * e_y[1]
+            zs[1] = zs[0] + scale * e_y[2]
+            ax.plot(xs, ys, zs, "g-", lw=3)
+            xs = zeros(2)
+            ys = zeros(2)
+            zs = zeros(2)
+            xs[0] = xm[0]
+            ys[0] = xm[1]
+            zs[0] = xm[2]
+            xs[1] = xs[0] + scale * e_z[0]
+            ys[1] = ys[0] + scale * e_z[1]
+            zs[1] = zs[0] + scale * e_z[2]
+            ax.plot(xs, ys, zs, "b-", lw=3)
         else:
             e_x, e_z, h = beam_2d_member_geometry(i, j)
             xs = zeros(2)
             ys = zeros(2)
             xs[0] = xm[0]
-            xs[1] = xm[0] + scale * e_x[0]
             ys[0] = xm[1]
-            ys[1] = xm[1] + scale * e_x[1]
-            ax.plot(xs, ys, "r-")
+            xs[1] = xs[0] + scale * e_x[0]
+            ys[1] = ys[0] + scale * e_x[1]
+            ax.plot(xs, ys, "r-", lw=3)
+            xs = zeros(2)
+            ys = zeros(2)
             xs[0] = xm[0]
-            xs[1] = xm[0] + scale * e_z[0]
             ys[0] = xm[1]
-            ys[1] = xm[1] + scale * e_z[1]
-            ax.plot(xs, ys, "b-")
+            xs[1] = xs[0] + scale * e_z[0]
+            ys[1] = ys[0] + scale * e_z[1]
+            ax.plot(xs, ys, "b-", lw=3)
     return ax
 
 
