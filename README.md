@@ -1,6 +1,7 @@
 # pystran: Python for Structural Analysis
 
-[pystran capabilities in graphic abstract](splash.png)
+![Alt pystran capabilities in graphic abstract](splash.png "pystran")
+
 
 ## Limitations
 
