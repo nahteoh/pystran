@@ -24,6 +24,7 @@ G = E / (2 * (1 + 0.3))
 m = model.create(3)
 
 model.add_joint(m, 1, [0.0, 0.0, 0.0])
+model.add_joint(m, 12, [-L / 2, 0.0, 0.0])
 model.add_joint(m, 2, [-L, 0.0, 0.0])
 model.add_joint(m, 3, [0.0, -L, 0.0])
 model.add_joint(m, 4, [0.0, 0.0, +L])
@@ -32,10 +33,11 @@ model.add_joint(m, 5, [0.0, 0.0, -L])
 model.add_support(m["joints"][2], model.CLAMPED)
 model.add_support(m["joints"][3], model.CLAMPED)
 model.add_support(m["joints"][4], model.CLAMPED)
+model.add_support(m["joints"][5], model.CLAMPED)
 
 # Member 1, 2: W18x130
 A, Ix, Iy, Iz, J = section.i_beam(19.3, 11.2, 1.2, 0.67)
-xz_vector = dot(rotx(-30), array([0, 0, 1]))
+xz_vector = dot(rotx(-30), array([0, 1, 0]))
 sect_1 = section.beam_3d_section(
     "sect_1", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
 )
@@ -58,13 +60,17 @@ sect_4 = section.beam_3d_section(
     "sect_4", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
 )
 
-model.add_beam_member(m, 1, [1, 2], sect_1)
+model.add_beam_member(m, 1, [1, 12], sect_1)
+model.add_beam_member(m, 12, [12, 2], sect_1)
 model.add_beam_member(m, 2, [1, 3], sect_2)
 model.add_beam_member(m, 3, [1, 4], sect_3)
 model.add_beam_member(m, 4, [1, 5], sect_4)
 
 
-model.add_load(m["joints"][1], model.U3, -5e3 - 7.5e3)
+model.add_load(m["joints"][1], model.U1, 1000)
+model.add_load(m["joints"][12], model.UR2, 500)
+model.add_load(m["joints"][1], model.U3, -2 * L / 2)
+model.add_load(m["joints"][1], model.UR1, 2 * L**2 / 12)
 
 model.number_dofs(m)
 
@@ -90,7 +96,8 @@ model.solve(m)
 
 # print("Displacement calculation OK")
 
-# print('Reference: ', [-0.02238452,  0.00419677,  0.00593197])
+print("Displacements: ", m["joints"][1]["displacements"])
+print("Reference: ", [0.1865, 0.0316, -0.028, 3.095e-3, -9.256e-3, -0.0275])
 
 plots.plot_setup(m)
 plots.plot_members(m)
@@ -99,7 +106,7 @@ plots.show(m)
 
 plots.plot_setup(m)
 plots.plot_members(m)
-plots.plot_deformations(m, 10.0)
+plots.plot_deformations(m, 100.0)
 # ax = plots.plot_shear_forces(m, scale=0.50e-3)
 # ax.set_title('Shear forces')
 plots.show(m)
