@@ -6,6 +6,7 @@ and Computation, 5th ed., Springer, 2001
 """
 
 from numpy import array, dot, pi
+from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
@@ -37,13 +38,13 @@ model.add_support(m["joints"][5], model.CLAMPED)
 
 # Member 1, 2: W18x130
 A, Ix, Iy, Iz, J = section.i_beam(19.3, 11.2, 1.2, 0.67)
-xz_vector = dot(rotx(-30), array([0, 1, 0]))
+xz_vector = dot(rotx(-30), array([0, 0, 1]))
 sect_1 = section.beam_3d_section(
     "sect_1", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
 )
 # Member 1, 3: W18x130
 A, Ix, Iy, Iz, J = section.i_beam(19.3, 11.2, 1.2, 0.67)
-xz_vector = array([1, 0, 0])
+xz_vector = array([0, 0, 1])
 sect_2 = section.beam_3d_section(
     "sect_2", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
 )
@@ -55,7 +56,7 @@ sect_3 = section.beam_3d_section(
 )
 # Member 1, 5: W14x82
 A, Ix, Iy, Iz, J = section.i_beam(14.3, 10.1, 0.855, 0.51)
-xz_vector = array([1, 0, 0])
+xz_vector = array([0, 1, 0])
 sect_4 = section.beam_3d_section(
     "sect_4", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
 )
@@ -68,7 +69,7 @@ model.add_beam_member(m, 4, [1, 5], sect_4)
 
 
 model.add_load(m["joints"][1], model.U1, 1000)
-model.add_load(m["joints"][12], model.UR2, 500)
+model.add_load(m["joints"][12], model.U2, 500)
 model.add_load(m["joints"][1], model.U3, -2 * L / 2)
 model.add_load(m["joints"][1], model.UR1, 2 * L**2 / 12)
 
@@ -87,14 +88,11 @@ model.solve(m)
 
 # print(m["U"][0 : m["nfreedof"]])# out
 
+refsol_1 = array([0.1865, 0.0316, -0.028, 0.003095, -0.009256, -0.0275])
+if norm(m["joints"][1]["displacements"] - refsol_1) > 1.0e-1 * norm(refsol_1):
+    raise ValueError("Displacement calculation error")
 
-# if (
-#     norm(b["displacements"] - [0.0, 0.0, -0.02238452, 0.00419677, 0.00593197, 0.0])
-#     > 1.0e-5
-# ):
-#     raise ValueError("Displacement calculation error")
-
-# print("Displacement calculation OK")
+print("Displacement calculation OK")
 
 print("Displacements: ", m["joints"][1]["displacements"])
 print("Reference: ", [0.1865, 0.0316, -0.028, 3.095e-3, -9.256e-3, -0.0275])
