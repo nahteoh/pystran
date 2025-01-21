@@ -191,14 +191,10 @@ def beam_2d_bending_stiffness(e_x, e_z, h, E, I):
     return K
 
 
-def beam_3d_xz_curv_displ_matrix(e_x, e_y, e_z, h, xi):
+def beam_3d_xz_curv_displ_matrix(e_y, e_z, h, xi):
     """
-    Compute beam curvature-displacement matrix in the local x-z plane.
-
-    The quantity computed is
-    ```math
-    \\frac{d^2 N(x)}{d x^2} =  \\frac{d^2 N(\\xi)}{d \\xi^2} (2/h)^2
-    ```
+    Compute beam curvature-displacement matrix in the local x-z plane (i.e.
+    bending about the y axis).
     """
     d2Ndxi2 = beam_3d_xz_shape_fun_xi2(xi)
     B = zeros((1, 12))
@@ -209,14 +205,10 @@ def beam_3d_xz_curv_displ_matrix(e_x, e_y, e_z, h, xi):
     return B
 
 
-def beam_3d_xy_curv_displ_matrix(e_x, e_y, e_z, h, xi):
+def beam_3d_xy_curv_displ_matrix(e_y, e_z, h, xi):
     """
-    Compute beam curvature-displacement matrix in the local x-y plane.
-
-    The quantity computed is
-    ```math
-    \\frac{d^2 N(x)}{d x^2} =  \\frac{d^2 N(\\xi)}{d \\xi^2} (2/h)^2
-    ```
+    Compute beam curvature-displacement matrix in the local x-y plane (i.e.
+    bending about the z axis).
     """
     d2Ndxi2 = beam_3d_xy_shape_fun_xi2(xi)
     B = zeros((1, 12))
@@ -227,7 +219,7 @@ def beam_3d_xy_curv_displ_matrix(e_x, e_y, e_z, h, xi):
     return B
 
 
-def beam_3d_bending_stiffness(e_x, e_y, e_z, h, E, Iy, Iz):
+def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
     """
     Compute 3d beam stiffness matrices for bending in the planes x-y and x-z.
     """
@@ -235,11 +227,11 @@ def beam_3d_bending_stiffness(e_x, e_y, e_z, h, E, Iy, Iz):
     WG = [1, 1]
     Kxy = zeros((12, 12))
     for q in range(2):
-        B = beam_3d_xy_curv_displ_matrix(e_x, e_y, e_z, h, xiG[q])
+        B = beam_3d_xy_curv_displ_matrix(e_y, e_z, h, xiG[q])
         Kxy += E * Iz * outer(B.T, B) * WG[q] * (h / 2)
     Kxz = zeros((12, 12))
     for q in range(2):
-        B = beam_3d_xz_curv_displ_matrix(e_x, e_y, e_z, h, xiG[q])
+        B = beam_3d_xz_curv_displ_matrix(e_y, e_z, h, xiG[q])
         Kxz += E * Iy * outer(B.T, B) * WG[q] * (h / 2)
     return Kxy, Kxz
 
@@ -257,7 +249,7 @@ def beam_2d_curv_displ_matrix(e_x, e_z, h, xi):
     return B
 
 
-def beam_2d_3rd_deriv_displ_matrix(e_x, e_z, h, xi):
+def beam_2d_3rd_deriv_displ_matrix(e_z, h, xi):
     """
     Compute beam third derivative-displacement matrix.
     """
@@ -270,31 +262,31 @@ def beam_2d_3rd_deriv_displ_matrix(e_x, e_z, h, xi):
     return B
 
 
-def beam_3d_xz_3rd_deriv_displ_matrix(e_x, e_y, e_z, h, xi):
+def beam_3d_xz_3rd_deriv_displ_matrix(e_y, e_z, h, xi):
     """
     Compute 3d beam third derivative-displacement matrix for displacements in
     the x-z plane.
     """
     d2Ndxi3 = beam_3d_xz_shape_fun_xi3(xi)
-    B = zeros((1, 6))
-    B[0, 0:2] = d2Ndxi3[0] * (2 / h) ** 3 * e_z
-    B[0, 2] = (h / 2) * d2Ndxi3[1] * (2 / h) ** 3
-    B[0, 3:5] = d2Ndxi3[2] * (2 / h) ** 3 * e_z
-    B[0, 5] = (h / 2) * d2Ndxi3[3] * (2 / h) ** 3
+    B = zeros((1, 12))
+    B[0, 0:3] = d2Ndxi3[0] * (2 / h) ** 3 * e_z
+    B[0, 3:6] = (h / 2) * d2Ndxi3[1] * (2 / h) ** 3 * e_y
+    B[0, 6:9] = d2Ndxi3[2] * (2 / h) ** 3 * e_z
+    B[0, 9:12] = (h / 2) * d2Ndxi3[3] * (2 / h) ** 3 * e_y
     return B
 
 
-def beam_3d_xy_3rd_deriv_displ_matrix(e_x, e_y, e_z, h, xi):
+def beam_3d_xy_3rd_deriv_displ_matrix(e_y, e_z, h, xi):
     """
     Compute 3d beam third derivative-displacement matrix for displacements in
     the x-y plane.
     """
     d2Ndxi3 = beam_3d_xy_shape_fun_xi3(xi)
-    B = zeros((1, 6))
-    B[0, 0:2] = d2Ndxi3[0] * (2 / h) ** 3 * e_y
-    B[0, 2] = (h / 2) * d2Ndxi3[1] * (2 / h) ** 3
-    B[0, 3:5] = d2Ndxi3[2] * (2 / h) ** 3 * e_y
-    B[0, 5] = (h / 2) * d2Ndxi3[3] * (2 / h) ** 3
+    B = zeros((1, 12))
+    B[0, 0:3] = d2Ndxi3[0] * (2 / h) ** 3 * e_y
+    B[0, 3:6] = (h / 2) * d2Ndxi3[1] * (2 / h) ** 3 * e_z
+    B[0, 6:9] = d2Ndxi3[2] * (2 / h) ** 3 * e_y
+    B[0, 9:12] = (h / 2) * d2Ndxi3[3] * (2 / h) ** 3 * e_z
     return B
 
 
@@ -316,7 +308,7 @@ def beam_3d_moment(member, i, j, axis, xi):
     """
     Compute 3d beam moment based on the displacements stored at the joints.
     The moment is computed at the parametric location `xi` along the beam.
-    The moment act about the axis specified by the string `axis`.
+    The moment acts about the axis specified by the string `axis`.
     """
     sect = member["section"]
     e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
@@ -324,10 +316,10 @@ def beam_3d_moment(member, i, j, axis, xi):
     ui, uj = i["displacements"], j["displacements"]
     u = concatenate([ui, uj])
     if axis == "y":
-        B = beam_3d_xz_curv_displ_matrix(e_x, e_y, e_z, h, xi)
+        B = beam_3d_xz_curv_displ_matrix(e_y, e_z, h, xi)
         M = -E * Iy * dot(B, u)
     else:
-        B = beam_3d_xy_curv_displ_matrix(e_x, e_y, e_z, h, xi)
+        B = beam_3d_xy_curv_displ_matrix(e_y, e_z, h, xi)
         M = -E * Iz * dot(B, u)
     return M
 
@@ -374,12 +366,12 @@ def beam_3d_shear_force(member, i, j, axis, xi):
     ui, uj = i["displacements"], j["displacements"]
     u = concatenate([ui, uj])
     if axis == "y":
-        B = beam_3d_xz_3rd_deriv_displ_matrix(e_x, e_y, e_z, h, xi)
-        M = -E * Iy * dot(B, u)
+        B = beam_3d_xz_3rd_deriv_displ_matrix(e_y, e_z, h, xi)
+        Q = -E * Iy * dot(B, u)
     else:
-        B = beam_3d_xy_3rd_deriv_displ_matrix(e_x, e_y, e_z, h, xi)
-        M = -E * Iz * dot(B, u)
-    return M
+        B = beam_3d_xy_3rd_deriv_displ_matrix(e_y, e_z, h, xi)
+        Q = -E * Iz * dot(B, u)
+    return Q
 
 
 def beam_2d_shear_force(member, i, j, xi):
@@ -392,7 +384,7 @@ def beam_2d_shear_force(member, i, j, xi):
     E, I = sect["E"], sect["I"]
     ui, uj = i["displacements"], j["displacements"]
     u = concatenate([ui, uj])
-    B = beam_2d_3rd_deriv_displ_matrix(e_x, e_z, h, xi)
+    B = beam_2d_3rd_deriv_displ_matrix(e_z, h, xi)
     return -E * I * dot(B, u)
 
 
@@ -448,7 +440,7 @@ def assemble_stiffness(Kg, member, i, j):
         sect = member["section"]
         e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
         E, Iy, Iz = sect["E"], sect["Iy"], sect["Iz"]
-        kxy, kxz = beam_3d_bending_stiffness(e_x, e_y, e_z, h, E, Iy, Iz)
+        kxy, kxz = beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz)
         Kg = assemble.assemble(Kg, dof, kxy)
         Kg = assemble.assemble(Kg, dof, kxz)
     # Add stiffness in the axial direction.
@@ -548,25 +540,25 @@ def beam_3d_end_forces(member, i, j):
     Nj = Ni
     Ti = beam_3d_torsion_moment(member, i, j)
     Tj = Ti
-    Mzi = beam_3d_moment(member, i, j, "z", -1.0)
-    Mzj = beam_3d_moment(member, i, j, "z", +1.0)
     Myi = beam_3d_moment(member, i, j, "y", -1.0)
     Myj = beam_3d_moment(member, i, j, "y", +1.0)
+    Mzi = beam_3d_moment(member, i, j, "z", -1.0)
+    Mzj = beam_3d_moment(member, i, j, "z", +1.0)
     Qyi = beam_3d_shear_force(member, i, j, "y", -1.0)
     Qyj = beam_3d_shear_force(member, i, j, "y", +1.0)
     Qzi = beam_3d_shear_force(member, i, j, "z", -1.0)
     Qzj = beam_3d_shear_force(member, i, j, "z", +1.0)
     return dict(
-        Ni=Ni,
-        Qyi=Qyi,
-        Qzi=Qzi,
-        Ti=Ti,
-        Myi=Myi,
-        Mzi=Mzi,
-        Nj=Nj,
-        Qyj=Qyj,
-        Qzj=Qzj,
-        Tj=Tj,
-        Myj=Myj,
-        Mzj=Mzj,
+        Ni=Ni[0],
+        Qyi=Qyi[0],
+        Qzi=Qzi[0],
+        Ti=Ti[0],
+        Myi=-Myi[0],
+        Mzi=-Mzi[0],
+        Nj=-Nj[0],
+        Qyj=-Qyj[0],
+        Qzj=-Qzj[0],
+        Tj=-Tj[0],
+        Myj=Myj[0],
+        Mzj=Mzj[0],
     )

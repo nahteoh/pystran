@@ -14,6 +14,7 @@ from context import pystran
 from pystran import model
 from pystran import section
 from pystran import plots
+from pystran import beam
 
 # US customary units, inches, pounds, seconds
 L = 120.0
@@ -42,12 +43,13 @@ xz_vector = [1, 0, 0]
 sect_1 = section.beam_3d_section(
     "sect_1", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
 )
-model.add_beam_member(m, 1, [3, 1], sect_1)
 xz_vector = [0, 1, 0]
 sect_2 = section.beam_3d_section(
     "sect_2", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
 )
-model.add_beam_member(m, 2, [1, 2], sect_2)
+
+model.add_beam_member(m, 1, [1, 2], sect_2)
+model.add_beam_member(m, 2, [3, 1], sect_1)
 model.add_beam_member(m, 3, [2, 4], sect_2)
 
 model.add_load(m["joints"][1], model.U1, F)
@@ -84,11 +86,23 @@ if norm(m["joints"][2]["displacements"] - ref2) > 1.0e-1 * norm(ref2):
 else:
     print("Displacement calculation OK")
 
+for k in m["beam_members"].keys():
+    member = m["beam_members"][k]
+    connectivity = member["connectivity"]
+    i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+    f = beam.beam_3d_end_forces(member, i, j)
+    print(f"Member {k}: ")
+    print(
+        f" Joint {connectivity[0]}: N={f['Ni']:.5}, Qy={f['Qyi']:.5}, Qz={f['Qzi']:.5}, T={f['Ti']:.5}, My={f['Myi']:.5}, Mz={f['Mzi']:.5}: "
+    )
+    print(
+        f" Joint {connectivity[1]}: N={f['Nj']:.5}, Qy={f['Qyj']:.5}, Qz={f['Qzj']:.5}, T={f['Tj']:.5}, My={f['Myj']:.5}, Mz={f['Mzj']:.5}: "
+    )
 
 plots.plot_setup(m)
 plots.plot_members(m)
-# plots.plot_member_numbers(m)
-plots.plot_deformations(m, 30.0)
+plots.plot_beam_orientation(m, 20)
+plots.plot_deformations(m, 80.0)
 # ax = plots.plot_shear_forces(m, scale=0.50e-3)
 # ax.set_title('Shear forces')
 plots.show(m)
