@@ -365,7 +365,7 @@ def beam_3d_shear_force(member, i, j, axis, xi):
     E, Iy, Iz = sect["E"], sect["Iy"], sect["Iz"]
     ui, uj = i["displacements"], j["displacements"]
     u = concatenate([ui, uj])
-    if axis == "y":
+    if axis == "z":
         B = beam_3d_xz_3rd_deriv_displ_matrix(e_y, e_z, h, xi)
         Q = -E * Iy * dot(B, u)
     else:
@@ -553,12 +553,12 @@ def beam_3d_end_forces(member, i, j):
         Qyi=Qyi[0],
         Qzi=Qzi[0],
         Ti=Ti[0],
-        Myi=-Myi[0],
-        Mzi=-Mzi[0],
+        Myi=Myi[0],
+        Mzi=Mzi[0],
         Nj=-Nj[0],
         Qyj=-Qyj[0],
         Qzj=-Qzj[0],
         Tj=-Tj[0],
-        Myj=Myj[0],
-        Mzj=Mzj[0],
+        Myj=-Myj[0],
+        Mzj=-Mzj[0],
     )
