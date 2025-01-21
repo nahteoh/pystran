@@ -45,7 +45,7 @@ model.add_beam_member(m, 1, [1, 2], s1)
 model.add_beam_member(m, 2, [2, 3], s1)
 model.add_beam_member(m, 3, [2, 4], s1)
 
-model.add_load(m["joints"][3], model.U1, -P)
+model.add_load(m["joints"][3], model.U2, -P)
 
 model.number_dofs(m)
 
