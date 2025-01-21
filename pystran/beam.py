@@ -320,7 +320,7 @@ def beam_3d_moment(member, i, j, axis, xi):
         M = -E * Iy * dot(B, u)
     else:
         B = beam_3d_xy_curv_displ_matrix(e_y, e_z, h, xi)
-        M = -E * Iz * dot(B, u)
+        M = +E * Iz * dot(B, u)
     return M
 
 
