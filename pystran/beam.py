@@ -397,10 +397,18 @@ def beam_2d_shear_force(member, i, j, xi):
 
 
 def beam_3d_stretch_displ_matrix(e_x, h):
+    """
+    Compute beam stretch-displacement matrix.
+
+    The job is delegated to the truss module.
+    """
     return truss.strain_displacement(e_x, h)
 
 
 def beam_3d_axial_stiffness(e_x, h, E, A):
+    """
+    Compute axial stiffness matrix.
+    """
     B = beam_3d_stretch_displ_matrix(e_x, h)
     return E * A * outer(B.T, B) * h
 
