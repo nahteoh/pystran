@@ -15,6 +15,7 @@ from context import pystran
 from pystran import model
 from pystran import section
 from pystran import plots
+from pystran import beam
 
 # SI units
 L = 3.0
@@ -59,27 +60,27 @@ for id in [2, 3, 4]:
     j = m["joints"][id]
     print(id, j["displacements"])
 
-# print(m['K'][0:m['nfreedof'], 0:m['nfreedof']])
 
-# print(m['U'][0:m['nfreedof']])
-
-
-# if norm(m['joints'][1]['displacements'] - [-8.59409726e-04, 5.77635277e-05, 5.00764459e-03, 2.39333188e-03, -1.62316861e-03, 6.81331291e-04]) > 1.e-5:
-#     raise ValueError('Displacement calculation error')
-# else:
-#     print('Displacement calculation OK')
-
-# if norm(m['joints'][2]['displacements'] - [-0.00117605, 0.00325316, 0.00525552, 0.00128843, 0.00172094, -0.00077147]) > 1.e-5:
-#     raise ValueError('Displacement calculation error')
-# else:
-#     print('Displacement calculation OK')
+for k in m["beam_members"].keys():
+    member = m["beam_members"][k]
+    connectivity = member["connectivity"]
+    i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+    f = beam.beam_3d_end_forces(member, i, j)
+    print(f"Member {k}: ")
+    print(
+        f" Joint {connectivity[0]}: N={f['Ni']:.5}, Qy={f['Qyi']:.5}, Qz={f['Qzi']:.5}, T={f['Ti']:.5}, My={f['Myi']:.5}, Mz={f['Mzi']:.5}: "
+    )
+    print(
+        f" Joint {connectivity[1]}: N={f['Nj']:.5}, Qy={f['Qyj']:.5}, Qz={f['Qzj']:.5}, T={f['Tj']:.5}, My={f['Myj']:.5}, Mz={f['Mzj']:.5}: "
+    )
 
 plots.plot_setup(m)
 plots.plot_members(m)
-# plots.plot_member_numbers(m)
+plots.plot_member_numbers(m)
 plots.plot_deformations(m, 100.0)
-plots.plot_moments(m, 0.00001, "y")
-plots.plot_moments(m, 0.00001, "z")
+plots.plot_beam_orientation(m, 0.5)
+# plots.plot_moments(m, 0.00001, "y")
+# plots.plot_moments(m, 0.00001, "z")
 # ax = plots.plot_shear_forces(m, scale=0.50e-3)
 # ax.set_title('Shear forces')
 plots.show(m)
