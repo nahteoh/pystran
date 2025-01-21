@@ -15,6 +15,7 @@ from pystran import model
 from pystran import section
 from pystran import plots
 from pystran import beam
+from pystran import rotation
 
 # US customary units, inches, pounds, seconds
 L = 120.0
@@ -39,18 +40,22 @@ model.add_joint(m, 4, [3 * L, 0.0, L])
 model.add_support(m["joints"][3], model.CLAMPED)
 model.add_support(m["joints"][4], model.CLAMPED)
 
-xz_vector = [1, 0, 0]
+xz_vector = [0, 0, 1]
 sect_1 = section.beam_3d_section(
     "sect_1", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
 )
-xz_vector = [0, 1, 0]
+xz_vector = [0, 0, 1]
 sect_2 = section.beam_3d_section(
     "sect_2", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
 )
+xz_vector = rotation.rotate(m["joints"][2], m["joints"][4], [0, 1, 0], 90)
+sect_3 = section.beam_3d_section(
+    "sect_3", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
+)
 
-model.add_beam_member(m, 1, [1, 2], sect_2)
-model.add_beam_member(m, 2, [3, 1], sect_1)
-model.add_beam_member(m, 3, [2, 4], sect_2)
+model.add_beam_member(m, 1, [1, 2], sect_1)
+model.add_beam_member(m, 2, [3, 1], sect_2)
+model.add_beam_member(m, 3, [2, 4], sect_3)
 
 model.add_load(m["joints"][1], model.U1, F)
 model.add_load(m["joints"][2], model.U2, -P)
