@@ -223,6 +223,32 @@ def solve_statics(m):
     return None
 
 
+def statics_reactions(m):
+    """
+    Compute the reactions in the static equilibrium of the discrete model.
+    """
+    nt, nf = m["ntotaldof"], m["nfreedof"]
+
+    K = m["K"]
+    F = m["F"]
+    U = m["U"]
+
+    # Compute reactions from the partitioned stiffness matrix and the
+    # partitioned displacement vector
+    # R = dot(K[nf:nt, 0:nf], U[0:nf]) + dot(K[nf:nt, nf:nt], U[nf:nt])
+    R = dot(K, U)
+
+    for joint in m["joints"].values():
+        if "supports" in joint:
+            reactions = dict()
+            for dof, value in joint["supports"].items():
+                gr = joint["dof"][dof]
+                reactions[dof] = R[gr]
+            joint["reactions"] = reactions
+
+    return None
+
+
 def solve_free_vibration(m):
     """
     Solve the free vibration of the discrete model.
