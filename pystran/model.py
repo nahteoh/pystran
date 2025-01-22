@@ -195,7 +195,7 @@ def solve_statics(m):
 
     m["K"] = K
 
-    # Apply boundary conditions
+    # Compute the active load vector
     F = zeros(m["ntotaldof"])
     for joint in m["joints"].values():
         if "loads" in joint:
@@ -303,3 +303,84 @@ def copy_mode(m, mode):
     for joint in m["joints"].values():
         joint["displacements"] = m["U"][joint["dof"]]
     return None
+
+
+def free_body_check(m):
+    """
+    Check the balance of the structure as a free body.
+
+    All the active forces and moments together with the corresponding reactions
+    should sum to zero.
+
+    `statics_reactions(m)` should be called before this function.
+    """
+    if m["dim"] == 2:
+        nrbm = 3  # Number of rigid body modes: assume 2 translations, 1 rotation
+        FX, FY, MZ = 0, 1, 2
+        allforces = zeros(nrbm)
+        for joint in m["joints"].values():
+            c = joint["coordinates"]
+            x, y = c[0], c[1]
+            if "loads" in joint:
+                for dof, value in joint["loads"].items():
+                    if dof < MZ:
+                        # Add contributions of forces to the moment
+                        if dof == 0:
+                            allforces[MZ] += -value * y
+                        elif dof == 1:
+                            allforces[MZ] += +value * x
+                    else:
+                        # Add contributions of forces and moments
+                        allforces[dof] += value
+            if "reactions" in joint:
+                for dof, value in joint["reactions"].items():
+                    if dof < MZ:
+                        # Add contributions of forces to the moment
+                        if dof == 0:
+                            allforces[MZ] += -value * y
+                        elif dof == 1:
+                            allforces[MZ] += +value * x
+                    else:
+                        # Add contributions of forces and moments
+                        allforces[dof] += value
+        return allforces
+    else:
+        nrbm = 6  # Number of rigid body modes: assume 3 translations, 3 rotations
+        FX, FY, FZ, MX, MY, MZ = 0, 1, 2, 3, 4, 5
+        allforces = zeros(nrbm)
+        for joint in m["joints"].values():
+            c = joint["coordinates"]
+            x, y, z = c[0], c[1], c[2]
+            if "loads" in joint:
+                for dof, value in joint["loads"].items():
+                    if dof < MX:
+                        # Add contributions of forces to the moment
+                        if dof == 0:
+                            allforces[MY] += +value * z
+                            allforces[MZ] += -value * y
+                        elif dof == 1:
+                            allforces[MX] += -value * z
+                            allforces[MZ] += +value * x
+                        else:
+                            allforces[MY] += -value * x
+                            allforces[MX] += +value * y
+                    else:
+                        # Add contributions of forces and moments
+                        allforces[dof] += value
+            if "reactions" in joint:
+                for dof, value in joint["reactions"].items():
+                    if dof < MX:
+                        # Add contributions of forces to the moment
+                        if dof == 0:
+                            allforces[MY] += +value * z
+                            allforces[MZ] += -value * y
+                        elif dof == 1:
+                            allforces[MX] += -value * z
+                            allforces[MZ] += +value * x
+                        else:
+                            allforces[MY] += -value * x
+                            allforces[MX] += +value * y
+                    else:
+                        # Add contributions of forces and moments
+                        allforces[dof] += value
+        return allforces

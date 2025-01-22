@@ -5,7 +5,7 @@ Define rotation utilities.
 
 from math import pi, cos, sin
 import numpy
-from pystran.geometry import delt, len
+from pystran.geometry import delt, vlen
 
 
 def rotmat3(rotvec):
@@ -43,6 +43,6 @@ def rotate(i, j, v, angleindegrees):
     and `j`.
     """
     ci, cj = i["coordinates"], j["coordinates"]
-    uv = delt(ci, cj) / len(ci, cj)
+    uv = delt(ci, cj) / vlen(ci, cj)
     angle = angleindegrees * pi / 180.0
     return rotmat3(uv * angle).dot(numpy.array(v))

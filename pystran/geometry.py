@@ -1,5 +1,9 @@
-import numpy 
+"""
+Simple geometry utilities.
+"""
+
 from numpy.linalg import norm
+
 
 def delt(xi, xj):
     """
@@ -7,8 +11,9 @@ def delt(xi, xj):
     """
     return xj - xi
 
-def len(xi, xj):
+
+def vlen(xi, xj):
     """
     Compute distance from the first to the second joint
     """
-    return  norm(delt(xj, xi))
+    return norm(delt(xi, xj))

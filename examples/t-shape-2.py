@@ -9,8 +9,6 @@ taken from example 4.8, which does not provide both second moments of area.
 They are taken here as both the same.
 """
 
-from math import sqrt
-from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section

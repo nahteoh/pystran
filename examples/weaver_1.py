@@ -113,6 +113,33 @@ for jid in [3, 4]:
         f"   Rx={j['reactions'][0]:.5}, Ry={j['reactions'][1]:.5}, Rz={j['reactions'][2]:.5}, Mx={j['reactions'][3]:.5}, My={j['reactions'][4]:.5}, Mz={j['reactions'][5]:.5}: "
     )
 
+allforces = model.free_body_check(m)
+print("Sum of forces and moments: ", allforces)
+if norm(allforces) > 1.0e-10:
+    raise ValueError("Sum of forces and moments not zero")
+
+m["joints"][3]["reactions"] = {
+    0: -1.10,
+    1: -0.43,
+    2: 0.22,
+    3: 48.78,
+    4: -17.97,
+    5: 96.12,
+}
+m["joints"][4]["reactions"] = {
+    0: -0.90,
+    1: 1.43,
+    2: -0.22,
+    3: 123.08,
+    4: 47.25,
+    5: -11.72,
+}
+allforces = model.free_body_check(m)
+print("Sum of forces and moments: ", allforces)
+if norm(allforces) > 1.0e-10:
+    raise ValueError("Sum of forces and moments not zero")
+
+
 plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_beam_orientation(m, 20)

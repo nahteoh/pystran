@@ -145,7 +145,7 @@ def beam_2d_member_geometry(i, j):
     (consistent with the sign convention in the book).
     """
     e_x = geometry.delt(i["coordinates"], j["coordinates"])
-    h = geometry.len(i["coordinates"], j["coordinates"])
+    h = geometry.vlen(i["coordinates"], j["coordinates"])
     if h <= 0.0:
         raise ZeroDivisionError("Length of element must be positive")
     e_x /= h
@@ -162,7 +162,7 @@ def beam_3d_member_geometry(i, j, xz_vector):
     Compute 3d beam geometry.
     """
     e_x = geometry.delt(i["coordinates"], j["coordinates"])
-    h = geometry.len(i["coordinates"], j["coordinates"])
+    h = geometry.vlen(i["coordinates"], j["coordinates"])
     if h <= 0.0:
         raise ZeroDivisionError("Length of element must be positive")
     e_x /= h
@@ -178,7 +178,7 @@ def beam_3d_member_geometry(i, j, xz_vector):
     return e_x, e_y, e_z, h
 
 
-def beam_2d_bending_stiffness(e_x, e_z, h, E, I):
+def beam_2d_bending_stiffness(e_z, h, E, I):
     """
     Compute 2d beam stiffness matrix.
     """
@@ -186,7 +186,7 @@ def beam_2d_bending_stiffness(e_x, e_z, h, E, I):
     WG = [1, 1]
     K = zeros((6, 6))
     for q in range(2):
-        B = beam_2d_curv_displ_matrix(e_x, e_z, h, xiG[q])
+        B = beam_2d_curv_displ_matrix(e_z, h, xiG[q])
         K += E * I * outer(B.T, B) * WG[q] * (h / 2)
     return K
 
@@ -236,7 +236,7 @@ def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
     return Kxy, Kxz
 
 
-def beam_2d_curv_displ_matrix(e_x, e_z, h, xi):
+def beam_2d_curv_displ_matrix(e_z, h, xi):
     """
     Compute beam curvature-displacement matrix.
     """
@@ -300,7 +300,7 @@ def beam_2d_moment(member, i, j, xi):
     E, I = sect["E"], sect["I"]
     ui, uj = i["displacements"], j["displacements"]
     u = concatenate([ui, uj])
-    B = beam_2d_curv_displ_matrix(e_x, e_z, h, xi)
+    B = beam_2d_curv_displ_matrix(e_z, h, xi)
     return -E * I * dot(B, u)
 
 
@@ -434,7 +434,7 @@ def assemble_stiffness(Kg, member, i, j):
         e_x, e_z, h = beam_2d_member_geometry(i, j)
         sect = member["section"]
         E, I = sect["E"], sect["I"]
-        k = beam_2d_bending_stiffness(e_x, e_z, h, E, I)
+        k = beam_2d_bending_stiffness(e_z, h, E, I)
         Kg = assemble.assemble(Kg, dof, k)
     else:
         sect = member["section"]
@@ -473,7 +473,7 @@ def assemble_mass(Mg, member, i, j):
     if beam_is_2d:
         e_x, e_z, h = beam_2d_member_geometry(i, j)
         I = sect["I"]
-        m = beam_2d_mass(e_x, e_z, h, rho, A, I)
+        m = beam_2d_mass(e_x, h, rho, A, I)
     else:
         e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
         Ix, Iy, Iz = sect["Ix"], sect["Iy"], sect["Iz"]
@@ -482,7 +482,7 @@ def assemble_mass(Mg, member, i, j):
     return Mg
 
 
-def beam_2d_mass(e_x, e_z, h, rho, A, I):
+def beam_2d_mass(e_x, h, rho, A, I):
     """
     Compute beam mass matrix.
     """

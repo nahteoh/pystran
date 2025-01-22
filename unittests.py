@@ -4,6 +4,14 @@ pystran unit tests
 
 import unittest
 
+from numpy import array, dot, outer, concatenate
+from numpy.linalg import norm
+from pystran import model
+from pystran import section
+from pystran import plots
+from pystran import beam
+from pystran import rotation
+
 
 class UnitTestsPlaneTrusses(unittest.TestCase):
 
@@ -27,12 +35,6 @@ class UnitTestsPlaneTrusses(unittest.TestCase):
 
         Vertical deflection at the crown: -.20641184e+00 in (linear analysis)
         """
-
-        from numpy import array, dot, outer, concatenate
-        from numpy.linalg import norm
-        from pystran import model
-        from pystran import section
-        from pystran import plots
 
         m = model.create(3)
 
@@ -134,12 +136,6 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         taken from example 4.8, which does not provide both second moments of area.
         They are taken here as both the same.
         """
-
-        import unittest
-        from numpy.linalg import norm
-        from pystran import model
-        from pystran import section
-        from pystran import plots
 
         # SI units
         L = 3.0
@@ -253,11 +249,6 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         problem 8. From: STAAD.Pro 2023.00.03
         """
 
-        from numpy.linalg import norm
-        from pystran import model
-        from pystran import section
-        from pystran import plots
-
         # US customary units, inches, pounds, seconds
         L = 120.0
         E = 30000
@@ -346,13 +337,6 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         taken from example 4.8, which does not provide both second moments of area.
         They are taken here as both the same.
         """
-
-        from numpy.linalg import norm
-        from pystran import model
-        from pystran import section
-        from pystran import plots
-        from pystran import beam
-        from pystran import rotation
 
         # US customary units, inches, pounds, seconds
         L = 120.0
