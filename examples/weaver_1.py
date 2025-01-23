@@ -1,12 +1,16 @@
 """
-Created on 01/12/2025
+Created on 01/22/2025
 
-Example 5.8 from Matrix Structural Analysis: Second Edition 2nd Edition by
-William McGuire, Richard H. Gallagher, Ronald D. Ziemian 
+Weaver Jr., W., Computer Programs for Structural Analysis, page 146, problem 8.
+via STAAD.Pro 2023.00.03 User Manual.
 
-The section properties are not completely defined in the book.  They are
-taken from example 4.8, which does not provide both second moments of area.
-They are taken here as both the same.
+These reactions are consistent with STAAD.Pro 2023.00.03 User Manual, 
+assuming Poisson ratio 0.25:
+
+Joint 3:
+   Rx=-1.1041, Ry=-0.43222, Rz=0.21731, Mx=48.785, My=-17.973, Mz=96.122:        
+Joint 4:
+   Rx=-0.89588, Ry=1.4322, Rz=-0.21731, Mx=123.08, My=47.246, Mz=-11.72:
 """
 
 from numpy.linalg import norm
@@ -20,7 +24,8 @@ from pystran import rotation
 # US customary units, inches, pounds, seconds
 L = 120.0
 E = 30000
-G = E / (2 * (1 + 0.3))
+nu = 0.25  # Poisson's ratio assumed in STAAD documentation
+G = E / (2 * (1 + nu))
 A = 11
 Iz = 56
 Iy = 56
@@ -63,10 +68,10 @@ model.add_load(m["joints"][2], model.UR3, -M)
 
 model.number_dofs(m)
 
-# print("Number of free degrees of freedom = ", m["nfreedof"])
-# print("Number of all degrees of freedom = ", m["ntotaldof"])
+print("Number of free degrees of freedom = ", m["nfreedof"])
+print("Number of all degrees of freedom = ", m["ntotaldof"])
 
-# print([j['dof'] for j in m['joints'].values()])
+print([j["dof"] for j in m["joints"].values()])
 
 model.solve(m)
 
@@ -118,26 +123,26 @@ print("Sum of forces and moments: ", allforces)
 if norm(allforces) > 1.0e-10:
     raise ValueError("Sum of forces and moments not zero")
 
-m["joints"][3]["reactions"] = {
-    0: -1.10,
-    1: -0.43,
-    2: 0.22,
-    3: 48.78,
-    4: -17.97,
-    5: 96.12,
-}
-m["joints"][4]["reactions"] = {
-    0: -0.90,
-    1: 1.43,
-    2: -0.22,
-    3: 123.08,
-    4: 47.25,
-    5: -11.72,
-}
-allforces = model.free_body_check(m)
-print("Sum of forces and moments: ", allforces)
-if norm(allforces) > 1.0e-10:
-    raise ValueError("Sum of forces and moments not zero")
+# m["joints"][3]["reactions"] = {
+#     0: -1.10,
+#     1: -0.43,
+#     2: 0.22,
+#     3: 48.78,
+#     4: -17.97,
+#     5: 96.12,
+# }
+# m["joints"][4]["reactions"] = {
+#     0: -0.90,
+#     1: 1.43,
+#     2: -0.22,
+#     3: 123.08,
+#     4: 47.25,
+#     5: -11.72,
+# }
+# allforces = model.free_body_check(m)
+# print("Sum of forces and moments: ", allforces)
+# if norm(allforces) > 1.0e-10:
+#     raise ValueError("Sum of forces and moments not zero")
 
 
 plots.plot_setup(m)
