@@ -26,11 +26,11 @@ def create(dim=2):
 
     Supply the dimension of the model (2 or 3).
     """
-    m = dict()
+    m = {}
     m["dim"] = dim  # Dimension of the model
-    m["joints"] = dict()
-    m["truss_members"] = dict()
-    m["beam_members"] = dict()
+    m["joints"] = {}
+    m["truss_members"] = {}
+    m["beam_members"] = {}
 
     global U1
     global U2
@@ -55,17 +55,16 @@ def create(dim=2):
     return m
 
 
-def add_joint(m, identifier, coordinates):
+def add_joint(m, jid, coordinates):
     """
     Add a joint to the model.
     """
-    if identifier in m["joints"]:
+    if jid in m["joints"]:
         raise RuntimeError("Joint already exists")
-    else:
-        m["joints"][identifier] = {"coordinates": array(coordinates)}
-    if m["joints"][identifier]["coordinates"].shape != (m["dim"],):
+    coordinates = array(coordinates)
+    if coordinates.shape != (m["dim"],):
         raise RuntimeError("Coordinate dimension mismatch")
-    return None
+    m["joints"][jid] = {"jid": jid, "coordinates": array(coordinates)}
 
 
 def add_truss_member(m, identifier, connectivity, sect):
@@ -74,12 +73,10 @@ def add_truss_member(m, identifier, connectivity, sect):
     """
     if identifier in m["truss_members"]:
         raise RuntimeError("Truss member already exists")
-    else:
-        m["truss_members"][identifier] = {
-            "connectivity": array(connectivity, dtype=numpy.int32),
-            "section": sect,
-        }
-    return None
+    m["truss_members"][identifier] = {
+        "connectivity": array(connectivity, dtype=numpy.int32),
+        "section": sect,
+    }
 
 
 def add_beam_member(m, identifier, connectivity, sect):
@@ -93,7 +90,6 @@ def add_beam_member(m, identifier, connectivity, sect):
             "connectivity": array(connectivity, dtype=numpy.int32),
             "section": sect,
         }
-    return None
 
 
 def add_support(j, dof, value=0.0):
@@ -101,7 +97,7 @@ def add_support(j, dof, value=0.0):
     Add a support to a joint.
     """
     if "supports" not in j:
-        j["supports"] = dict()
+        j["supports"] = {}
     dim = len(j["coordinates"])
     if dof == CLAMPED:
         if dim == 2:
@@ -115,7 +111,6 @@ def add_support(j, dof, value=0.0):
             j["supports"] = {U1: 0.0, U2: 0.0, U3: 0.0}
     else:
         j["supports"][dof] = value
-    return None
 
 
 def add_load(j, dof, value):
@@ -123,9 +118,8 @@ def add_load(j, dof, value):
     Add a load to a joint.
     """
     if "loads" not in j:
-        j["loads"] = dict()
+        j["loads"] = {}
     j["loads"][dof] = value
-    return None
 
 
 def add_mass(j, dof, value):
@@ -133,9 +127,26 @@ def add_mass(j, dof, value):
     Add a mass to a joint.
     """
     if "mass" not in j:
-        j["mass"] = dict()
+        j["mass"] = {}
     j["mass"][dof] = value
-    return None
+
+
+def add_link(i, j, dof):
+    """
+    Add a link between two joints in the direction `dof`.
+    """
+    jjid = j["jid"]
+    if "links" not in i:
+        i["links"] = {}
+    if jjid not in i["links"]:
+        i["links"][jjid] = []
+    i["links"][jjid].append(dof)
+    ijid = i["jid"]
+    if "links" not in j:
+        j["links"] = {}
+    if ijid not in j["links"]:
+        j["links"][ijid] = []
+    j["links"][ijid].append(dof)
 
 
 def number_dofs(m):
@@ -151,14 +162,22 @@ def number_dofs(m):
             ndof_per_joint = 3
         else:
             ndof_per_joint = 6
+    # Generate arrays for storing the degrees of freedom
+    for j in m["joints"].values():
+        j["dof"] = zeros((ndof_per_joint,), dtype=numpy.int32) - 1
     # Number the free degrees of freedom first
     n = 0
     for j in m["joints"].values():
-        j["dof"] = array([i for i in range(ndof_per_joint)], dtype=numpy.int32)
         for d in range(ndof_per_joint):
-            if "supports" not in j or d not in j["supports"]:
-                j["dof"][d] = n
-                n += 1
+            if ("supports" not in j) or (d not in j["supports"]):
+                if j["dof"][d] < 0:
+                    j["dof"][d] = n
+                    if "links" in j:
+                        for k in j["links"].keys():
+                            o = m["joints"][k]
+                            if d in o['links'][j['jid']]:
+                                o["dof"][d] = n
+                    n += 1
     m["nfreedof"] = n
     # Number all prescribed degrees of freedom
     for j in m["joints"].values():
@@ -167,7 +186,6 @@ def number_dofs(m):
                 j["dof"][d] = n
                 n += 1
     m["ntotaldof"] = n
-    return None
 
 
 def solve(m):
@@ -220,17 +238,12 @@ def solve_statics(m):
     for joint in m["joints"].values():
         joint["displacements"] = U[joint["dof"]]
 
-    return None
-
 
 def statics_reactions(m):
     """
     Compute the reactions in the static equilibrium of the discrete model.
     """
-    nt, nf = m["ntotaldof"], m["nfreedof"]
-
     K = m["K"]
-    F = m["F"]
     U = m["U"]
 
     # Compute reactions from the partitioned stiffness matrix and the
@@ -240,13 +253,11 @@ def statics_reactions(m):
 
     for joint in m["joints"].values():
         if "supports" in joint:
-            reactions = dict()
+            reactions = {}
             for dof, value in joint["supports"].items():
                 gr = joint["dof"][dof]
                 reactions[dof] = R[gr]
             joint["reactions"] = reactions
-
-    return None
 
 
 def solve_free_vibration(m):
@@ -302,7 +313,6 @@ def copy_mode(m, mode):
     m["U"][0:nf] = m["eigvecs"][:, mode]
     for joint in m["joints"].values():
         joint["displacements"] = m["U"][joint["dof"]]
-    return None
 
 
 def free_body_check(m):
@@ -316,7 +326,7 @@ def free_body_check(m):
     """
     if m["dim"] == 2:
         nrbm = 3  # Number of rigid body modes: assume 2 translations, 1 rotation
-        FX, FY, MZ = 0, 1, 2
+        MZ = 2
         allforces = zeros(nrbm)
         for joint in m["joints"].values():
             c = joint["coordinates"]
@@ -346,7 +356,7 @@ def free_body_check(m):
         return allforces
     else:
         nrbm = 6  # Number of rigid body modes: assume 3 translations, 3 rotations
-        FX, FY, FZ, MX, MY, MZ = 0, 1, 2, 3, 4, 5
+        MX, MY, MZ = 3, 4, 5
         allforces = zeros(nrbm)
         for joint in m["joints"].values():
             c = joint["coordinates"]
