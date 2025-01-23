@@ -46,9 +46,9 @@ model.add_beam_member(m, 2, [3, 4], sect_2)
 
 model.add_load(m["joints"][4], model.U3, -P)
 
-model.add_link(m["joints"][2], m["joints"][4], model.U1)
-model.add_link(m["joints"][2], m["joints"][4], model.U2)
-model.add_link(m["joints"][2], m["joints"][4], model.U3)
+model.add_links(m, [2, 4], model.U1)
+model.add_links(m, [2, 4], model.U2)
+model.add_links(m, [2, 4], model.U3)
 
 model.number_dofs(m)
 

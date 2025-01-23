@@ -92,6 +92,28 @@ def add_beam_member(m, identifier, connectivity, sect):
         }
 
 
+def pinned_dofs(dim):
+    if dim == 2:
+        return [U1, U2]
+    else:
+        return [U1, U2, U3]
+
+
+def clamped_dofs(dim):
+    if dim == 2:
+        return [U1, U2, UR3]
+    else:
+        return [U1, U2, U3, UR1, UR2, UR3]
+
+
+def dofs_values(dim, dof, value):
+    if dof == CLAMPED:
+        return clamped_dofs(dim), [0.0 for d in clamped_dofs(dim)]
+    elif dof == PINNED:
+        return pinned_dofs(dim), [0.0 for d in pinned_dofs(dim)]
+    return [dof], [value]
+
+
 def add_support(j, dof, value=0.0):
     """
     Add a support to a joint.
@@ -99,18 +121,8 @@ def add_support(j, dof, value=0.0):
     if "supports" not in j:
         j["supports"] = {}
     dim = len(j["coordinates"])
-    if dof == CLAMPED:
-        if dim == 2:
-            j["supports"] = {U1: 0.0, U2: 0.0, UR3: 0.0}
-        else:
-            j["supports"] = {U1: 0.0, U2: 0.0, U3: 0.0, UR1: 0.0, UR2: 0.0, UR3: 0.0}
-    elif dof == PINNED:
-        if dim == 2:
-            j["supports"] = {U1: 0.0, U2: 0.0}
-        else:
-            j["supports"] = {U1: 0.0, U2: 0.0, U3: 0.0}
-    else:
-        j["supports"][dof] = value
+    for d, v in zip(*dofs_values(dim, dof, value)):
+        j["supports"][d] = v
 
 
 def add_load(j, dof, value):
@@ -131,26 +143,24 @@ def add_mass(j, dof, value):
     j["mass"][dof] = value
 
 
-def add_link(i, j, dof):
+def add_links(m, jids, dof):
     """
-    Add a link between two joints in the direction `dof`.
+    Add links between all joints in the list `jids` in the direction `dof`.
     """
     # If any of the joints is supported, the link is not allowed at this stage
-    if "supports" in i or "supports" in j:
-        raise RuntimeError("Link must be applied before supports")
+    # if "supports" in i or "supports" in j:
+    #     raise RuntimeError("Link must be applied before supports")
     # Now add the mutual links between the joints
-    jjid = j["jid"]
-    if "links" not in i:
-        i["links"] = {}
-    if jjid not in i["links"]:
-        i["links"][jjid] = []
-    i["links"][jjid].append(dof)
-    ijid = i["jid"]
-    if "links" not in j:
-        j["links"] = {}
-    if ijid not in j["links"]:
-        j["links"][ijid] = []
-    j["links"][ijid].append(dof)
+    for jid1 in jids:
+        for jid2 in jids:
+            if jid1 != jid2:
+                j1 = m["joints"][jid1]
+                if "links" not in j1:
+                    j1["links"] = {}
+                if jid2 not in j1["links"]:
+                    j1["links"][jid2] = []
+                for d, v in zip(*dofs_values(m["dim"], dof, 0.0)):
+                    j1["links"][jid2].append(d)
 
 
 def copy_dof_num_to_linked(m, j, d, n):

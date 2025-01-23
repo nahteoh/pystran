@@ -1,11 +1,9 @@
 """
-Created on 01/22/2025
+Created on 01/23/2025
 
-Linked can deliver
+Linked cantilevers through their tips, with a force acting at the linked joints. 
 """
 
-from math import sqrt
-from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
@@ -34,21 +32,28 @@ sect_2 = section.beam_3d_section(
 m = model.create(3)
 
 model.add_joint(m, 1, [0.0, 0.0, 0.0])
-model.add_joint(m, 2, [L, 0, 0.0])
-model.add_joint(m, 3, [2 * L, 0, 0])
-model.add_joint(m, 4, [L, 0, 0.0])
+model.add_joint(m, 2, [0.0, 0.0, 0.0])
+model.add_joint(m, 3, [0.0, 0.0, 0.0])
+model.add_joint(m, 4, [0.0, 0.0, 0.0])
+model.add_joint(m, 5, [-L, 0, 0.0])
+model.add_joint(m, 6, [L, 0, 0.0])
+model.add_joint(m, 7, [0, -L, 0.0])
+model.add_joint(m, 8, [0, L, 0.0])
 
-model.add_support(m["joints"][1], model.CLAMPED)
-model.add_support(m["joints"][3], model.CLAMPED)
 
-model.add_beam_member(m, 1, [1, 2], sect_1)
-model.add_beam_member(m, 2, [3, 4], sect_2)
+model.add_support(m["joints"][5], model.CLAMPED)
+model.add_support(m["joints"][6], model.CLAMPED)
+model.add_support(m["joints"][7], model.CLAMPED)
+model.add_support(m["joints"][8], model.CLAMPED)
+
+model.add_beam_member(m, 1, [1, 5], sect_2)
+model.add_beam_member(m, 2, [2, 6], sect_2)
+model.add_beam_member(m, 3, [3, 7], sect_2)
+model.add_beam_member(m, 4, [4, 8], sect_2)
 
 model.add_load(m["joints"][4], model.U3, -P)
 
-model.add_link(m["joints"][2], m["joints"][4], model.U1)
-model.add_link(m["joints"][2], m["joints"][4], model.U2)
-model.add_link(m["joints"][2], m["joints"][4], model.U3)
+model.add_links(m, [1, 2, 3, 4], model.PINNED)
 
 model.number_dofs(m)
 
@@ -59,7 +64,7 @@ print("Number of all degrees of freedom = ", m["ntotaldof"])
 
 model.solve(m)
 
-for id in [2, 3, 4]:
+for id in [2, 4]:
     j = m["joints"][id]
     print(id, j["displacements"])
 
@@ -77,9 +82,20 @@ for k in m["beam_members"].keys():
         f" Joint {connectivity[1]}: N={f['Nj']:.5}, Qy={f['Qyj']:.5}, Qz={f['Qzj']:.5}, T={f['Tj']:.5}, My={f['Myj']:.5}, Mz={f['Mzj']:.5}: "
     )
 
+sum_end_forces = 0.0
+for k in m["beam_members"].keys():
+    member = m["beam_members"][k]
+    connectivity = member["connectivity"]
+    i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+    f = beam.beam_3d_end_forces(member, i, j)
+    sum_end_forces += f["Qzi"]
+
+if abs(sum_end_forces) - P > 1e-10:
+    raise ValueError("Sum of end forces not zero")
+
 model.statics_reactions(m)
 
-for jid in [1]:
+for jid in [5, 6, 7, 8]:
     j = m["joints"][jid]
     print(f"Joint {jid}:")
     print(
@@ -89,7 +105,7 @@ for jid in [1]:
 plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_member_numbers(m)
-plots.plot_deformations(m, 100.0)
+plots.plot_deformations(m, 200.0)
 plots.plot_beam_orientation(m, 0.5)
 # plots.plot_moments(m, 0.00001, "y")
 # plots.plot_moments(m, 0.00001, "z")

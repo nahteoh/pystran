@@ -3,8 +3,8 @@
 A simple structural analysis tool in Python.
 The intent is for this package to be used in a classroom setting,
 and the students are expected to fill in missing functionality.
-Lot of the source code is included, such as for plotting,
-but the basic mechanics formulations are not implemented on purpose.
+Much of the source code is included, such as for plotting,
+but the basics of the formulations are not implemented on purpose.
 
 Linear statics and dynamics can be analyzed in structures consisting of truss and beam members, both in two dimensions and in three dimensions.
 

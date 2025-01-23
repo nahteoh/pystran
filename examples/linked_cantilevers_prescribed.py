@@ -39,7 +39,7 @@ model.add_joint(m, 2, [L, 0, 0.0])
 model.add_joint(m, 3, [2 * L, 0, 0])
 model.add_joint(m, 4, [L, 0, 0.0])
 
-model.add_link(m["joints"][2], m["joints"][4], model.PINNED)
+model.add_links(m, [2, 4], model.PINNED)
 
 model.add_support(m["joints"][1], model.CLAMPED)
 model.add_support(m["joints"][3], model.CLAMPED)
