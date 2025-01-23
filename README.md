@@ -29,14 +29,14 @@ but the basic mechanics formulations are not implemented on purpose.
 - SciPy
 - Matplotlib
 
-These requirements can be easily satisfied by running the examples in Spyder 6 (IDE).
+These requirements can be easily satisfied by running the examples in [Spyder 6](https://www.spyder-ide.org/download/) (IDE).
 
 ## Running
 
 This package is not distributed through the official Python channels.
 It needs to be downloaded from GitHub as a zip file, and expanded in some convenient location. 
 
-The easiest way to run a pystran example is to download and install Spyder 6. It is a complete IDE for Python, including a very capable debugger. Just open an example and click the run button.
+The easiest way to run a pystran example is to download and install [Spyder 6](https://www.spyder-ide.org/download/). It is a complete IDE for Python, including a very capable debugger. Just open an example and click the run button.
 
 It is also possible to run using a plain Python.
 The user then needs to install the requirements, and in the
