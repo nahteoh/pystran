@@ -1,10 +1,6 @@
 # pystran: Python for Structural Analysis
 
 A simple structural analysis tool in Python.
-The intent is for this package to be used in a classroom setting,
-and the students are expected to fill in missing functionality.
-Much of the source code is included, such as for plotting,
-but the basics of the formulations are not implemented on purpose.
 
 Linear statics and dynamics can be analyzed in structures consisting of truss and beam members, both in two dimensions and in three dimensions.
 
@@ -22,7 +18,8 @@ Linear statics and dynamics can be analyzed in structures consisting of truss an
   members and beams (even in combination) can be handled.
 - Only elastic models can be solved.
 - Member loading is not considered. All member loading needs to be converted to nodal forces.
-- Internal hinges can be modelled with linked joints.
+- Internal hinges can be modelled with linked joints. No member end releases are implemented.
+- Degrees of freedom are only along the cartesian axes.
 - Offsets are currently not implemented.
 
 ## Requirements
