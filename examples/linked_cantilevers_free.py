@@ -59,7 +59,7 @@ print("Number of all degrees of freedom = ", m["ntotaldof"])
 
 model.solve(m)
 
-for id in [2, 3, 4]:
+for id in [2, 4]:
     j = m["joints"][id]
     print(id, j["displacements"])
 
@@ -79,7 +79,7 @@ for k in m["beam_members"].keys():
 
 model.statics_reactions(m)
 
-for jid in [1]:
+for jid in [1, 3]:
     j = m["joints"][jid]
     print(f"Joint {jid}:")
     print(
