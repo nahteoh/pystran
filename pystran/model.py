@@ -135,6 +135,10 @@ def add_link(i, j, dof):
     """
     Add a link between two joints in the direction `dof`.
     """
+    # If any of the joints is supported, the link is not allowed at this stage
+    if "supports" in i or "supports" in j:
+        raise RuntimeError("Link must be applied before supports")
+    # Now add the mutual links between the joints
     jjid = j["jid"]
     if "links" not in i:
         i["links"] = {}
@@ -147,6 +151,14 @@ def add_link(i, j, dof):
     if ijid not in j["links"]:
         j["links"][ijid] = []
     j["links"][ijid].append(dof)
+
+
+def copy_dof_num_to_linked(m, j, d, n):
+    if "links" in j:
+        for k in j["links"].keys():
+            o = m["joints"][k]
+            if d in o["links"][j["jid"]]:
+                o["dof"][d] = n
 
 
 def number_dofs(m):
@@ -165,6 +177,16 @@ def number_dofs(m):
     # Generate arrays for storing the degrees of freedom
     for j in m["joints"].values():
         j["dof"] = zeros((ndof_per_joint,), dtype=numpy.int32) - 1
+    # For each linked pair of joints, make sure they share the same supports
+    for j in m["joints"].values():
+        if "links" in j and "supports" in j:
+            for k in j["links"].keys():
+                o = m["joints"][k]
+                if not "supports" in o:
+                    o["supports"] = j["supports"].copy()
+                if o["supports"] != j["supports"]:
+                    raise RuntimeError("Linked joints must have the same supports")
+
     # Number the free degrees of freedom first
     n = 0
     for j in m["joints"].values():
@@ -172,19 +194,17 @@ def number_dofs(m):
             if ("supports" not in j) or (d not in j["supports"]):
                 if j["dof"][d] < 0:
                     j["dof"][d] = n
-                    if "links" in j:
-                        for k in j["links"].keys():
-                            o = m["joints"][k]
-                            if d in o['links'][j['jid']]:
-                                o["dof"][d] = n
+                    copy_dof_num_to_linked(m, j, d, n)
                     n += 1
     m["nfreedof"] = n
     # Number all prescribed degrees of freedom
     for j in m["joints"].values():
         for d in range(ndof_per_joint):
             if "supports" in j and d in j["supports"]:
-                j["dof"][d] = n
-                n += 1
+                if j["dof"][d] < 0:
+                    j["dof"][d] = n
+                    copy_dof_num_to_linked(m, j, d, n)
+                    n += 1
     m["ntotaldof"] = n
 
 
@@ -227,8 +247,9 @@ def solve_statics(m):
     for joint in m["joints"].values():
         if "supports" in joint:
             for dof, value in joint["supports"].items():
-                gr = joint["dof"][dof]
-                U[gr] = value
+                if value != 0.0:
+                    gr = joint["dof"][dof]
+                    U[gr] = value
     # # Solve for displacements
     U[0:nf] = numpy.linalg.solve(K[0:nf, 0:nf], F[0:nf] - dot(K[0:nf, nf:nt], U[nf:nt]))
 
