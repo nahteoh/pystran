@@ -6,6 +6,8 @@ and the students are expected to fill in missing functionality.
 Lot of the source code is included, such as for plotting,
 but the basic mechanics formulations are not implemented on purpose.
 
+Linear statics and dynamics can be analyzed in structures consisting of truss and beam members, both in two dimensions and in three dimensions.
+
 ![Alt pystran capabilities in graphic abstract](docs/splash.png "pystran")
 
 ## News
