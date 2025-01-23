@@ -1,7 +1,8 @@
 """
 Created on 01/22/2025
 
-Linked can deliver
+Linked cantilevers through their tips, with a prescribed displacement given at
+the linked joints. 
 """
 
 from math import sqrt
@@ -84,6 +85,12 @@ for jid in [1]:
     print(
         f"   Rx={j['reactions'][0]:.5}, Ry={j['reactions'][1]:.5}, Rz={j['reactions'][2]:.5}, Mx={j['reactions'][3]:.5}, My={j['reactions'][4]:.5}, Mz={j['reactions'][5]:.5}: "
     )
+
+j2 = m["joints"][2]
+j4 = m["joints"][4]
+print("Linked displacements:")
+print(j2["displacements"][model.U2])
+print(j4["displacements"][model.U2])
 
 plots.plot_setup(m)
 plots.plot_members(m)

@@ -1,7 +1,7 @@
 """
 Created on 01/22/2025
 
-Linked can deliver
+Linked cantilevers through their tips, with a force given at the linked joints. 
 """
 
 from math import sqrt
