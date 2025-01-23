@@ -4,7 +4,7 @@ A simple structural analysis tool in Python.
 The intent is for this package to be used in a classroom setting,
 and the students are expected to fill in missing functionality.
 Lot of the source code is included, such as for plotting,
-but the basic mechanics implementations are is not implemented on purpose.
+but the basic mechanics formulations are not implemented on purpose.
 
 ![Alt pystran capabilities in graphic abstract](docs/splash.png "pystran")
 
