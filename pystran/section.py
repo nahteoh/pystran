@@ -76,22 +76,6 @@ def beam_3d_section(
     return s
 
 
-def close_points(points):
-    """
-    If the input points do not form a closed polygon, closes the polygon
-    and returns the result.
-
-    Parameters
-    ----------
-    points : array
-        An array of (x, y) coordinates of shape (N, 2).
-    """
-    p = numpy.asarray(points)
-    if (p[0] == p[-1]).all():
-        return p
-    return numpy.append(p, [p[0]], axis=0)
-
-
 def circular_tube(innerradius, outerradius):
     """
     Returns the area, moments of inertia and torsion constant for a hollow circle (tube).
@@ -137,4 +121,42 @@ def square_tube(H, B, th, tb):
     Iz = (B**3 / 12) * H - (Bi**3 / 12) * Hi
     Ix = Iy + Iz
     J = 2 * tb * th * Hi**2 * Bi**2 / (H * tb + B * th - tb**2 - th**2)
+    return A, Ix, Iy, Iz, J
+
+
+def rectangle(H, B):
+    """
+    Returns the area, moments of inertia and torsion constant for a rectangular
+    section.
+
+    The axis parallel to the B dimension is y, the axis parallel to the H
+    dimension is z.
+    """
+    a = max(H, B)
+    b = min(H, B)
+    A = B * H
+    Iy = (B / 12) * H**3
+    Iz = (B**3 / 12) * H
+    Ix = Iy + Iz
+    rs = numpy.array([1, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 10, 20, 40, 80, 200, 2000])
+    coeff = numpy.array(
+        [
+            0.141,
+            0.196,
+            0.229,
+            0.249,
+            0.263,
+            0.281,
+            0.291,
+            0.299,
+            0.312,
+            0.317,
+            0.325,
+            0.33,
+            1 / 3,
+            1 / 3,
+        ]
+    )
+    c = numpy.interp(a / b, rs, coeff, coeff[0], coeff[-1])
+    J = c * a * b**3
     return A, Ix, Iy, Iz, J
