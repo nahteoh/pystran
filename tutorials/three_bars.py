@@ -1,7 +1,7 @@
 """
 pystran - Python package for structural analysis with trusses and beams 
 
-(C) 2025, Petr Krysl
+(C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
 Three-bar example on page 32 from the book Analysis of Geometrically Nonlinear
 Structures Second Edition by Robert Levy and William R. Spillers.
