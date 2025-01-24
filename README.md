@@ -44,4 +44,17 @@ pystran folder rather an example for instance as
 py examples/linked_cantilevers_prescribed.py
 ```
 
+## Tutorials
+
+Step-by-step tutorials are available in the [`tutorials`](./tutorials) folder. 
+Run tutorials for example as
+```
+py tutorials/three_bars.py
+```
+
+## Examples
+
+There are many examples in the [`examples`](./examples) folder. They may not be heavily documented,
+but they do show many recipes for solving truss and beam structures.
+
 ## <a name="past-news"></a>Past news
