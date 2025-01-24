@@ -1,18 +1,10 @@
 """
-Analysis of Geometrically 
-Nonlinear Structures 
-Second Edition 
+pystran - Python package for structural analysis with trusses and beams 
 
-by 
-Robert Levy 
-Technion-Israel Institute of Technology, 
-Haifa, Israel 
+(C) 2025, Petr Krysl
 
-and 
-William R. Spillers 
-New Jersey Institute of Technology, 
-
-Three bar example on page 32
+Three-bar example on page 32 from the book Analysis of Geometrically Nonlinear
+Structures Second Edition by Robert Levy and William R. Spillers.
 """
 
 # Due to the Python source code loading conventions, pystran is not immediately
