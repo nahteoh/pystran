@@ -2,12 +2,7 @@
 Define truss mechanical quantities.
 """
 
-from numpy import (
-    reshape,
-    outer,
-    concatenate,
-    zeros,
-)
+from numpy import reshape, outer, concatenate, zeros, dot
 from pystran import geometry
 from pystran import assemble
 
@@ -24,15 +19,15 @@ def truss_member_geometry(i, j):
     return e_x, h
 
 
-def stiffness(e_x, h, E, A):
+def truss_stiffness(e_x, h, E, A):
     """
     Compute truss stiffness matrix.
     """
-    B = strain_displacement(e_x, h)
+    B = truss_strain_displacement(e_x, h)
     return E * A * outer(B.T, B) * h
 
 
-def mass(e_x, h, rho, A):
+def truss_mass(e_x, h, rho, A):
     """
     Compute truss mass matrix.
     """
@@ -43,9 +38,12 @@ def mass(e_x, h, rho, A):
     return m
 
 
-def strain_displacement(e_x, h):
+def truss_strain_displacement(e_x, h):
     """
     Compute truss strain displacement matrix.
+
+    The axial strain is computed as $\\varepsilon = B u$, using the strain
+    displacement matrix $B$ and the displacement vector $u$.
     """
     return reshape(concatenate((-e_x / h, e_x / h)), (1, 2 * len(e_x)))
 
@@ -53,6 +51,10 @@ def strain_displacement(e_x, h):
 def assemble_stiffness(Kg, member, i, j):
     """
     Assemble truss stiffness matrix.
+
+    - `Kg` is the global stiffness matrix,
+    - `member` is the truss member,
+    - `i`, `j` are the joints.
     """
     e_x, h = truss_member_geometry(i, j)
     sect = member["section"]
@@ -61,7 +63,7 @@ def assemble_stiffness(Kg, member, i, j):
         raise ValueError("Elastic modulus must be positive")
     if A <= 0.0:
         raise ValueError("Area must be positive")
-    k = stiffness(e_x, h, E, A)
+    k = truss_stiffness(e_x, h, E, A)
     dim = len(e_x)
     dof = concatenate([i["dof"][0:dim], j["dof"][0:dim]])
     return assemble.assemble(Kg, dof, k)
@@ -82,3 +84,17 @@ def assemble_mass(Mg, member, i, j):
     dim = len(e_x)
     dof = concatenate([i["dof"][0:dim], j["dof"][0:dim]])
     return assemble.assemble(Mg, dof, m)
+
+
+def truss_axial_force(member, i, j):
+    """
+    Compute truss axial force based on the displacements stored at the joints.
+    """
+    sect = member["section"]
+    e_x, h = truss_member_geometry(i, j)
+    E, A = sect["E"], sect["A"]
+    ui, uj = i["displacements"][0:3], j["displacements"][0:3]
+    u = concatenate([ui, uj])
+    B = truss_strain_displacement(e_x, h)
+    N = E * A * dot(B, u)
+    return N
