@@ -230,21 +230,21 @@ def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
     e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
-    xs = zeros(2)
-    ys = zeros(2)
-    zs = zeros(2)
     dirv = e_y
     if axis == "y":
         dirv = e_z
     for s, xi in enumerate(linspace(-1, +1, n)):
         M = beam_3d_moment(member, i, j, axis, xi)
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        xs = zeros(2)
+        ys = zeros(2)
+        zs = zeros(2)
         xs[0] = x[0]
-        xs[1] = x[0] + scale * M * dirv[0]
+        xs[1] = xs[0] + scale * M * dirv[0]
         ys[0] = x[1]
-        ys[1] = x[1] + scale * M * dirv[1]
+        ys[1] = ys[0] + scale * M * dirv[1]
         zs[0] = x[2]
-        zs[1] = x[2] + scale * M * dirv[1]
+        zs[1] = zs[0] + scale * M * dirv[2]
         ax.plot(xs, ys, zs, "b-")
         if xi == -1.0:
             ax.text(xs[1], ys[1], zs[1], str(f"{M[0]:.5}"))
