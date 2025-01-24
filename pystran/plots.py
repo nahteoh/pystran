@@ -15,6 +15,7 @@ from pystran.beam import (
     beam_3d_xz_shape_fun,
     beam_3d_xy_shape_fun,
     beam_3d_moment,
+    beam_3d_shear_force,
 )
 
 
@@ -61,7 +62,6 @@ def plot_members(m):
 
 
 def _plot_2d_beam_deflection(ax, member, i, j, scale):
-    sect = member["section"]
     di, dj = i["displacements"], j["displacements"]
     ci, cj = i["coordinates"], j["coordinates"]
     e_x, e_z, h = beam_2d_member_geometry(i, j)
@@ -207,12 +207,12 @@ def _plot_2d_beam_moments(ax, member, i, j, scale):
     e_x, e_z, h = beam_2d_member_geometry(i, j)
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
-    xs = zeros(2)
-    ys = zeros(2)
     for s, xi in enumerate(linspace(-1, +1, n)):
         M = beam_2d_moment(member, i, j, xi)
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         # The convention: moment is plotted next to fibers in tension
+        xs = zeros(2)
+        ys = zeros(2)
         xs[0] = x[0]
         xs[1] = x[0] + scale * M * e_z[0]
         ys[0] = x[1]
@@ -274,11 +274,11 @@ def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
     e_x, e_z, h = beam_2d_member_geometry(i, j)
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
-    xs = zeros(2)
-    ys = zeros(2)
     for s, xi in enumerate(linspace(-1, +1, n)):
         V = beam_2d_shear_force(member, i, j, xi)
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        xs = zeros(2)
+        ys = zeros(2)
         xs[0] = x[0]
         xs[1] = x[0] + scale * V * e_z[0]
         ys[0] = x[1]
@@ -289,16 +289,46 @@ def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
     return ax
 
 
-def plot_shear_forces(m, scale=1.0):
+def _plot_3d_beam_shear_forces(ax, member, i, j, axis, scale):
+    sect = member["section"]
+    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+    ci, cj = i["coordinates"], j["coordinates"]
+    n = 13
+    dirv = e_z
+    if axis == "y":
+        dirv = e_y
+    for s, xi in enumerate(linspace(-1, +1, n)):
+        Q = beam_3d_shear_force(member, i, j, axis, xi)
+        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        xs = zeros(2)
+        ys = zeros(2)
+        zs = zeros(2)
+        xs[0] = x[0]
+        xs[1] = xs[0] + scale * Q * dirv[0]
+        ys[0] = x[1]
+        ys[1] = ys[0] + scale * Q * dirv[1]
+        zs[0] = x[2]
+        zs[1] = zs[0] + scale * Q * dirv[2]
+        ax.plot(xs, ys, zs, "b-")
+        if xi == -1.0:
+            ax.text(xs[1], ys[1], zs[1], str(f"{Q[0]:.5}"))
+        elif xi == +1.0:
+            ax.text(xs[1], ys[1], zs[1], str(f"{Q[0]:.5}"))
+    return ax
+
+
+def plot_shear_forces(m, scale=1.0, axis="z"):
     """
     Plot the shear forces in the beam members.
+
+    Optional: axis = "y" or "z" (default is "z", which is suitable for 2d beams).
     """
     ax = plt.gca()
     for member in m["beam_members"].values():
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         if m["dim"] == 3:
-            raise NotImplementedError("3D not implemented")
+            _plot_3d_beam_shear_forces(ax, member, i, j, axis, scale)
         else:
             _plot_2d_beam_shear_forces(ax, member, i, j, scale)
     return ax
