@@ -1,13 +1,12 @@
 """
-pystran
+pystran - Python package for structural analysis with trusses and beams 
 
-Created on Sun Nov 17 19:21:25 2024
-
-@author: Petr Krysl
+(C) 2025, Petr Krysl
 """
 
 # Define the __all__ variable
 __all__ = [
+    "pystran",
     "model",
     "section",
     "rotation",
