@@ -8,16 +8,42 @@ from numpy import array, zeros, dot
 import scipy
 import pystran.section
 
-# These are the designations of degrees of freedom (directions in space), plus a
-# special designation for a clamped support.
 U1 = 0
+"""
+This is a designation of the degree of freedom as translation along `X`.
+"""
 U2 = 1
+"""
+This is a designation of the degree of freedom as translation along `Z` (in 2D models)
+or along `Y` (in 3D models).
+"""
 U3 = 2
+"""
+This is a designation of the degree of freedom as translation along `Z` (in 3D models).
+"""
 UR1 = 3
+"""
+This is a designation of the degree of freedom as rotation about  `X` (in 3D models).
+"""
 UR2 = 4
+"""
+This is a designation of the degree of freedom as rotation about  `Y` (in 3D models).
+"""
 UR3 = 5
+"""
+This is a designation of the degree of freedom as rotation about  `Y` (in 2D
+models) or rotation about `Z`  (in 3D models).
+"""
 CLAMPED = 100
+"""
+This is a designation of the clamped condition (`U1`, `U2`, `UR3` in 2D models,
+or `U1`, `U2`, `U3`, `UR1`, `UR2`, `UR3` in 3D models).
+"""
 PINNED = 200
+"""
+This is a designation of the pinned condition (`U1`, `U2`,  in 2D models,
+or `U1`, `U2`,  `U3` in 3D models).
+"""
 
 
 def create(dim=2):
@@ -55,9 +81,13 @@ def create(dim=2):
     return m
 
 
-def add_joint(m, jid, coordinates):
+def add_joint(m, jid: int, coordinates):
     """
     Add a joint to the model.
+
+    - `m` = the model,
+    - `jid` = the joint identifier,
+    - `coordinates` = the list of coordinates of the joint.
     """
     if jid in m["joints"]:
         raise RuntimeError("Joint already exists")
@@ -67,67 +97,85 @@ def add_joint(m, jid, coordinates):
     m["joints"][jid] = {"jid": jid, "coordinates": array(coordinates)}
 
 
-def add_truss_member(m, identifier, connectivity, sect):
+def add_truss_member(m, mid: int, connectivity, sect):
     """
     Add a truss member to the model.
+
+    - `m` = the model,
+    - `mid` = the member identifier (must be unique),
+    - `connectivity` = the list of the joint identifiers,
+    - `sect` = the section of the member.
     """
-    if identifier in m["truss_members"]:
+    if mid in m["truss_members"]:
         raise RuntimeError("Truss member already exists")
-    m["truss_members"][identifier] = {
+    m["truss_members"][mid] = {
         "connectivity": array(connectivity, dtype=numpy.int32),
         "section": sect,
     }
 
 
-def add_beam_member(m, identifier, connectivity, sect):
+def add_beam_member(m, mid: int, connectivity, sect):
     """
     Add a beam member to the model.
+
+    - `m` = the model,
+    - `mid` = the member identifier (must be unique),
+    - `connectivity` = the list of the joint identifiers,
+    - `sect` = the section of the member.
     """
-    if identifier in m["beam_members"]:
+    if mid in m["beam_members"]:
         raise RuntimeError("Beam member already exists")
     else:
-        m["beam_members"][identifier] = {
+        m["beam_members"][mid] = {
             "connectivity": array(connectivity, dtype=numpy.int32),
             "section": sect,
         }
 
 
-def pinned_dofs(dim):
+def _pinned_dofs(dim):
     if dim == 2:
         return [U1, U2]
     else:
         return [U1, U2, U3]
 
 
-def clamped_dofs(dim):
+def _clamped_dofs(dim):
     if dim == 2:
         return [U1, U2, UR3]
     else:
         return [U1, U2, U3, UR1, UR2, UR3]
 
 
-def dofs_values(dim, dof, value):
+def _dofs_values(dim, dof, value):
     if dof == CLAMPED:
-        return clamped_dofs(dim), [0.0 for d in clamped_dofs(dim)]
+        return _clamped_dofs(dim), [0.0 for d in _clamped_dofs(dim)]
     elif dof == PINNED:
-        return pinned_dofs(dim), [0.0 for d in pinned_dofs(dim)]
+        return _pinned_dofs(dim), [0.0 for d in _pinned_dofs(dim)]
     return [dof], [value]
 
 
 def add_support(j, dof, value=0.0):
     """
     Add a support to a joint.
+
+    - `j` = the joint,
+    - `dof` = the degree of freedom,
+    - `value` = the amount of the support motion (default is zero).
     """
     if "supports" not in j:
         j["supports"] = {}
     dim = len(j["coordinates"])
-    for d, v in zip(*dofs_values(dim, dof, value)):
+    for d, v in zip(*_dofs_values(dim, dof, value)):
         j["supports"][d] = v
 
 
 def add_load(j, dof, value):
     """
     Add a load to a joint.
+
+    - `j` = the joint,
+    - `dof` = the degree of freedom,
+    - `value` = signed magnitude of the load.
     """
     if "loads" not in j:
         j["loads"] = {}
@@ -137,6 +185,10 @@ def add_load(j, dof, value):
 def add_mass(j, dof, value):
     """
     Add a mass to a joint.
+
+    - `j` = the joint,
+    - `dof` = the degree of freedom,
+    - `value` = magnitude of the mass.
     """
     if "mass" not in j:
         j["mass"] = {}
@@ -146,6 +198,10 @@ def add_mass(j, dof, value):
 def add_links(m, jids, dof):
     """
     Add links between all joints in the list `jids` in the direction `dof`.
+
+    - `m` = the model,
+    - `jids` = the list of joint identifiers,
+    - `dof` = the degree of freedom at which the joints are to be linked.
     """
     # If any of the joints is supported, the link is not allowed at this stage
     # if "supports" in i or "supports" in j:
@@ -159,11 +215,11 @@ def add_links(m, jids, dof):
                     j1["links"] = {}
                 if jid2 not in j1["links"]:
                     j1["links"][jid2] = []
-                for d, v in zip(*dofs_values(m["dim"], dof, 0.0)):
+                for d, v in zip(*_dofs_values(m["dim"], dof, 0.0)):
                     j1["links"][jid2].append(d)
 
 
-def copy_dof_num_to_linked(m, j, d, n):
+def _copy_dof_num_to_linked(m, j, d, n):
     if "links" in j:
         for k in j["links"].keys():
             o = m["joints"][k]
@@ -204,7 +260,7 @@ def number_dofs(m):
             if ("supports" not in j) or (d not in j["supports"]):
                 if j["dof"][d] < 0:
                     j["dof"][d] = n
-                    copy_dof_num_to_linked(m, j, d, n)
+                    _copy_dof_num_to_linked(m, j, d, n)
                     n += 1
     m["nfreedof"] = n
     # Number all prescribed degrees of freedom
@@ -213,21 +269,16 @@ def number_dofs(m):
             if "supports" in j and d in j["supports"]:
                 if j["dof"][d] < 0:
                     j["dof"][d] = n
-                    copy_dof_num_to_linked(m, j, d, n)
+                    _copy_dof_num_to_linked(m, j, d, n)
                     n += 1
     m["ntotaldof"] = n
-
-
-def solve(m):
-    """
-    The default solve procedure of the discrete model.
-    """
-    return solve_statics(m)
 
 
 def solve_statics(m):
     """
     Solve the static equilibrium of the discrete model.
+
+    `number_dofs` must be called before this function.
     """
     nt, nf = m["ntotaldof"], m["nfreedof"]
     # Assemble global stiffness matrix
@@ -273,6 +324,9 @@ def solve_statics(m):
 def statics_reactions(m):
     """
     Compute the reactions in the static equilibrium of the discrete model.
+
+    The static solution must be obtained with `solve_statics` before calling
+    this function.
     """
     K = m["K"]
     U = m["U"]
@@ -294,6 +348,13 @@ def statics_reactions(m):
 def solve_free_vibration(m):
     """
     Solve the free vibration of the discrete model.
+
+    The free vibration eigenvalue problem is solved for the eigenvalues and
+    eigenvectors (can be retrieved as  `m["eigvals"]` and `m["eigvecs"]`). The
+    frequencies are computed from the eigenvalues (can be retrieved as
+    `m["frequencies"]`).
+
+    `number_dofs` must be called before this function.
     """
     nt, nf = m["ntotaldof"], m["nfreedof"]
     # Assemble global stiffness matrix and mass matrix
@@ -339,6 +400,8 @@ def solve_free_vibration(m):
 def copy_mode(m, mode):
     """
     Copy a mode to the displacement field of the model.
+
+    `solve_free_vibration` must be called before this function.
     """
     nf = m["nfreedof"]
     m["U"][0:nf] = m["eigvecs"][:, mode]
@@ -350,10 +413,11 @@ def free_body_check(m):
     """
     Check the balance of the structure as a free body.
 
-    All the active forces and moments together with the corresponding reactions
-    should sum to zero.
+    All the active forces and moments together with the reactions at all the
+    supports should sum to zero.
 
-    `statics_reactions(m)` should be called before this function.
+    `statics_reactions` must be called before this function as this calculation
+    relies on the presence of reactions at the joints.
     """
     if m["dim"] == 2:
         nrbm = 3  # Number of rigid body modes: assume 2 translations, 1 rotation
