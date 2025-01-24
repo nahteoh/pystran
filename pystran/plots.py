@@ -3,7 +3,12 @@ Implement simple plots for truss and beam structures.
 """
 
 import matplotlib.pyplot as plt
-from numpy import linspace, dot, zeros
+from numpy import linspace, dot, zeros, array
+from pystran.truss import (
+    truss_member_geometry,
+    truss_strain_displacement,
+    truss_axial_force,
+)
 from pystran.beam import (
     beam_2d_member_geometry,
     beam_2d_shape_fun,
@@ -16,6 +21,7 @@ from pystran.beam import (
     beam_3d_xy_shape_fun,
     beam_3d_moment,
     beam_3d_shear_force,
+    beam_3d_torsion_moment,
 )
 
 
@@ -334,6 +340,134 @@ def plot_shear_forces(m, scale=1.0, axis="z"):
     return ax
 
 
+def _plot_2d_beam_axial_forces(ax, member, i, j, scale):
+    e_x, e_z, h = beam_2d_member_geometry(i, j)
+    ci, cj = i["coordinates"], j["coordinates"]
+    n = 13
+    for s, xi in enumerate(linspace(-1, +1, n)):
+        N = beam_2d_axial_force(member, i, j, xi)
+        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        xs = zeros(2)
+        ys = zeros(2)
+        xs[0] = x[0]
+        xs[1] = x[0] + scale * N * e_z[0]
+        ys[0] = x[1]
+        ys[1] = x[1] + scale * N * e_z[1]
+        ax.plot(xs, ys, "b-")
+        if xi == 0.0:
+            ax.text(xs[1], ys[1], str(f"{N[0]:.5}"))
+    return ax
+
+
+def _plot_2d_truss_axial_forces(ax, member, i, j, scale):
+    e_x, h = truss_member_geometry(i, j)
+    ci, cj = i["coordinates"], j["coordinates"]
+    N = truss_axial_force(member, i, j)
+    e_z = array([e_x[1], -e_x[0]])
+    n = 13
+    for s, xi in enumerate(linspace(-1, +1, n)):
+        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        xs = zeros(2)
+        ys = zeros(2)
+        xs[0] = x[0]
+        xs[1] = x[0] + scale * N * e_z[0]
+        ys[0] = x[1]
+        ys[1] = x[1] + scale * N * e_z[1]
+        ax.plot(xs, ys, "b-")
+        if xi == 0.0:
+            ax.text(xs[1], ys[1], str(f"{N[0]:.5}"))
+    return ax
+
+
+def _plot_3d_beam_axial_forces(ax, member, i, j, scale):
+    sect = member["section"]
+    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+    ci, cj = i["coordinates"], j["coordinates"]
+    n = 13
+    dirv = e_z
+    if axis == "y":
+        dirv = e_y
+    for s, xi in enumerate(linspace(-1, +1, n)):
+        Q = beam_3d_axial_force(member, i, j, xi)
+        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        xs = zeros(2)
+        ys = zeros(2)
+        zs = zeros(2)
+        xs[0] = x[0]
+        xs[1] = xs[0] + scale * Q * dirv[0]
+        ys[0] = x[1]
+        ys[1] = ys[0] + scale * Q * dirv[1]
+        zs[0] = x[2]
+        zs[1] = zs[0] + scale * Q * dirv[2]
+        ax.plot(xs, ys, zs, "b-")
+        if xi == -1.0:
+            ax.text(xs[1], ys[1], zs[1], str(f"{Q[0]:.5}"))
+        elif xi == +1.0:
+            ax.text(xs[1], ys[1], zs[1], str(f"{Q[0]:.5}"))
+    return ax
+
+
+def plot_axial_forces(m, scale=1.0):
+    """
+    Plot the axial forces in the members.
+
+    Optional: axis = "y" or "z" (default is "z", which is suitable for 2d beams).
+    """
+    ax = plt.gca()
+    for member in m["truss_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        if m["dim"] == 3:
+            _plot_3d_truss_axial_forces(ax, member, i, j, scale)
+        else:
+            _plot_2d_truss_axial_forces(ax, member, i, j, scale)
+    for member in m["beam_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        if m["dim"] == 3:
+            _plot_3d_beam_axial_forces(ax, member, i, j, axis, scale)
+        else:
+            _plot_2d_beam_axial_forces(ax, member, i, j, scale)
+    return ax
+
+
+def _plot_3d_beam_torsion_moments(ax, member, i, j, scale):
+    sect = member["section"]
+    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+    ci, cj = i["coordinates"], j["coordinates"]
+    n = 13
+    dirv = e_z
+    for s, xi in enumerate(linspace(-1, +1, n)):
+        T = beam_3d_torsion_moment(member, i, j)
+        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        xs = zeros(2)
+        ys = zeros(2)
+        zs = zeros(2)
+        xs[0] = x[0]
+        xs[1] = xs[0] + scale * T * dirv[0]
+        ys[0] = x[1]
+        ys[1] = ys[0] + scale * T * dirv[1]
+        zs[0] = x[2]
+        zs[1] = zs[0] + scale * T * dirv[2]
+        ax.plot(xs, ys, zs, "b-")
+        if xi == 0.0:
+            ax.text(xs[1], ys[1], zs[1], str(f"{T[0]:.5}"))
+    return ax
+
+
+def plot_torsion_moments(m, scale=1.0):
+    """
+    Plot the torsion moments in the 3D beam members.
+    """
+    ax = plt.gca()
+    for member in m["beam_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        if m["dim"] == 3:
+            _plot_3d_beam_torsion_moments(ax, member, i, j, scale)
+    return ax
+
+
 def plot_beam_orientation(m, scale=1.0):
     """
     Plot the beam orientations as cartesian triplets.
@@ -403,7 +537,7 @@ def show(m):
     ax = plt.gca()
     ax.set_aspect("equal")
     ax.set_xlabel("X")
-    ax.set_ylabel("Y")
+    ax.set_ylabel("Z")
     if m["dim"] == 3:
         ax.set_zlabel("Z")
     plt.show()

@@ -356,6 +356,21 @@ def beam_3d_torsion_moment(member, i, j):
     return T
 
 
+def beam_2d_axial_force(member, i, j):
+    """
+    Compute 2d beam axial force based on the displacements stored at the joints.
+    The axial force is computed at the parametric location `xi` along the beam.
+    """
+    sect = member["section"]
+    e_x, h = beam_2d_member_geometry(i, j)
+    E, A = sect["E"], sect["A"]
+    ui, uj = i["displacements"][0:2], j["displacements"][0:2]
+    u = concatenate([ui, uj])
+    B = truss.truss_strain_displacement(e_x, h)
+    N = E * A * dot(B, u)
+    return N
+
+
 def beam_3d_axial_force(member, i, j):
     """
     Compute 3d beam axial force based on the displacements stored at the joints.
@@ -411,7 +426,7 @@ def beam_3d_stretch_displ_matrix(e_x, h):
 
     The job is delegated to the truss module.
     """
-    return truss.strain_displacement(e_x, h)
+    return truss.truss_strain_displacement(e_x, h)
 
 
 def beam_3d_axial_stiffness(e_x, h, E, A):
