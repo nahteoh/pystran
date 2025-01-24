@@ -78,7 +78,7 @@ Created on Mon Nov 18 08:09:22 2024
 # print(m['ntotaldof'])
 # print([j['dof'] for j in m['joints'].values()])
 
-# model.solve(m)
+# model.solve_statics(m)
 
 import pystran
 from pystran import model
@@ -103,4 +103,4 @@ print(m["nfreedof"])
 print(m["ntotaldof"])
 print([j["dof"] for j in m["joints"].values()])
 
-model.solve(m)
+model.solve_statics(m)

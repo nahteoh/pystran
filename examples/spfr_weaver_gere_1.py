@@ -63,7 +63,7 @@ print("Number of all degrees of freedom = ", m["ntotaldof"])
 
 # print([j['dof'] for j in m['joints'].values()])
 
-model.solve(m)
+model.solve_statics(m)
 
 for jid in [jB, jC, jE]:
     j = m["joints"][jid]

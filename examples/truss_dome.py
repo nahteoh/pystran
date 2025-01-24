@@ -85,7 +85,7 @@ model.number_dofs(m)
 print("Total Degrees of Freedom = ", m["ntotaldof"])
 print("Free Degrees of Freedom = ", m["nfreedof"])
 
-model.solve(m)
+model.solve_statics(m)
 
 for j in m["joints"].values():
     print(j["displacements"])

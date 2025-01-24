@@ -69,7 +69,7 @@ print("Free Degrees of Freedom = ", m["nfreedof"])
 
 # The model is solved.  This means that the displacements are calculated  from
 # the balance of the joints.
-model.solve(m)
+model.solve_statics(m)
 
 # The displacements are printed.
 for j in m["joints"].values():

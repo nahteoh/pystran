@@ -54,7 +54,7 @@ def test(e_x, e_y, e_z, F, refdefl, refslope):
 
     # print([j['dof'] for j in m['joints'].values()])
 
-    model.solve(m)
+    model.solve_statics(m)
 
     # print([j['displacements'] for j in m['joints'].values()])
 
