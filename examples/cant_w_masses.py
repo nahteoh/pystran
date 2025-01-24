@@ -12,6 +12,7 @@ only the added masses.
 
 from math import sqrt, pi
 from numpy import array
+from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
@@ -57,6 +58,9 @@ model.solve_free_vibration(m)
 
 expected = array([0.1609, 1.7604, 5.0886]) * sqrt(g * E * Iy / W / L**3) / 2 / pi
 print("Expected frequencies (zero mass of beam): ", expected)
+print("Computed frequencies: ", m["frequencies"][0:3])
+if norm((m["frequencies"][0:3] - expected) / expected) > 1.0e-2:
+    raise ValueError("Frequency calculation error")
 
 for mode in range(3):
     plots.plot_setup(m)
