@@ -12,6 +12,10 @@ import numpy
 def truss_section(name, E=0.0, A=0.0, rho=0.0):
     """
     Define truss section.
+
+    - `E`= Young's modulus,
+    - `A`= cross-sectional area,
+    - `rho`= mass density.
     """
     s = dict()
     s["name"] = name
@@ -27,8 +31,9 @@ def beam_2d_section(name, E=0.0, A=0.0, I=0.0, rho=0.0):
 
     - `E`= Young's modulus,
     - `A`= cross-sectional area,
-    - `I`= central moment of inertia of the cross-section about the x3
-    coordinate axis (i.e. the axis perpendicular to the plane of the beam).
+    - `I`= central moment of inertia of the cross-section about the `y`
+    coordinate axis (i.e. the axis perpendicular to the plane of the bending, `x-z`).
+    - `rho`= mass density.
     """
     s = dict()
     s["name"] = name
@@ -55,12 +60,13 @@ def beam_3d_section(
     Define 3d beam section.
 
     - `E`, `G`= Young's and shear modulus,
+    - `rho`= mass density,
     - `A`= cross-sectional area,
-    - `Ix`= central moment of inertia of the cross-section about the local x.
-    - `Iy`, `Iz`= central moment of inertia of the cross-section about the local y and local z
+    - `Ix`= central moment of inertia of the cross-section about the local `x`.
+    - `Iy`, `Iz`= central moment of inertia of the cross-section about the local `y` and local `z`
     coordinate axis,
     - `J`= St Venant torsion constant.
-    - `xz_vector`= vector that lies in the local x and z coordinate plane.
+    - `xz_vector`= vector that lies in the local `x` and `z` coordinate plane.
     """
     s = dict()
     s["name"] = name
@@ -94,7 +100,7 @@ def i_beam(H, B, tf, tw):
     """
     Returns the area, moments of inertia and torsion constant for an I-beam.
 
-    The axis parallel to the flanges is y, the axis parallel to the web is z.
+    The axis parallel to the flanges is `y`, the axis parallel to the web is `z`.
     """
     A = B * H - (B - tw) * (H - 2 * tf)
     Iy = (B / 12) * H**3 - ((B - tw) / 12) * (H - 2 * tf) ** 3
@@ -112,8 +118,8 @@ def square_tube(H, B, th, tb):
     """
     Returns the area, moments of inertia and torsion constant for a square tube.
 
-    The axis parallel to the B dimension is y, the axis parallel to the H
-    dimension is z.
+    The axis parallel to the `B` dimension is `y`, the axis parallel to the `H`
+    dimension is `z`.
     """
     Bi, Hi = (B - 2 * tb), (H - 2 * th)
     A = B * H - Bi * Hi
@@ -126,11 +132,11 @@ def square_tube(H, B, th, tb):
 
 def rectangle(H, B):
     """
-    Returns the area, moments of inertia and torsion constant for a rectangular
-    section.
+    Returns the area, moments of inertia and torsion constant for a solid
+    rectangular section.
 
-    The axis parallel to the B dimension is y, the axis parallel to the H
-    dimension is z.
+    The axis parallel to the `B` dimension is `y`, the axis parallel to the `H`
+    dimension is `z`.
     """
     a = max(H, B)
     b = min(H, B)
