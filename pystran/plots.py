@@ -224,7 +224,7 @@ def _plot_2d_beam_moments(ax, member, i, j, scale):
         xs[1] = x[0] + scale * M * e_z[0]
         ys[0] = x[1]
         ys[1] = x[1] + scale * M * e_z[1]
-        ax.plot(xs, ys, "b-")
+        ax.plot(xs, ys, "r-" if (M > 0) else "b-")
         if xi == -1.0:
             ax.text(xs[1], ys[1], str(f"{M[0]:.5}"))
         elif xi == +1.0:
@@ -252,7 +252,7 @@ def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
         ys[1] = ys[0] + scale * M * dirv[1]
         zs[0] = x[2]
         zs[1] = zs[0] + scale * M * dirv[2]
-        ax.plot(xs, ys, zs, "b-")
+        ax.plot(xs, ys, zs, "r-" if (M > 0) else "b-")
         if xi == -1.0:
             ax.text(xs[1], ys[1], zs[1], str(f"{M[0]:.5}"))
         elif xi == +1.0:
@@ -282,17 +282,17 @@ def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     for s, xi in enumerate(linspace(-1, +1, n)):
-        V = beam_2d_shear_force(member, i, j, xi)
+        Q = beam_2d_shear_force(member, i, j, xi)
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         xs = zeros(2)
         ys = zeros(2)
         xs[0] = x[0]
-        xs[1] = x[0] + scale * V * e_z[0]
+        xs[1] = x[0] + scale * Q * e_z[0]
         ys[0] = x[1]
-        ys[1] = x[1] + scale * V * e_z[1]
-        ax.plot(xs, ys, "b-")
+        ys[1] = x[1] + scale * Q * e_z[1]
+        ax.plot(xs, ys, "r-" if (Q > 0) else "b-")
         if xi == 0.0:
-            ax.text(xs[1], ys[1], str(f"{V[0]:.5}"))
+            ax.text(xs[1], ys[1], str(f"{Q[0]:.5}"))
     return ax
 
 
@@ -316,7 +316,7 @@ def _plot_3d_beam_shear_forces(ax, member, i, j, axis, scale):
         ys[1] = ys[0] + scale * Q * dirv[1]
         zs[0] = x[2]
         zs[1] = zs[0] + scale * Q * dirv[2]
-        ax.plot(xs, ys, zs, "b-")
+        ax.plot(xs, ys, zs, "r-" if (Q > 0) else "b-")
         if xi == -1.0:
             ax.text(xs[1], ys[1], zs[1], str(f"{Q[0]:.5}"))
         elif xi == +1.0:
@@ -354,7 +354,7 @@ def _plot_2d_beam_axial_forces(ax, member, i, j, scale):
         xs[1] = x[0] + scale * N * e_z[0]
         ys[0] = x[1]
         ys[1] = x[1] + scale * N * e_z[1]
-        ax.plot(xs, ys, "b-")
+        ax.plot(xs, ys, "r-" if (N > 0) else "b-")
         if xi == 0.0:
             ax.text(xs[1], ys[1], str(f"{N[0]:.5}"))
     return ax
@@ -374,7 +374,7 @@ def _plot_2d_truss_axial_forces(ax, member, i, j, scale):
         xs[1] = x[0] + scale * N * e_z[0]
         ys[0] = x[1]
         ys[1] = x[1] + scale * N * e_z[1]
-        ax.plot(xs, ys, "b-")
+        ax.plot(xs, ys, "r-" if (N > 0) else "b-")
         if xi == 0.0:
             ax.text(xs[1], ys[1], str(f"{N[0]:.5}"))
     return ax
@@ -400,7 +400,7 @@ def _plot_3d_beam_axial_forces(ax, member, i, j, scale):
         ys[1] = ys[0] + scale * Q * dirv[1]
         zs[0] = x[2]
         zs[1] = zs[0] + scale * Q * dirv[2]
-        ax.plot(xs, ys, zs, "b-")
+        ax.plot(xs, ys, zs, "r-" if (Q > 0) else "b-")
         if xi == -1.0:
             ax.text(xs[1], ys[1], zs[1], str(f"{Q[0]:.5}"))
         elif xi == +1.0:
@@ -450,7 +450,7 @@ def _plot_3d_beam_torsion_moments(ax, member, i, j, scale):
         ys[1] = ys[0] + scale * T * dirv[1]
         zs[0] = x[2]
         zs[1] = zs[0] + scale * T * dirv[2]
-        ax.plot(xs, ys, zs, "b-")
+        ax.plot(xs, ys, zs, "r-" if (T > 0) else "b-")
         if xi == 0.0:
             ax.text(xs[1], ys[1], zs[1], str(f"{T[0]:.5}"))
     return ax
