@@ -101,6 +101,11 @@ def assemble_mass(Mg, member, i, j):
 def truss_axial_force(member, i, j):
     """
     Compute truss axial force based on the displacements stored at the joints.
+
+    The force is computed as $N = EA B U$, where $B$ is the strain-displacement
+    matrix (computed by `truss_strain_displacement`), $U$ is the displacement
+    vector (so that $\\varepsilon  = BU$ is the axial strain), and $EA$ is the
+    axial stiffness.
     """
     sect = member["section"]
     e_x, h = truss_member_geometry(i, j)
