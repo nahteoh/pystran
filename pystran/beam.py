@@ -362,7 +362,7 @@ def beam_2d_axial_force(member, i, j):
     The axial force is computed at the parametric location `xi` along the beam.
     """
     sect = member["section"]
-    e_x, h = beam_2d_member_geometry(i, j)
+    e_x, e_z, h = beam_2d_member_geometry(i, j)
     E, A = sect["E"], sect["A"]
     ui, uj = i["displacements"][0:2], j["displacements"][0:2]
     u = concatenate([ui, uj])

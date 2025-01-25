@@ -7,6 +7,8 @@ by William McGuire, Richard H. Gallagher, Ronald D. Ziemian
 """
 
 from math import sqrt
+from numpy import array
+from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
@@ -14,9 +16,12 @@ from pystran import plots
 
 m = model.create(2)
 
+# We are working in a SI units (m)
+
 model.add_joint(m, 1, [0.0, 5.0])
 model.add_joint(m, 2, [8.0, 5.0])
 model.add_joint(m, 3, [8.0, 0.0])
+
 model.add_support(m["joints"][1], model.U1)
 model.add_support(m["joints"][1], model.U2)
 model.add_support(m["joints"][1], model.UR3)
@@ -41,18 +46,39 @@ model.add_load(m["joints"][2], model.UR3, 50e3)
 
 model.number_dofs(m)
 
-print("Number of free degrees of freedom = ", m["nfreedof"])
-print("Number of all degrees of freedom = ", m["ntotaldof"])
-
-print([j["dof"] for j in m["joints"].values()])
-
 model.solve_statics(m)
 
 print([j["displacements"] for j in m["joints"].values()])
 
-# print(m['K'][0:m['nfreedof'], 0:m['nfreedof']])
+if (
+    norm(m["joints"][2]["displacements"] - [0.00044147, -0.00039989, 0.00169432])
+    / norm([0.00044147, -0.00039989, 0.00169432])
+    > 1e-5
+):
+    raise ValueError("Displacement error")
 
-print(m["U"][0 : m["nfreedof"]])
+model.statics_reactions(m)
+
+for jid in [1, 3]:
+    j = m["joints"][jid]
+    print(f"Joint {jid}:")
+    print(
+        f"   Rx={j['reactions'][0]:.5}, Ry={j['reactions'][1]:.5}, My={j['reactions'][2]:.5} "
+    )
+r = m["joints"][1]["reactions"]
+if (
+    norm(array([r[0], r[1], r[2]]) - array([-6.6221e04, 6728.6, 1.8443e04]))
+    / norm(array([-6.6221e04, 6728.6, 1.8443e04]))
+    > 1e-3
+):
+    raise ValueError("Reaction error")
+r = m["joints"][3]["reactions"]
+if (
+    norm(array([r[0], r[1], r[2]]) - array([-4490.2, 6.3982e04, 7836.8]))
+    / norm(array([-4490.2, 6.3982e04, 7836.8]))
+    > 1e-3
+):
+    raise ValueError("Reaction error")
 
 
 plots.plot_setup(m)
@@ -60,4 +86,12 @@ plots.plot_members(m)
 plots.plot_deformations(m, 100.0)
 ax = plots.plot_shear_forces(m, scale=0.50e-3)
 ax.set_title("Shear forces")
+plots.show(m)
+
+
+plots.plot_setup(m)
+plots.plot_members(m)
+plots.plot_deformations(m, 100.0)
+ax = plots.plot_axial_forces(m, scale=0.50e-5)
+ax.set_title("Axial forces")
 plots.show(m)

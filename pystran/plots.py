@@ -14,6 +14,7 @@ from pystran.beam import (
     beam_2d_shape_fun,
     beam_2d_moment,
     beam_2d_shear_force,
+    beam_2d_axial_force,
 )
 from pystran.beam import (
     beam_3d_member_geometry,
@@ -345,7 +346,7 @@ def _plot_2d_beam_axial_forces(ax, member, i, j, scale):
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     for s, xi in enumerate(linspace(-1, +1, n)):
-        N = beam_2d_axial_force(member, i, j, xi)
+        N = beam_2d_axial_force(member, i, j)
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         xs = zeros(2)
         ys = zeros(2)
