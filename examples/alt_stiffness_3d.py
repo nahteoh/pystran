@@ -1,9 +1,9 @@
 """
-Created on 01/12/2025
-
-Example 4.13 from 
-Matrix Structural Analysis: Second Edition 2nd Edition
-by William McGuire, Richard H. Gallagher, Ronald D. Ziemian 
+In this example it is demonstrated that the stiffness matrix computed by the
+package results in the same matrix that is assembled from a textbook formula
+that produces the stiffness matrix of in the local beam coordinate system, and
+then transforms it using a 12x12 transformation matrix into the global
+coordinates.
 """
 
 from numpy import zeros, dot
