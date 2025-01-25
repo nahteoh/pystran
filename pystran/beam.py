@@ -13,6 +13,8 @@ from pystran import truss
 def beam_2d_shape_fun(xi):
     """
     Compute the beam shape functions for deflection in the `x-z` plane (i.e. in 2d).
+
+    An array of shape function values is returned (i.e. $[N_1(\\xi), ..., N_4(\\xi)]$).
     """
     return array(
         [
@@ -29,7 +31,8 @@ def beam_2d_shape_fun_xi(xi):
     Compute the first derivative of the beam shape functions for deflection in
     the `x-z` plane (i.e. in 2d).
 
-    The quantity computed is `d N(xi)/d xi`.
+    An array of first derivatives of shape functions is returned (i.e.
+    $[dN_1(\\xi)/d\\xi, ..., dN_4(\\xi)/d\\xi]$).
     """
     return array(
         [
@@ -46,7 +49,8 @@ def beam_2d_shape_fun_xi2(xi):
     Compute the second derivative of the beam shape functions for deflection in
     the `x-z` plane (i.e. in 2d).
 
-    The quantity computed is `d^2 N(xi)/d xi^2`.
+    An array of second derivatives of shape functions is returned (i.e.
+    $[d^2N_1(\\xi)/d\\xi^2, ..., d^2N_4(\\xi)/d\\xi^2]$).
     """
     return array([(6 * xi) / 4, (2 - 6 * xi) / 4, (-6 * xi) / 4, (-2 - 6 * xi) / 4])
 
@@ -56,7 +60,8 @@ def beam_2d_shape_fun_xi3(xi):
     Compute the third derivative of the beam shape functions for deflection in
     the `x-z` plane (i.e. in 2d).
 
-    The quantity computed is  `d^3 N(xi)/d xi^3`.
+    An array of third derivatives of shape functions is returned (i.e.
+    $[d^3N_1(\\xi)/d\\xi^3, ..., d^3N_4(\\xi)/d\\xi^3]$).
     """
     return array([(6) / 4, (-6) / 4, (-6) / 4, (-6) / 4])
 
@@ -64,6 +69,8 @@ def beam_2d_shape_fun_xi3(xi):
 def beam_3d_xz_shape_fun(xi):
     """
     Compute the beam shape functions for deflection in the `x-z` plane.
+
+    An array of shape function values is returned (i.e. $[N_1(\\xi), ..., N_4(\\xi)]$).
     """
     return beam_2d_shape_fun(xi)
 
@@ -72,6 +79,9 @@ def beam_3d_xz_shape_fun_xi2(xi):
     """
     Compute the second derivative of the beam shape functions for deflection in
     the `x-z` plane.
+
+    An array of second derivatives of shape functions is returned (i.e.
+    $[d^2N_1(\\xi)/d\\xi^2, ..., d^2N_4(\\xi)/d\\xi^2]$).
     """
     return beam_2d_shape_fun_xi2(xi)
 
@@ -80,10 +90,10 @@ def beam_3d_xy_shape_fun(xi):
     """
     Compute the beam shape functions for deflection in the x-y plane.
 
-    The quantity computed is `N(xi)`.
-
     The signs of the shape functions that go with the rotations (i.e. the second
-    and fourth) need to be reversed.
+    and fourth) need to be reversed: An array of second derivatives of shape
+    functions is returned (i.e. $[N_1(\\xi), -N_2(\\xi),
+    N_3(\\xi), -N_4(\\xi)]$).
     """
     N = beam_2d_shape_fun(xi)
     N[1] *= -1.0
@@ -96,10 +106,10 @@ def beam_3d_xy_shape_fun_xi2(xi):
     Compute the second derivative of the beam shape functions for deflection in
     the `x-y` plane.
 
-    The quantity computed is `d^2 N(xi)/d xi^2`.
-
     The signs of the shape functions that go with the rotations (i.e. the second
-    and fourth) need to be reversed.
+    and fourth) need to be reversed: An array of second derivatives of shape
+    functions is returned (i.e. $[d^2N_1(\\xi)/d\\xi^2, -d^2N_2(\\xi)/d\\xi^2,
+    d^2N_3(\\xi)/d\\xi^2, -d^2N_4(\\xi)/d\\xi^2]$).
     """
     d2Ndxi2 = beam_2d_shape_fun_xi2(xi)
     d2Ndxi2[1] *= -1.0
@@ -112,8 +122,8 @@ def beam_3d_xz_shape_fun_xi3(xi):
     Compute the third derivative of the beam shape functions with respect to
     `xi` for deflection in the `x-z` plane.
 
-    The quantity computed is `d^3 N(xi)/d xi^3`.
-
+    An array of third derivatives of shape functions is returned (i.e.
+    $[d^3N_1(\\xi)/d\\xi^3, ..., d^3N_4(\\xi)/d\\xi^3]$).
     """
     return beam_2d_shape_fun_xi3(xi)
 
@@ -123,10 +133,10 @@ def beam_3d_xy_shape_fun_xi3(xi):
     Compute the third derivative of the beam shape functions with respect to
     `xi` for deflection in the `x-y` plane.
 
-    The quantity computed is `d^3 N(xi)/d xi^3`.
-
     The signs of the shape functions that go with the rotations (i.e. the second
-    and fourth) need to be reversed.
+    and fourth) need to be reversed: An array of third derivatives of shape
+    functions is returned (i.e. $[d^3N_1(\\xi)/d\\xi^3, -d^3N_2(\\xi)/d\\xi^3,
+    d^3N_3(\\xi)/d\\xi^3, -d^3N_4(\\xi)/d\\xi^3]$).
     """
     d3Ndxi3 = beam_2d_shape_fun_xi3(xi)
     d3Ndxi3[1] *= -1.0
@@ -200,6 +210,12 @@ def beam_3d_xz_curv_displ_matrix(e_y, e_z, h, xi):
     """
     Compute beam curvature-displacement matrix in the local `x-z` plane (i.e.
     bending about the `y` axis).
+
+    The curvature $d^2w/dx^2$ is computed in the local coordinate system of the
+    beam as $d^2w/dx^2 = B U$. Here $B$ is the curvature-displacement matrix and
+    $U$ is the displacement vector. All three displacement components and all
+    three rotation components at each joint are assumed, so the matrix $B$ has
+    one row and twelve columns.
     """
     d2Ndxi2 = beam_3d_xz_shape_fun_xi2(xi)
     B = zeros((1, 12))
@@ -214,6 +230,12 @@ def beam_3d_xy_curv_displ_matrix(e_y, e_z, h, xi):
     """
     Compute beam curvature-displacement matrix in the local `x-y` plane (i.e.
     bending about the `z` axis).
+
+    The curvature $d^2v/dx^2$ is computed in the local coordinate system of the
+    beam as $d^2v/dx^2 = B U$. Here $B$ is the curvature-displacement matrix and
+    $U$ is the displacement vector. All three displacement components and all
+    three rotation components at each joint are assumed, so the matrix $B$ has
+    one row and twelve columns.
     """
     d2Ndxi2 = beam_3d_xy_shape_fun_xi2(xi)
     B = zeros((1, 12))
@@ -227,6 +249,8 @@ def beam_3d_xy_curv_displ_matrix(e_y, e_z, h, xi):
 def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
     """
     Compute 3d beam stiffness matrices for bending in the planes `x-y` and `x-z`.
+
+    Two-point Gauss quadrature is used to compute the stiffness matrices.
     """
     xiG = [-1 / sqrt(3), 1 / sqrt(3)]
     WG = [1, 1]
@@ -243,10 +267,16 @@ def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
 
 def beam_2d_curv_displ_matrix(e_z, h, xi):
     """
-    Compute beam curvature-displacement matrix.
+    Compute 2d beam curvature-displacement matrix.
 
     Here the curvatures is with respect to the physical coordinate measured
     along the member (local `x`).
+
+    The curvature $d^2w/dx^2$ is computed in the local coordinate system of the
+    beam as $d^2w/dx^2 = B U$. Here $B$ is the curvature-displacement matrix and
+    $U$ is the displacement vector. Two displacement components and one rotation
+    component at each joint are assumed, so the matrix $B$ has one row and six
+    columns.
     """
     d2Ndxi2 = beam_2d_shape_fun_xi2(xi)
     B = zeros((1, 6))
@@ -263,6 +293,12 @@ def beam_2d_3rd_deriv_displ_matrix(e_z, h, xi):
 
     Here the third derivative is with respect to the physical coordinate measured
     along the member (local `x`).
+
+    The third derivative $d^3w/dx^3$ is computed in the local coordinate system of the
+    beam as $d^3w/dx^3 = B U$. Here $B$ is the third-derivative-displacement matrix and
+    $U$ is the displacement vector. Two displacement components and one rotation
+    component at each joint are assumed, so the matrix $B$ has one row and six
+    columns.
     """
     d2Ndxi3 = beam_2d_shape_fun_xi3(xi)
     B = zeros((1, 6))
@@ -273,15 +309,21 @@ def beam_2d_3rd_deriv_displ_matrix(e_z, h, xi):
     return B
 
 
-def beam_3d_xz_3rd_deriv_displ_matrix(e_y, e_z, h, xi):
+def beam_3d_xz_3rd_deriv_displ_matrix(e_y, e_z, h):
     """
     Compute 3d beam third derivative-displacement matrix for displacements in
     the `x-z` plane.
 
-    Here the curvatures is with respect to the physical coordinate measured
+    Here the third derivative is with respect to the physical coordinate measured
     along the member (local `x`).
+
+    The third derivative $d^3w/dx^3$ is computed in the local coordinate system of the
+    beam as $d^3w/dx^3 = B U$. Here $B$ is the third-derivative-displacement matrix and
+    $U$ is the displacement vector. All three displacement components and all
+    three rotation components at each joint are assumed, so the matrix $B$ has
+    one row and twelve columns.
     """
-    d2Ndxi3 = beam_3d_xz_shape_fun_xi3(xi)
+    d2Ndxi3 = beam_3d_xz_shape_fun_xi3(0.0)
     B = zeros((1, 12))
     B[0, 0:3] = d2Ndxi3[0] * (2 / h) ** 3 * e_z
     B[0, 3:6] = (h / 2) * d2Ndxi3[1] * (2 / h) ** 3 * e_y
@@ -290,15 +332,21 @@ def beam_3d_xz_3rd_deriv_displ_matrix(e_y, e_z, h, xi):
     return B
 
 
-def beam_3d_xy_3rd_deriv_displ_matrix(e_y, e_z, h, xi):
+def beam_3d_xy_3rd_deriv_displ_matrix(e_y, e_z, h):
     """
     Compute 3d beam third derivative-displacement matrix for displacements in
     the `x-y` plane.
 
-    Here the curvatures is with respect to the physical coordinate measured
+    Here the third derivative is with respect to the physical coordinate measured
     along the member (local `x`).
+
+    The third derivative $d^3v/dx^3$ is computed in the local coordinate system of the
+    beam as $d^3v/dx^3 = B U$. Here $B$ is the third-derivative-displacement matrix and
+    $U$ is the displacement vector. All three displacement components and all
+    three rotation components at each joint are assumed, so the matrix $B$ has
+    one row and twelve columns.
     """
-    d2Ndxi3 = beam_3d_xy_shape_fun_xi3(xi)
+    d2Ndxi3 = beam_3d_xy_shape_fun_xi3(0.0)
     B = zeros((1, 12))
     B[0, 0:3] = d2Ndxi3[0] * (2 / h) ** 3 * e_y
     B[0, 3:6] = (h / 2) * d2Ndxi3[1] * (2 / h) ** 3 * e_z
@@ -311,6 +359,11 @@ def beam_2d_moment(member, i, j, xi):
     """
     Compute 2d beam moment based on the displacements stored at the joints.
     The moment is computed at the parametric location `xi` along the beam.
+
+    The moment is mathematically defined as $M = -EI d^2w/dx^2$.
+
+    The curvature is computed with the curvature-displacement matrix $B$ by the function
+    `beam_2d_curv_displ_matrix`.
     """
     e_x, e_z, h = beam_2d_member_geometry(i, j)
     sect = member["section"]
@@ -323,9 +376,16 @@ def beam_2d_moment(member, i, j, xi):
 
 def beam_3d_moment(member, i, j, axis, xi):
     """
-    Compute 3d beam moment based on the displacements stored at the joints.
-    The moment is computed at the parametric location `xi` along the beam.
-    The moment acts about the axis specified by the string `axis` (`'y'` or `'z'`).
+    Compute 3d beam moment based on the displacements stored at the joints. The
+    moment is computed at the parametric location `xi` along the beam. The
+    moment acts about the axis specified by the string `axis` (`'y'` or `'z'`).
+
+    The moments are mathematically defined as $M_y = -EI_y d^2w/dx^2$ for bending
+    about the `y` axis, and $M_z = +EI_z d^2v/dx^2$ for bending about the `z`
+    axis.
+
+    The curvatures are computed with  curvature-displacement matrices $B$ by the
+    functions `beam_3d_xz_curv_displ_matrix` and `beam_3d_xy_curv_displ_matrix` respectively.
     """
     sect = member["section"]
     e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
@@ -344,7 +404,7 @@ def beam_3d_moment(member, i, j, axis, xi):
 def beam_3d_torsion_moment(member, i, j):
     """
     Compute 3d beam torsion moment based on the displacements stored at the joints.
-    The moment is computed at the parametric location `xi` along the beam.
+    The moment is uniform along the beam.
     """
     sect = member["section"]
     e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
@@ -359,7 +419,7 @@ def beam_3d_torsion_moment(member, i, j):
 def beam_2d_axial_force(member, i, j):
     """
     Compute 2d beam axial force based on the displacements stored at the joints.
-    The axial force is computed at the parametric location `xi` along the beam.
+    The axial force is uniform along the beam.
     """
     sect = member["section"]
     e_x, e_z, h = beam_2d_member_geometry(i, j)
@@ -374,7 +434,7 @@ def beam_2d_axial_force(member, i, j):
 def beam_3d_axial_force(member, i, j):
     """
     Compute 3d beam axial force based on the displacements stored at the joints.
-    The axial force is computed at the parametric location `xi` along the beam.
+    The axial force is uniform along the beam.
     """
     sect = member["section"]
     e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
@@ -389,8 +449,7 @@ def beam_3d_axial_force(member, i, j):
 def beam_3d_shear_force(member, i, j, axis, xi):
     """
     Compute 3d shear force based on the displacements stored at the joints. The
-    shear force in the direction of axis `axis`  (`'y'` or `'z'`) is computed at
-    the parametric location `xi` along the beam.
+    shear force in the direction of axis `axis`  (`'y'` or `'z'`) is uniform along the beam.
     """
     sect = member["section"]
     e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
@@ -398,10 +457,10 @@ def beam_3d_shear_force(member, i, j, axis, xi):
     ui, uj = i["displacements"], j["displacements"]
     u = concatenate([ui, uj])
     if axis == "z":
-        B = beam_3d_xz_3rd_deriv_displ_matrix(e_y, e_z, h, xi)
+        B = beam_3d_xz_3rd_deriv_displ_matrix(e_y, e_z, h)
         Q = -E * Iy * dot(B, u)
     else:
-        B = beam_3d_xy_3rd_deriv_displ_matrix(e_y, e_z, h, xi)
+        B = beam_3d_xy_3rd_deriv_displ_matrix(e_y, e_z, h)
         Q = -E * Iz * dot(B, u)
     return Q
 
