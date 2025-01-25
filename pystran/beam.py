@@ -196,10 +196,6 @@ def beam_3d_member_geometry(i, j, xz_vector):
     if h <= 0.0:
         raise ZeroDivisionError("Length of element must be positive")
     e_x /= h  # normalize the unit length
-    # The orientation here reflects the sign convention in the book. The
-    # deflection is measured positive downwards, while the x coordinate is
-    # measured left to right. So in two dimensions e_x and e_z form a
-    # left-handed coordinate system.
     if abs(dot(e_x, xz_vector)) > 0.99 * norm(xz_vector):
         raise ZeroDivisionError("xz_vector must not be parallel to the beam axis")
     e_y = cross(xz_vector, e_x)
@@ -208,16 +204,27 @@ def beam_3d_member_geometry(i, j, xz_vector):
     return e_x, e_y, e_z, h
 
 
-def beam_2d_bending_stiffness(e_z, h, E, I):
+def beam_2d_bending_stiffness(e_z, h, E, I_y):
     """
     Compute 2d beam stiffness matrix.
+
+    Two-point Gauss quadrature is used to compute the stiffness matrix.
+
+    The formula reads
+
+    $K = (h/2) \\int_{-1}^{+1} EI_y B^T B  d\\xi$,
+
+    where $B$ is the curvature-displacement matrix (computed by
+    `beam_2d_curv_displ_matrix`), and $h/2$ is the Jacobian. `I_y` is the second
+    moment of area about the `y` axis (which is orthogonal to the plane of
+    bending).
     """
     xiG = [-1 / sqrt(3), 1 / sqrt(3)]
     WG = [1, 1]
     K = zeros((6, 6))
     for q in range(2):
         B = beam_2d_curv_displ_matrix(e_z, h, xiG[q])
-        K += E * I * outer(B.T, B) * WG[q] * (h / 2)
+        K += E * I_y * outer(B.T, B) * WG[q] * (h / 2)
     return K
 
 
@@ -263,9 +270,25 @@ def beam_3d_xy_curv_displ_matrix(e_y, e_z, h, xi):
 
 def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
     """
-    Compute 3d beam stiffness matrices for bending in the planes `x-y` and `x-z`.
+    Compute 3d beam stiffness matrices for bending in the planes `x-y` and
+    `x-z`.
 
     Two-point Gauss quadrature is used to compute the stiffness matrices.
+
+    The formula reads
+
+    $K = (h/2) \\int_{-1}^{+1} EI_y B_{xz}^T B_{xz}  d\\xi$,
+
+    for bending in the `x-z` plane, and
+
+    $K = (h/2) \\int_{-1}^{+1} EI_z B_{xy}^T B_{xy}  d\\xi$,
+
+    where $B_{xz}$ is the curvature-displacement matrix for bending in the `x-z`
+    plane (computed by `beam_3d_xz_curv_displ_matrix`), $B_{xy}$ is the
+    curvature-displacement matrix for bending in the `x-y` plane (computed by
+    `beam_3d_xy_curv_displ_matrix`), and $h/2$ is the Jacobian. `I_y` is the
+    second moment of area about the `y` axis, and `I_z`  is the second moment of
+    area about the `z` axis.
     """
     xiG = [-1 / sqrt(3), 1 / sqrt(3)]
     WG = [1, 1]
@@ -395,12 +418,13 @@ def beam_3d_moment(member, i, j, axis, xi):
     moment is computed at the parametric location `xi` along the beam. The
     moment acts about the axis specified by the string `axis` (`'y'` or `'z'`).
 
-    The moments are mathematically defined as $M_y = -EI_y d^2w/dx^2$ for bending
-    about the `y` axis, and $M_z = +EI_z d^2v/dx^2$ for bending about the `z`
-    axis.
+    The moments are mathematically defined as $M_y = -EI_y d^2w/dx^2$ for
+    bending about the `y` axis, and $M_z = +EI_z d^2v/dx^2$ for bending about
+    the `z` axis.
 
     The curvatures are computed with  curvature-displacement matrices $B$ by the
-    functions `beam_3d_xz_curv_displ_matrix` and `beam_3d_xy_curv_displ_matrix` respectively.
+    functions `beam_3d_xz_curv_displ_matrix` and `beam_3d_xy_curv_displ_matrix`,
+    respectively.
     """
     sect = member["section"]
     e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
@@ -418,8 +442,15 @@ def beam_3d_moment(member, i, j, axis, xi):
 
 def beam_3d_torsion_moment(member, i, j):
     """
-    Compute 3d beam torsion moment based on the displacements stored at the joints.
-    The moment is uniform along the beam.
+    Compute 3d beam torsion moment based on the displacements stored at the
+    joints. The moment is uniform along the beam.
+
+    The moment is mathematically defined as $T = GJ d\\theta_x/dx$. The rate of
+    change of the axial rotation, $d\\theta_x/dx$, is computed with the
+    torsion-displacement matrix $B$, obtained by the function
+    `beam_3d_torsion_displ_matrix`.
+
+    The torsion moment is uniform along the beam.
     """
     sect = member["section"]
     e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
@@ -434,6 +465,10 @@ def beam_3d_torsion_moment(member, i, j):
 def beam_2d_axial_force(member, i, j):
     """
     Compute 2d beam axial force based on the displacements stored at the joints.
+
+    Refer to the function `truss.truss_strain_displacement` that computes the
+    strain-displacement matrix for a truss member.
+
     The axial force is uniform along the beam.
     """
     sect = member["section"]
@@ -449,6 +484,7 @@ def beam_2d_axial_force(member, i, j):
 def beam_3d_axial_force(member, i, j):
     """
     Compute 3d beam axial force based on the displacements stored at the joints.
+
     The axial force is uniform along the beam.
     """
     sect = member["section"]
@@ -498,6 +534,8 @@ def beam_3d_stretch_displ_matrix(e_x, h):
     """
     Compute beam stretch-displacement matrix.
 
+    Stretch here means axial strain.
+
     The job is delegated to the truss module.
     """
     return truss.truss_strain_displacement(e_x, h)
@@ -506,6 +544,9 @@ def beam_3d_stretch_displ_matrix(e_x, h):
 def beam_3d_axial_stiffness(e_x, h, E, A):
     """
     Compute axial stiffness matrix.
+
+    The axial stiffness matrix is computed as $K = EA B^T B h$. Here $B$ is the
+    stretch-displacement matrix, computed by `beam_3d_stretch_displ_matrix`.
     """
     B = beam_3d_stretch_displ_matrix(e_x, h)
     return E * A * outer(B.T, B) * h
@@ -514,6 +555,9 @@ def beam_3d_axial_stiffness(e_x, h, E, A):
 def beam_3d_torsion_stiffness(e_x, h, G, J):
     """
     Compute torsion stiffness matrix.
+
+    The torsion stiffness matrix is computed as $K = GJ B^T B h$. Here $B$ is
+    the torsion-displacement matrix, computed by `beam_3d_torsion_displ_matrix`.
     """
     B = beam_3d_torsion_displ_matrix(e_x, h)
     return G * J * outer(B.T, B) * h
@@ -522,6 +566,8 @@ def beam_3d_torsion_stiffness(e_x, h, G, J):
 def beam_3d_torsion_displ_matrix(e_x, h):
     """
     Compute torsion-displacement matrix.
+
+    The torsion-displacement matrix is constant.
     """
     B = zeros((1, 6))
     B[0, 0:3] = -e_x / h
@@ -642,21 +688,23 @@ def beam_3d_end_forces(member, i, j):
     """
     Compute the end forces of a beam element in 3d.
 
-    Dictionary with the keys 'Ni', 'Qyi', 'Qzi', 'Ti', 'Myi', 'Mzi', 'Nj',
-    'Qyj', 'Qzj', 'Tj', 'Myj', 'Mzj',  is returned.
+    The end forces of the beam are forces acting on the joints `i` and `j` by the beam.
+
+    Dictionary with the keys `'Ni'`, `'Qyi'`, `'Qzi'`, `'Ti'`, `'Myi'`, `'Mzi'`, `'Nj'`,
+    `'Qyj'`, `'Qzj'`, `'Tj'`, `'Myj'`, `'Mzj'`,  is returned.
     """
     Ni = beam_3d_axial_force(member, i, j)
-    Nj = Ni
+    Nj = -Ni
     Ti = beam_3d_torsion_moment(member, i, j)
-    Tj = Ti
+    Tj = -Ti
     Myi = beam_3d_moment(member, i, j, "y", -1.0)
-    Myj = beam_3d_moment(member, i, j, "y", +1.0)
+    Myj = -beam_3d_moment(member, i, j, "y", +1.0)
     Mzi = beam_3d_moment(member, i, j, "z", -1.0)
-    Mzj = beam_3d_moment(member, i, j, "z", +1.0)
+    Mzj = -beam_3d_moment(member, i, j, "z", +1.0)
     Qyi = beam_3d_shear_force(member, i, j, "y", -1.0)
-    Qyj = beam_3d_shear_force(member, i, j, "y", +1.0)
+    Qyj = -beam_3d_shear_force(member, i, j, "y", +1.0)
     Qzi = beam_3d_shear_force(member, i, j, "z", -1.0)
-    Qzj = beam_3d_shear_force(member, i, j, "z", +1.0)
+    Qzj = -beam_3d_shear_force(member, i, j, "z", +1.0)
     return dict(
         Ni=Ni[0],
         Qyi=Qyi[0],
@@ -664,10 +712,10 @@ def beam_3d_end_forces(member, i, j):
         Ti=Ti[0],
         Myi=Myi[0],
         Mzi=Mzi[0],
-        Nj=-Nj[0],
-        Qyj=-Qyj[0],
-        Qzj=-Qzj[0],
-        Tj=-Tj[0],
-        Myj=-Myj[0],
-        Mzj=-Mzj[0],
+        Nj=Nj[0],
+        Qyj=Qyj[0],
+        Qzj=Qzj[0],
+        Tj=Tj[0],
+        Myj=Myj[0],
+        Mzj=Mzj[0],
     )
