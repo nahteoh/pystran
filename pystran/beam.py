@@ -148,21 +148,24 @@ def beam_2d_member_geometry(i, j):
     """
     Compute 2d beam geometry.
 
-    The deformation of the beam is considered in the x-z plane. `e_x` is the
-    direction vector along the axis of the beam. `e_z` is the direction vector
-    perpendicular to the axis of the beam. These two vectors form a right-handed
-    coordinate system, considering `e_y` points out of the whiteboard
-    (consistent with the sign convention in the book).
+    A local coordinate system is attached to the beam such that the `x` axis is
+    along the beam axis. The deformation of the beam is considered in the x-z
+    plane.
+
+    Vector `e_x` is the direction vector along the axis of the beam. `e_z` is
+    the direction vector perpendicular to the axis of the beam. These two
+    vectors form a left-handed coordinate system (consistent with the sign
+    convention in the book): The deflection `w` is measured positive downwards,
+    while the `x` coordinate is measured left to right. So in two dimensions
+    `e_x` and `e_z` form a left-handed coordinate system. In reality, the
+    complete coordinate system is right-handed, as the not-used basis vector is
+    `e_y`, which points out of the plane of the screen (page).
     """
     e_x = geometry.delt(i["coordinates"], j["coordinates"])
     h = geometry.vlen(i["coordinates"], j["coordinates"])
     if h <= 0.0:
         raise ZeroDivisionError("Length of element must be positive")
     e_x /= h
-    # The orientation here reflects the sign convention in the book. The
-    # deflection is measured positive downwards, while the x coordinate is
-    # measured left to right. So in two dimensions e_x and e_z form a
-    # left-handed coordinate system.
     e_z = array([e_x[1], -e_x[0]])
     return e_x, e_z, h
 
@@ -171,10 +174,22 @@ def beam_3d_member_geometry(i, j, xz_vector):
     """
     Compute 3d beam geometry.
 
-    The deformation of the beam is considered in the `x-y` and `x-z` plane.
-    Vector `e_x` is the direction vector along the axis of the beam. `e_z` is the
-    direction vector perpendicular to the axis of the beam. These two vectors
-    form a right-handed coordinate system, completed by `e_y`.
+    A local coordinate system is attached to the beam such that the `x` axis is
+    along the beam axis. The deformation of the beam is considered in the `x-y`
+    and `x-z` plane.
+
+    Vector `e_x` is the direction vector along the axis of the beam. `e_z` is
+    the direction vector perpendicular to the axis of the beam. These two
+    vectors form a right-handed coordinate system, completed by `e_y`.
+
+    The plane `x-z` is defined by the vector `xz_vector` and the beam axis (i.e.
+    `e_x`). Therefore, the vector `xz_vector` must not be parallel to the beam
+    axis.
+
+    - `i` and `j` = the two joints of the beam.
+    - `xz_vector` = the vector that defines the `x-z` plane of the beam-local
+      coordinate system. It does not need to be of unit length, but it must not
+      be parallel to the beam axis.
     """
     e_x = geometry.delt(i["coordinates"], j["coordinates"])
     h = geometry.vlen(i["coordinates"], j["coordinates"])
