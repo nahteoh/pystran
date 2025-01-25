@@ -4,7 +4,9 @@ A simple structural analysis tool in Python.
 
 Linear statics and dynamics can be analyzed in structures consisting of truss and beam members, both in two dimensions and in three dimensions.
 
-![Alt pystran capabilities in graphic abstract](docs/splash.png "pystran")
+The formulations are derived in the Finite element modeling with shells and beams [book](http://hogwarts.ucsd.edu/~pkrysl/femstructures-book/).
+
+![Alt pystran capabilities in graphic abstract](docs/splash.png "pystran" width=80%)
 
 ## News
 
