@@ -10,6 +10,9 @@ from pystran import assemble
 def truss_member_geometry(i, j):
     """
     Compute truss geometry.
+
+    Vector `e_x` is the unit vector along the truss member, and `h` is the
+    length of the member.
     """
     e_x = geometry.delt(i["coordinates"], j["coordinates"])
     h = geometry.vlen(i["coordinates"], j["coordinates"])
@@ -22,6 +25,9 @@ def truss_member_geometry(i, j):
 def truss_stiffness(e_x, h, E, A):
     """
     Compute truss stiffness matrix.
+
+    The axial stiffness matrix is computed as $K = EA B^T B h$. Here $B$ is the
+    stretch-displacement matrix, computed by `truss_strain_displacement`.
     """
     B = truss_strain_displacement(e_x, h)
     return E * A * outer(B.T, B) * h
@@ -30,6 +36,8 @@ def truss_stiffness(e_x, h, E, A):
 def truss_mass(e_x, h, rho, A):
     """
     Compute truss mass matrix.
+
+    The mass each joint gets is computed as $m = \\rho A h / 2$.
     """
     n = len(e_x) * 2
     m = zeros((n, n))
@@ -40,10 +48,14 @@ def truss_mass(e_x, h, rho, A):
 
 def truss_strain_displacement(e_x, h):
     """
-    Compute truss strain displacement matrix.
+    Compute truss strain-displacement matrix.
 
     The axial strain is computed as $\\varepsilon = B u$, using the strain
     displacement matrix $B$ and the displacement vector $u$.
+
+    The dimension of the strain-displacement matrix depends on the number of
+    space dimensions. The vector `e_x` is the unit vector along the truss
+    member, so it could have one, two, or three components.
     """
     return reshape(concatenate((-e_x / h, e_x / h)), (1, 2 * len(e_x)))
 
