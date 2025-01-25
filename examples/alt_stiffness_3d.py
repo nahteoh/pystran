@@ -116,6 +116,8 @@ for r in range(12):
     for c in range(12):
         if abs(K[r, c] - K1[r, c]) > 1e-12 * (abs(K1[r, c]) + abs(K[r, c])):
             print(r, c, K[r, c], K1[r, c])
+            raise ValueError("Stiffness matrix is not correct")
+print("Stiffness matrix is correct")
 
 # plots.plot_setup(m)
 # plots.plot_members(m)
