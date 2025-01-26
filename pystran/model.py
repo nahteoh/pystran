@@ -229,12 +229,24 @@ def _copy_dof_num_to_linked(m, j, d, n):
                 o["dof"][d] = n
 
 
+def _have_rotations(m):
+    with_rotations = m["beam_members"]
+    if with_rotations:
+        return True
+    for j in m["joints"].values():
+        if "supports" in j and j["supports"]:
+            for dof in j["supports"].keys():
+                if dof == UR1 or dof == UR2 or dof == UR3:
+                    return True
+    return False
+
+
 def ndof_per_joint(m):
     """
     How many degrees of freedom are there per joint?
     """
     ndpn = m["dim"]
-    with_rotations = m["beam_members"]
+    with_rotations = _have_rotations(m)
     if with_rotations:
         if m["dim"] == 2:
             ndpn = 3

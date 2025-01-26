@@ -316,6 +316,7 @@ def plot_joint_numbers(m):
     ax = plt.gca()
     for j in m["joints"].values():
         if m["dim"] == 3:
+            ax.plot(j["coordinates"][0], j["coordinates"][1], j["coordinates"][2], "ro")
             ax.text(
                 j["coordinates"][0],
                 j["coordinates"][1],
@@ -323,6 +324,7 @@ def plot_joint_numbers(m):
                 str(j["jid"]),
             )
         else:
+            ax.plot(j["coordinates"][0], j["coordinates"][1], "ro")
             ax.text(j["coordinates"][0], j["coordinates"][1], str(j["jid"]))
     return ax
 
@@ -747,6 +749,119 @@ def plot_applied_moments(m, scale=1.0, radius=0.1):
                             arrowstyle="-|>",
                             color="cyan",
                         )
+    return ax
+
+
+def plot_translation_supports(m, scale=1.0, shortest_arrow=1.0e-6):
+    """
+    Plot the translation supports at the joints.
+
+    - `m` = model dictionary,
+    - `scale` = scale factor for the arrows.
+    """
+    ax = plt.gca()
+    dim = m["dim"]
+    ndpn = ndof_per_joint(m)
+    for j in m["joints"].values():
+        if "supports" in j and j["supports"]:
+            for d in j["supports"].keys():
+                U = zeros((dim,))
+                if d < dim:
+                    v = j["supports"][d]
+                    if v == 0:
+                        v = shortest_arrow
+                    U[d] = v
+                if dim == 2:
+                    x, y = j["coordinates"]
+                    u, v = F
+                    al = scale * norm(F)
+                    ax.arrow(
+                        x,
+                        y,
+                        scale * u,
+                        scale * v,
+                        head_width=al / 5,
+                        head_length=al / 5,
+                        color="cyan",
+                    )
+                else:
+                    x, y, z = j["coordinates"]
+                    u, v, w = U
+                    ax.arrow3D(
+                        x,
+                        y,
+                        z,
+                        scale * u,
+                        scale * v,
+                        scale * w,
+                        mutation_scale=20,
+                        arrowstyle="-|>",
+                        color="cyan",
+                    )
+    return ax
+
+
+def plot_rotation_supports(m, scale=1.0, radius=0.1, shortest_arrow=1.0e-6):
+    """
+    Plot the rotation supports at the joints.
+
+    - `m` = model dictionary,
+    - `scale` = scale factor for the arrows. Moments are rendered with double
+      arrows.
+
+    Optional: `radius` = radius of the circle (2D only).
+    """
+    ax = plt.gca()
+    dim = m["dim"]
+    ndpn = ndof_per_joint(m)
+    if ndpn == dim:
+        return
+    for j in m["joints"].values():
+        if "supports" in j and j["supports"]:
+            for d in j["supports"].keys():
+                R = zeros((ndpn - dim,))
+                if d >= dim:
+                    v = j["supports"][d]
+                    if v == 0:
+                        v = shortest_arrow
+                    R[d - dim] = v
+                    if dim == 2:
+                        x, y = j["coordinates"]
+                        if R >= 0:
+                            st = -110
+                            dl = 210
+                            sense = +1
+                        else:
+                            st = 80
+                            dl = 210
+                            sense = -1
+                        _drawCirc(ax, radius, x, y, st, dl, sense, color_="cyan")
+                    else:
+                        x, y, z = j["coordinates"]
+                        u, v, w = scale * R
+                        ax.arrow3D(
+                            x,
+                            y,
+                            z,
+                            u,
+                            v,
+                            w,
+                            mutation_scale=20,
+                            arrowstyle="-|>",
+                            color="cyan",
+                        )
+                        if norm(R) > 0:
+                            ax.arrow3D(
+                                x,
+                                y,
+                                z,
+                                0.9 * u,
+                                0.9 * v,
+                                0.9 * w,
+                                mutation_scale=20,
+                                arrowstyle="-|>",
+                                color="cyan",
+                            )
     return ax
 
 

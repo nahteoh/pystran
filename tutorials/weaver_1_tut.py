@@ -60,6 +60,22 @@ model.add_joint(m, 4, [3 * L, 0.0, L])
 model.add_support(m["joints"][3], model.ALL_DOFS)
 model.add_support(m["joints"][4], model.ALL_DOFS)
 
+# At this point we can visualize the supports. The translation supports are
+# shown with arrow heads.
+ax = plots.plot_setup(m)
+plots.plot_joint_numbers(m)
+plots.plot_translation_supports(m)
+ax.view_init(elev=137, azim=-67, roll=30)
+ax.set_title("Translation supports")
+plots.show(m)
+
+The rotation supports are shown next.
+ax = plots.plot_setup(m)
+plots.plot_joint_numbers(m)
+plots.plot_rotation_supports(m)
+ax.view_init(elev=137, azim=-67, roll=30)
+ax.set_title("Rotation supports")
+plots.show(m)
 
 # There are three beams. The cross sectional properties are the same, but they
 # have different orientation of their local coordinate systems in space.
