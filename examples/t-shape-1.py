@@ -11,6 +11,10 @@ They are taken here as both the same.
 
 from math import sqrt
 from numpy.linalg import norm
+import matplotlib.pyplot as plt
+from matplotlib.patches import FancyArrowPatch
+from mpl_toolkits.mplot3d.proj3d import proj_transform
+from mpl_toolkits.mplot3d.axes3d import Axes3D
 from context import pystran
 from pystran import model
 from pystran import section
@@ -46,6 +50,7 @@ model.add_beam_member(m, 2, [2, 3], s1)
 model.add_beam_member(m, 3, [2, 4], s1)
 
 model.add_load(m["joints"][3], model.U1, -P)
+print(m["joints"][3])
 
 model.number_dofs(m)
 
@@ -86,8 +91,9 @@ for jid in [1]:
 plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_member_numbers(m)
+plots.plot_loads(m, 0.00004)
 plots.plot_deformations(m, 100.0)
-plots.plot_beam_orientation(m, 0.5)
+ax = plots.plot_beam_orientation(m, 0.5)
 # plots.plot_moments(m, 0.00001, "y")
 # plots.plot_moments(m, 0.00001, "z")
 # ax = plots.plot_shear_forces(m, scale=0.50e-3)

@@ -148,6 +148,7 @@ if norm(allforces) > 1.0e-10:
 plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_beam_orientation(m, 20)
+plots.plot_loads(m, 20)
 plots.plot_deformations(m, 80.0)
 # ax = plots.plot_shear_forces(m, scale=0.50e-3)
 # ax.set_title('Shear forces')

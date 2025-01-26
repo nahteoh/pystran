@@ -71,6 +71,7 @@ else:
 plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_beam_orientation(m, 1.0)
+plots.plot_loads(m, scale=1.0, radius=0.9)
 plots.show(m)
 
 plots.plot_setup(m)

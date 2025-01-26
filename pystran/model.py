@@ -227,22 +227,29 @@ def _copy_dof_num_to_linked(m, j, d, n):
                 o["dof"][d] = n
 
 
+def ndof_per_joint(m):
+    """
+    How many degrees of freedom are there per joint?
+    """
+    ndpn = m["dim"]
+    with_rotations = m["beam_members"]
+    if with_rotations:
+        if m["dim"] == 2:
+            ndpn = 3
+        else:
+            ndpn = 6
+    return ndpn
+
+
 def number_dofs(m):
     """
     Number degrees of freedom.
     """
     # Determine the number of degrees of freedom per joint
-    translation_only = not m["beam_members"]
-    if translation_only:
-        ndof_per_joint = m["dim"]
-    else:
-        if m["dim"] == 2:
-            ndof_per_joint = 3
-        else:
-            ndof_per_joint = 6
+    ndpn = ndof_per_joint(m)
     # Generate arrays for storing the degrees of freedom
     for j in m["joints"].values():
-        j["dof"] = zeros((ndof_per_joint,), dtype=numpy.int32) - 1
+        j["dof"] = zeros((ndpn,), dtype=numpy.int32) - 1
     # For each linked pair of joints, make sure they share the same supports
     for j in m["joints"].values():
         if "links" in j and "supports" in j:
@@ -256,7 +263,7 @@ def number_dofs(m):
     # Number the free degrees of freedom first
     n = 0
     for j in m["joints"].values():
-        for d in range(ndof_per_joint):
+        for d in range(ndpn):
             if ("supports" not in j) or (d not in j["supports"]):
                 if j["dof"][d] < 0:
                     j["dof"][d] = n
@@ -265,7 +272,7 @@ def number_dofs(m):
     m["nfreedof"] = n
     # Number all prescribed degrees of freedom
     for j in m["joints"].values():
-        for d in range(ndof_per_joint):
+        for d in range(ndpn):
             if "supports" in j and d in j["supports"]:
                 if j["dof"][d] < 0:
                     j["dof"][d] = n

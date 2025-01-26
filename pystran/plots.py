@@ -3,7 +3,18 @@ Implement simple plots for truss and beam structures.
 """
 
 import matplotlib.pyplot as plt
+from matplotlib.patches import FancyArrowPatch
+from matplotlib.patches import Arc, RegularPolygon
+from mpl_toolkits.mplot3d.proj3d import proj_transform
+from mpl_toolkits.mplot3d.axes3d import Axes3D
+import numpy
 from numpy import linspace, dot, zeros, array
+from numpy import radians as rad
+from numpy.linalg import norm
+from pystran.model import U1, U2, U3, UR1, UR2, UR3
+from pystran.model import CLAMPED
+from pystran.model import PINNED
+from pystran.model import ndof_per_joint
 from pystran.truss import (
     truss_member_geometry,
     truss_strain_displacement,
@@ -24,6 +35,91 @@ from pystran.beam import (
     beam_3d_shear_force,
     beam_3d_torsion_moment,
 )
+
+
+# fig = plt.figure(figsize=(9,9))
+# ax = plt.gca()
+def drawCirc(ax, radius, centX, centY, angle_, theta2_, sense, color_="black"):
+    # ========Line
+    arc = Arc(
+        [centX, centY],
+        radius,
+        radius,
+        angle=angle_,
+        theta1=0,
+        theta2=theta2_,
+        capstyle="round",
+        linestyle="-",
+        lw=2,
+        color=color_,
+    )
+    ax.add_patch(arc)
+
+    # ========Create the arrow head
+    if sense > 0:
+        endX = centX + (radius / 2) * numpy.cos(
+            rad(theta2_ + angle_)
+        )  # Do trig to determine end position
+        endY = centY + (radius / 2) * numpy.sin(rad(theta2_ + angle_))
+    else:
+        endX = centX + (radius / 2) * numpy.cos(
+            rad(angle_)
+        )  # Do trig to determine end position
+        endY = centY + (radius / 2) * numpy.sin(rad(angle_))
+
+    ax.add_patch(  # Create triangle as arrow head
+        RegularPolygon(
+            (endX, endY),  # (x,y)
+            3,  # number of vertices
+            radius=radius / 9,  # radius
+            orientation=rad(angle_ + theta2_),  # orientation
+            color=color_,
+        )
+    )
+    # ax.set_xlim([centX - radius, centY + radius]) and ax.set_ylim(
+    #     [centY - radius, centY + radius]
+    # )
+    # Make sure you keep the axes scaled or else arrow will distort
+
+
+# drawCirc(ax,1,1,1,0,250)
+# drawCirc(ax,2,1,1,90,330,color_='blue')
+# plt.show()
+
+
+# From: https://gist.github.com/WetHat/1d6cd0f7309535311a539b42cccca89c
+class Arrow3D(FancyArrowPatch):
+
+    def __init__(self, x, y, z, dx, dy, dz, *args, **kwargs):
+        super().__init__((0, 0), (0, 0), *args, **kwargs)
+        self._xyz = (x, y, z)
+        self._dxdydz = (dx, dy, dz)
+
+    def draw(self, renderer):
+        x1, y1, z1 = self._xyz
+        dx, dy, dz = self._dxdydz
+        x2, y2, z2 = (x1 + dx, y1 + dy, z1 + dz)
+        xs, ys, zs = proj_transform((x1, x2), (y1, y2), (z1, z2), self.axes.M)
+        self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
+        super().draw(renderer)
+
+    def do_3d_projection(self, renderer=None):
+        x1, y1, z1 = self._xyz
+        dx, dy, dz = self._dxdydz
+        x2, y2, z2 = (x1 + dx, y1 + dy, z1 + dz)
+        xs, ys, zs = proj_transform((x1, x2), (y1, y2), (z1, z2), self.axes.M)
+        self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
+        return numpy.min(zs)
+
+
+def _arrow3D(ax, x, y, z, dx, dy, dz, *args, **kwargs):
+    """Add an 3d arrow to an `Axes3D` instance."""
+
+    arrow = Arrow3D(x, y, z, dx, dy, dz, *args, **kwargs)
+    ax.add_artist(arrow)
+
+
+setattr(Axes3D, "arrow3D", _arrow3D)
 
 
 def plot_setup(m):
@@ -528,6 +624,62 @@ def plot_beam_orientation(m, scale=1.0):
             xs[1] = xs[0] + scale * e_z[0]
             ys[1] = ys[0] + scale * e_z[1]
             ax.plot(xs, ys, "b-", lw=3)
+    return ax
+
+
+def plot_loads(m, scale=1.0, radius=0.1):
+    ax = plt.gca()
+    dim = m["dim"]
+    ndpn = ndof_per_joint(m)
+    for j in m["joints"].values():
+        if "loads" in j and j["loads"]:
+            F = zeros((dim,))
+            M = zeros((ndpn - dim,))
+            for d in j["loads"].keys():
+                if d < dim:
+                    F[d] = j["loads"][d]
+                else:
+                    M[d - dim] = j["loads"][d]
+                if norm(F) > 0:
+                    x, y, z = j["coordinates"]
+                    u, v, w = F
+                    ax.arrow3D(
+                        x,
+                        y,
+                        z,
+                        scale * u,
+                        scale * v,
+                        scale * w,
+                        mutation_scale=20,
+                        arrowstyle="-|>",
+                        color="cyan",
+                    )
+                if norm(M) > 0:
+                    if dim == 2:
+                        x, y = j["coordinates"]
+                        if M > 0:
+                            st = -90
+                            dl = 210
+                            sense = +1
+                        else:
+                            st = 60
+                            dl = 210
+                            sense = -1
+                        drawCirc(ax, radius, x, y, st, dl, sense, color_="cyan")
+                    else:
+                        x, y, z = j["coordinates"]
+                        u, v, w = M
+                        ax.arrow3D(
+                            x,
+                            y,
+                            z,
+                            scale * u,
+                            scale * v,
+                            scale * w,
+                            mutation_scale=20,
+                            arrowstyle="-|>",
+                            color="cyan",
+                        )
     return ax
 
 
