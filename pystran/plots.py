@@ -40,7 +40,7 @@ from pystran.beam import (
 
 # fig = plt.figure(figsize=(9,9))
 # ax = plt.gca()
-def drawCirc(ax, radius, centX, centY, angle_, theta2_, sense, color_="black"):
+def _drawCirc(ax, radius, centX, centY, angle_, theta2_, sense, color_="black"):
     # ========Line
     arc = Arc(
         [centX, centY],
@@ -83,13 +83,13 @@ def drawCirc(ax, radius, centX, centY, angle_, theta2_, sense, color_="black"):
     # Make sure you keep the axes scaled or else arrow will distort
 
 
-# drawCirc(ax,1,1,1,0,250)
-# drawCirc(ax,2,1,1,90,330,color_='blue')
+# _drawCirc(ax,1,1,1,0,250)
+# _drawCirc(ax,2,1,1,90,330,color_='blue')
 # plt.show()
 
 
 # From: https://gist.github.com/WetHat/1d6cd0f7309535311a539b42cccca89c
-class Arrow3D(FancyArrowPatch):
+class _Arrow3D(FancyArrowPatch):
 
     def __init__(self, x, y, z, dx, dy, dz, *args, **kwargs):
         super().__init__((0, 0), (0, 0), *args, **kwargs)
@@ -116,7 +116,7 @@ class Arrow3D(FancyArrowPatch):
 def _arrow3D(ax, x, y, z, dx, dy, dz, *args, **kwargs):
     """Add an 3d arrow to an `Axes3D` instance."""
 
-    arrow = Arrow3D(x, y, z, dx, dy, dz, *args, **kwargs)
+    arrow = _Arrow3D(x, y, z, dx, dy, dz, *args, **kwargs)
     ax.add_artist(arrow)
 
 
@@ -126,6 +126,8 @@ setattr(Axes3D, "arrow3D", _arrow3D)
 def plot_setup(m):
     """
     Setup the plot.
+
+    This function creates a figure and an axis object. The axes are returned.
     """
     fig = plt.figure()
     if m["dim"] == 3:
@@ -719,7 +721,7 @@ def plot_applied_moments(m, scale=1.0, radius=0.1):
                             st = 80
                             dl = 210
                             sense = -1
-                        drawCirc(ax, radius, x, y, st, dl, sense, color_="cyan")
+                        _drawCirc(ax, radius, x, y, st, dl, sense, color_="cyan")
                     else:
                         x, y, z = j["coordinates"]
                         u, v, w = M

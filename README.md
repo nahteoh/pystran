@@ -19,6 +19,7 @@ The formulations are derived in the Finite element modeling with shells and beam
 - Two-dimensional and three-dimensional structures made up of truss (axial)
   members and beams (even in combination) can be handled.
 - Only elastic models can be solved.
+- Only straight members are treated.
 - Only doubly symmetric cross sections can be handled in three dimensions. Hence
   there is no coupling between the bending actions in the two orthogonal planes.
 - Warping of the cross sections is not modelled, hence only free torsion effects are included.
@@ -54,7 +55,7 @@ py examples/linked_cantilevers_prescribed.py
 Step-by-step tutorials are available in the [`tutorials`](./tutorials) folder. 
 Run tutorials for example as
 ```
-py tutorials/three_bars.py
+py tutorials/three_bars_tut.py
 ```
 
 ## Examples
