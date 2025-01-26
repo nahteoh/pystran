@@ -51,6 +51,14 @@ for i in [2, 3, 4]:
     for d in range(2):
         model.add_support(m["joints"][i], d)
 
+# At this point we can visualize the supports. The translation supports are
+# shown with arrow heads.
+ax = plots.plot_setup(m)
+plots.plot_joint_numbers(m)
+plots.plot_translation_supports(m)
+ax.set_title("Translation supports")
+plots.show(m)
+
 # Loads are added to the joint 1. The loads are provided as [x, z] components.
 model.add_load(m["joints"][1], 0, -10000.0)
 model.add_load(m["joints"][1], 1, -10000.0 / 2.0)

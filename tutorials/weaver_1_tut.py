@@ -69,7 +69,7 @@ ax.view_init(elev=137, azim=-67, roll=30)
 ax.set_title("Translation supports")
 plots.show(m)
 
-The rotation supports are shown next.
+# The rotation supports are shown next.
 ax = plots.plot_setup(m)
 plots.plot_joint_numbers(m)
 plots.plot_rotation_supports(m)

@@ -381,7 +381,7 @@ def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
 
 def plot_bending_moments(m, scale=1.0, axis="y"):
     """
-    Plot the moments in the beam members.
+    Plot the bending moments in the beam members.
 
     Optional: axis = "y" or "z" (default is "y", which is suitable for 2d beams).
     """
@@ -773,16 +773,16 @@ def plot_translation_supports(m, scale=1.0, shortest_arrow=1.0e-6):
                     U[d] = v
                 if dim == 2:
                     x, y = j["coordinates"]
-                    u, v = F
-                    al = scale * norm(F)
+                    u, v = U
                     ax.arrow(
                         x,
                         y,
                         scale * u,
                         scale * v,
-                        head_width=al / 5,
-                        head_length=al / 5,
-                        color="cyan",
+                        head_width=1,
+                        head_length=1,
+                        length_includes_head=True,
+                        color="orange",
                     )
                 else:
                     x, y, z = j["coordinates"]
@@ -796,7 +796,7 @@ def plot_translation_supports(m, scale=1.0, shortest_arrow=1.0e-6):
                         scale * w,
                         mutation_scale=20,
                         arrowstyle="-|>",
-                        color="cyan",
+                        color="orange",
                     )
     return ax
 
@@ -835,7 +835,7 @@ def plot_rotation_supports(m, scale=1.0, radius=0.1, shortest_arrow=1.0e-6):
                             st = 80
                             dl = 210
                             sense = -1
-                        _drawCirc(ax, radius, x, y, st, dl, sense, color_="cyan")
+                        _drawCirc(ax, radius, x, y, st, dl, sense, color_="orange")
                     else:
                         x, y, z = j["coordinates"]
                         u, v, w = scale * R
@@ -848,7 +848,7 @@ def plot_rotation_supports(m, scale=1.0, radius=0.1, shortest_arrow=1.0e-6):
                             w,
                             mutation_scale=20,
                             arrowstyle="-|>",
-                            color="cyan",
+                            color="orange",
                         )
                         if norm(R) > 0:
                             ax.arrow3D(
@@ -860,7 +860,7 @@ def plot_rotation_supports(m, scale=1.0, radius=0.1, shortest_arrow=1.0e-6):
                                 0.9 * w,
                                 mutation_scale=20,
                                 arrowstyle="-|>",
-                                color="cyan",
+                                color="orange",
                             )
     return ax
 
