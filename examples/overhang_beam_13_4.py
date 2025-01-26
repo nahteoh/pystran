@@ -73,7 +73,7 @@ plots.show(m)
 
 plots.plot_setup(m)
 plots.plot_members(m)
-ax = plots.plot_moments(m, 0.0001)
+ax = plots.plot_bending_moments(m, 0.0001)
 ax.set_title("Moments")
 plots.show(m)
 

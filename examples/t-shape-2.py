@@ -91,7 +91,7 @@ plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_member_numbers(m)
 plots.plot_beam_orientation(m, 0.5)
-ax = plots.plot_moments(m, 0.00001, "z")
+ax = plots.plot_bending_moments(m, 0.00001, "z")
 ax.set_title("Moments Mz")
 plots.show(m)
 

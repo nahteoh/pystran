@@ -379,7 +379,7 @@ def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
     return ax
 
 
-def plot_moments(m, scale=1.0, axis="y"):
+def plot_bending_moments(m, scale=1.0, axis="y"):
     """
     Plot the moments in the beam members.
 
