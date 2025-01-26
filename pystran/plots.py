@@ -641,28 +641,42 @@ def plot_loads(m, scale=1.0, radius=0.1):
                 else:
                     M[d - dim] = j["loads"][d]
                 if norm(F) > 0:
-                    x, y, z = j["coordinates"]
-                    u, v, w = F
-                    ax.arrow3D(
-                        x,
-                        y,
-                        z,
-                        scale * u,
-                        scale * v,
-                        scale * w,
-                        mutation_scale=20,
-                        arrowstyle="-|>",
-                        color="cyan",
-                    )
+                    if dim == 2:
+                        x, y = j["coordinates"]
+                        u, v = F
+                        al = scale * norm(F)
+                        ax.arrow(
+                            x,
+                            y,
+                            scale * u,
+                            scale * v,
+                            head_width=al / 5,
+                            head_length=al / 5,
+                            color="cyan",
+                        )
+                    else:
+                        x, y, z = j["coordinates"]
+                        u, v, w = F
+                        ax.arrow3D(
+                            x,
+                            y,
+                            z,
+                            scale * u,
+                            scale * v,
+                            scale * w,
+                            mutation_scale=20,
+                            arrowstyle="-|>",
+                            color="cyan",
+                        )
                 if norm(M) > 0:
                     if dim == 2:
                         x, y = j["coordinates"]
                         if M > 0:
-                            st = -90
+                            st = -110
                             dl = 210
                             sense = +1
                         else:
-                            st = 60
+                            st = 80
                             dl = 210
                             sense = -1
                         drawCirc(ax, radius, x, y, st, dl, sense, color_="cyan")

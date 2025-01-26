@@ -1,6 +1,8 @@
 """
 Created on 01/12/2025
 
+Right angle portal frame.
+
 Example 4.13 from 
 Matrix Structural Analysis: Second Edition 2nd Edition
 by William McGuire, Richard H. Gallagher, Ronald D. Ziemian 
@@ -80,6 +82,11 @@ if (
 ):
     raise ValueError("Reaction error")
 
+
+plots.plot_setup(m)
+plots.plot_members(m)
+plots.plot_loads(m, scale=0.00001, radius=1.0)
+plots.show(m)
 
 plots.plot_setup(m)
 plots.plot_members(m)

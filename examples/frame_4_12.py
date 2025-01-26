@@ -1,6 +1,8 @@
 """
 Created on 01/12/2025
 
+Continuous beam with an eccentrically loaded short bracket.
+
 Example 4.12 from Matrix Structural Analysis: Second Edition 2nd Edition by
 William McGuire, Richard H. Gallagher, Ronald D. Ziemian 
 
