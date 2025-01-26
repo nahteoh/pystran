@@ -165,7 +165,7 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         model.add_joint(m, 3, [0.0, 1 * L])
         model.add_joint(m, 4, [0.0, 0.0])
 
-        model.add_support(m["joints"][4], model.CLAMPED)
+        model.add_support(m["joints"][4], model.ALL_DOFS)
 
         model.add_beam_member(m, 1, [1, 2], sbar)
         model.add_beam_member(m, 2, [2, 3], sbar)
@@ -234,8 +234,8 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_joint(m, jD, [3 * L, 0.0, L])
         model.add_joint(m, jE, [L, L, 0.0])
 
-        model.add_support(m["joints"][jA], model.CLAMPED)
-        model.add_support(m["joints"][jD], model.CLAMPED)
+        model.add_support(m["joints"][jA], model.ALL_DOFS)
+        model.add_support(m["joints"][jD], model.ALL_DOFS)
 
         xz_vector = [1, 0, 0]
         s1 = section.beam_3d_section(
@@ -346,8 +346,8 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_joint(m, 2, [2 * L, L, 0.0])
         model.add_joint(m, 4, [3 * L, 0.0, L])
 
-        model.add_support(m["joints"][3], model.CLAMPED)
-        model.add_support(m["joints"][4], model.CLAMPED)
+        model.add_support(m["joints"][3], model.ALL_DOFS)
+        model.add_support(m["joints"][4], model.ALL_DOFS)
 
         xz_vector = [1, 0, 0]
         sect_1 = section.beam_3d_section(
@@ -435,8 +435,8 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_joint(m, 2, [2 * L, L, 0.0])
         model.add_joint(m, 4, [3 * L, 0.0, L])
 
-        model.add_support(m["joints"][3], model.CLAMPED)
-        model.add_support(m["joints"][4], model.CLAMPED)
+        model.add_support(m["joints"][3], model.ALL_DOFS)
+        model.add_support(m["joints"][4], model.ALL_DOFS)
 
         xz_vector = [0, 0, 1]
         sect_1 = section.beam_3d_section(
@@ -595,8 +595,8 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_joint(m, 3, [2 * L, 0, 0])
         model.add_joint(m, 4, [L, 0, 0.0])
 
-        model.add_support(m["joints"][1], model.CLAMPED)
-        model.add_support(m["joints"][3], model.CLAMPED)
+        model.add_support(m["joints"][1], model.ALL_DOFS)
+        model.add_support(m["joints"][3], model.ALL_DOFS)
 
         model.add_beam_member(m, 1, [1, 2], sect_1)
         model.add_beam_member(m, 2, [3, 4], sect_2)
@@ -688,10 +688,10 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_joint(m, 3, [2 * L, 0, 0])
         model.add_joint(m, 4, [L, 0, 0.0])
 
-        model.add_links(m, [2, 4], model.PINNED)
+        model.add_links(m, [2, 4], model.TRANSLATION_DOFS)
 
-        model.add_support(m["joints"][1], model.CLAMPED)
-        model.add_support(m["joints"][3], model.CLAMPED)
+        model.add_support(m["joints"][1], model.ALL_DOFS)
+        model.add_support(m["joints"][3], model.ALL_DOFS)
         model.add_support(m["joints"][4], model.U2, 0.003)
 
         model.add_beam_member(m, 1, [1, 2], sect_1)
@@ -783,10 +783,10 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_joint(m, 7, [0, -L, 0.0])
         model.add_joint(m, 8, [0, L, 0.0])
 
-        model.add_support(m["joints"][5], model.CLAMPED)
-        model.add_support(m["joints"][6], model.CLAMPED)
-        model.add_support(m["joints"][7], model.CLAMPED)
-        model.add_support(m["joints"][8], model.CLAMPED)
+        model.add_support(m["joints"][5], model.ALL_DOFS)
+        model.add_support(m["joints"][6], model.ALL_DOFS)
+        model.add_support(m["joints"][7], model.ALL_DOFS)
+        model.add_support(m["joints"][8], model.ALL_DOFS)
 
         model.add_beam_member(m, 1, [1, 5], sect_2)
         model.add_beam_member(m, 2, [2, 6], sect_2)
@@ -795,7 +795,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         model.add_load(m["joints"][4], model.U3, -P)
 
-        model.add_links(m, [1, 2, 3, 4], model.PINNED)
+        model.add_links(m, [1, 2, 3, 4], model.TRANSLATION_DOFS)
 
         model.number_dofs(m)
 

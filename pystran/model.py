@@ -34,15 +34,17 @@ UR3 = 5
 This is a designation of the degree of freedom as rotation about  `Y` (in 2D
 models) or rotation about `Z`  (in 3D models).
 """
-CLAMPED = 100
+ALL_DOFS = 100
 """
-This is a designation of the clamped condition (`U1`, `U2`, `UR3` in 2D models,
-or `U1`, `U2`, `U3`, `UR1`, `UR2`, `UR3` in 3D models).
+This is a designation of all the degrees of freedom, translations and rotations
+(`U1`, `U2`, `UR3` in 2D models, or `U1`, `U2`, `U3`, `UR1`, `UR2`, `UR3` in 3D
+models). It may be used to specify the clamped condition for the joint.
 """
-PINNED = 200
+TRANSLATION_DOFS = 200
 """
-This is a designation of the pinned condition (`U1`, `U2`,  in 2D models,
-or `U1`, `U2`,  `U3` in 3D models).
+This is a designation of the translation degrees of freedom (`U1`, `U2`,  in 2D
+models, or `U1`, `U2`,  `U3` in 3D models). It may be used to specify the pinned
+condition for the joint.
 """
 
 
@@ -147,9 +149,9 @@ def _clamped_dofs(dim):
 
 
 def _dofs_values(dim, dof, value):
-    if dof == CLAMPED:
+    if dof == ALL_DOFS:
         return _clamped_dofs(dim), [0.0 for d in _clamped_dofs(dim)]
-    elif dof == PINNED:
+    elif dof == TRANSLATION_DOFS:
         return _pinned_dofs(dim), [0.0 for d in _pinned_dofs(dim)]
     return [dof], [value]
 

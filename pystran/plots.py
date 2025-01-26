@@ -12,8 +12,8 @@ from numpy import linspace, dot, zeros, array
 from numpy import radians as rad
 from numpy.linalg import norm
 from pystran.model import U1, U2, U3, UR1, UR2, UR3
-from pystran.model import CLAMPED
-from pystran.model import PINNED
+from pystran.model import ALL_DOFS
+from pystran.model import TRANSLATION_DOFS
 from pystran.model import ndof_per_joint
 from pystran.truss import (
     truss_member_geometry,
@@ -304,6 +304,24 @@ def plot_member_numbers(m):
         ax = _plot_member_numbers_3d(m)
     else:
         ax = _plot_member_numbers_2d(m)
+    return ax
+
+
+def plot_joint_numbers(m):
+    """
+    Plot the joint numbers.
+    """
+    ax = plt.gca()
+    for j in m["joints"].values():
+        if m["dim"] == 3:
+            ax.text(
+                j["coordinates"][0],
+                j["coordinates"][1],
+                j["coordinates"][2],
+                str(j["jid"]),
+            )
+        else:
+            ax.text(j["coordinates"][0], j["coordinates"][1], str(j["jid"]))
     return ax
 
 
@@ -739,5 +757,6 @@ def show(m):
     ax.set_xlabel("X")
     ax.set_ylabel("Z")
     if m["dim"] == 3:
+        ax.set_ylabel("Y")
         ax.set_zlabel("Z")
     plt.show()

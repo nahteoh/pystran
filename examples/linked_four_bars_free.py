@@ -41,10 +41,10 @@ model.add_joint(m, 7, [0, -L, 0.0])
 model.add_joint(m, 8, [0, L, 0.0])
 
 
-model.add_support(m["joints"][5], model.CLAMPED)
-model.add_support(m["joints"][6], model.CLAMPED)
-model.add_support(m["joints"][7], model.CLAMPED)
-model.add_support(m["joints"][8], model.CLAMPED)
+model.add_support(m["joints"][5], model.ALL_DOFS)
+model.add_support(m["joints"][6], model.ALL_DOFS)
+model.add_support(m["joints"][7], model.ALL_DOFS)
+model.add_support(m["joints"][8], model.ALL_DOFS)
 
 model.add_beam_member(m, 1, [1, 5], sect_2)
 model.add_beam_member(m, 2, [2, 6], sect_2)
@@ -53,7 +53,7 @@ model.add_beam_member(m, 4, [4, 8], sect_2)
 
 model.add_load(m["joints"][4], model.U3, -P)
 
-model.add_links(m, [1, 2, 3, 4], model.PINNED)
+model.add_links(m, [1, 2, 3, 4], model.TRANSLATION_DOFS)
 
 model.number_dofs(m)
 

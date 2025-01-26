@@ -13,6 +13,7 @@ Joint 4:
    Rx=-0.89588, Ry=1.4322, Rz=-0.21731, Mx=123.08, My=47.246, Mz=-11.72:
 """
 
+import numpy
 from numpy.linalg import norm
 from context import pystran
 from pystran import model
@@ -42,8 +43,8 @@ model.add_joint(m, 1, [0.0, L, 0.0])
 model.add_joint(m, 2, [2 * L, L, 0.0])
 model.add_joint(m, 4, [3 * L, 0.0, L])
 
-model.add_support(m["joints"][3], model.CLAMPED)
-model.add_support(m["joints"][4], model.CLAMPED)
+model.add_support(m["joints"][3], model.ALL_DOFS)
+model.add_support(m["joints"][4], model.ALL_DOFS)
 
 xz_vector = [0, 0, 1]
 sect_1 = section.beam_3d_section(
@@ -148,8 +149,10 @@ if norm(allforces) > 1.0e-10:
 plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_beam_orientation(m, 20)
-plots.plot_applied_moments(m, 1.0)
+ax = plots.plot_applied_moments(m, 1.0)
+ax.view_init(elev=58, azim=118)
 plots.show(m)
+print(ax.elev, ax.azim)
 
 plots.plot_setup(m)
 plots.plot_members(m)

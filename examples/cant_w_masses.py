@@ -39,7 +39,7 @@ model.add_joint(m, 2, [0.0, 2 * L])
 model.add_joint(m, 3, [0.0, 1 * L])
 model.add_joint(m, 4, [0.0, 0.0])
 
-model.add_support(m["joints"][4], model.CLAMPED)
+model.add_support(m["joints"][4], model.ALL_DOFS)
 
 model.add_beam_member(m, 1, [1, 2], sbar)
 model.add_beam_member(m, 2, [2, 3], sbar)

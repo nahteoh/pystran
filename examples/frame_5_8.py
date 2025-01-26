@@ -24,8 +24,8 @@ model.add_joint(m, 3, [5.0, 8.0, 0.0])
 a = m["joints"][1]
 b = m["joints"][2]
 c = m["joints"][3]
-model.add_support(a, model.CLAMPED)
-model.add_support(c, model.CLAMPED)
+model.add_support(a, model.ALL_DOFS)
+model.add_support(c, model.ALL_DOFS)
 
 E = 2.0e11
 G = E / (2 * (1 + 0.3))

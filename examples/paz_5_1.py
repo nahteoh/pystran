@@ -31,10 +31,10 @@ model.add_joint(m, 3, [0.0, -L, 0.0])
 model.add_joint(m, 4, [0.0, 0.0, +L])
 model.add_joint(m, 5, [0.0, 0.0, -L])
 
-model.add_support(m["joints"][2], model.CLAMPED)
-model.add_support(m["joints"][3], model.CLAMPED)
-model.add_support(m["joints"][4], model.CLAMPED)
-model.add_support(m["joints"][5], model.CLAMPED)
+model.add_support(m["joints"][2], model.ALL_DOFS)
+model.add_support(m["joints"][3], model.ALL_DOFS)
+model.add_support(m["joints"][4], model.ALL_DOFS)
+model.add_support(m["joints"][5], model.ALL_DOFS)
 
 # Member 1, 2: W18x130
 A, Ix, Iy, Iz, J = section.i_beam(19.3, 11.2, 1.2, 0.67)

@@ -36,8 +36,8 @@ model.add_joint(m, jC, [2 * L, L, 0.0])
 model.add_joint(m, jD, [3 * L, 0.0, L])
 model.add_joint(m, jE, [L, L, 0.0])
 
-model.add_support(m["joints"][jA], model.CLAMPED)
-model.add_support(m["joints"][jD], model.CLAMPED)
+model.add_support(m["joints"][jA], model.ALL_DOFS)
+model.add_support(m["joints"][jD], model.ALL_DOFS)
 
 xz_vector = [0, 0, 1]
 s1 = section.beam_3d_section(
