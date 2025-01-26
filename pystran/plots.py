@@ -34,6 +34,7 @@ from pystran.beam import (
     beam_3d_moment,
     beam_3d_shear_force,
     beam_3d_torsion_moment,
+    beam_3d_axial_force,
 )
 
 
@@ -482,25 +483,21 @@ def _plot_3d_beam_axial_forces(ax, member, i, j, scale):
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     dirv = e_z
-    if axis == "y":
-        dirv = e_y
     for s, xi in enumerate(linspace(-1, +1, n)):
-        Q = beam_3d_axial_force(member, i, j, xi)
+        N = beam_3d_axial_force(member, i, j)
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         xs = zeros(2)
         ys = zeros(2)
         zs = zeros(2)
         xs[0] = x[0]
-        xs[1] = xs[0] + scale * Q * dirv[0]
+        xs[1] = xs[0] + scale * N * dirv[0]
         ys[0] = x[1]
-        ys[1] = ys[0] + scale * Q * dirv[1]
+        ys[1] = ys[0] + scale * N * dirv[1]
         zs[0] = x[2]
-        zs[1] = zs[0] + scale * Q * dirv[2]
-        ax.plot(xs, ys, zs, "r-" if (Q > 0) else "b-")
-        if xi == -1.0:
-            ax.text(xs[1], ys[1], zs[1], str(f"{Q[0]:.5}"))
-        elif xi == +1.0:
-            ax.text(xs[1], ys[1], zs[1], str(f"{Q[0]:.5}"))
+        zs[1] = zs[0] + scale * N * dirv[2]
+        ax.plot(xs, ys, zs, "r-" if (N > 0) else "b-")
+        if xi == 0.0:
+            ax.text(xs[1], ys[1], zs[1], str(f"{N[0]:.5}"))
     return ax
 
 
@@ -522,7 +519,7 @@ def plot_axial_forces(m, scale=1.0):
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         if m["dim"] == 3:
-            _plot_3d_beam_axial_forces(ax, member, i, j, axis, scale)
+            _plot_3d_beam_axial_forces(ax, member, i, j, scale)
         else:
             _plot_2d_beam_axial_forces(ax, member, i, j, scale)
     return ax
@@ -627,19 +624,22 @@ def plot_beam_orientation(m, scale=1.0):
     return ax
 
 
-def plot_loads(m, scale=1.0, radius=0.1):
+def plot_applied_forces(m, scale=1.0):
+    """
+    Plot the applied forces at the joints.
+
+    - `m` = model dictionary,
+    - `scale` = scale factor for the arrows.
+    """
     ax = plt.gca()
     dim = m["dim"]
     ndpn = ndof_per_joint(m)
     for j in m["joints"].values():
         if "loads" in j and j["loads"]:
             F = zeros((dim,))
-            M = zeros((ndpn - dim,))
             for d in j["loads"].keys():
                 if d < dim:
                     F[d] = j["loads"][d]
-                else:
-                    M[d - dim] = j["loads"][d]
                 if norm(F) > 0:
                     if dim == 2:
                         x, y = j["coordinates"]
@@ -668,6 +668,28 @@ def plot_loads(m, scale=1.0, radius=0.1):
                             arrowstyle="-|>",
                             color="cyan",
                         )
+    return ax
+
+
+def plot_applied_moments(m, scale=1.0, radius=0.1):
+    """
+    Plot the applied moments at the joints.
+
+    - `m` = model dictionary,
+    - `scale` = scale factor for the arrows. Moments are rendered with double
+      arrows.
+
+    Optional: `radius` = radius of the circle (2D only).
+    """
+    ax = plt.gca()
+    dim = m["dim"]
+    ndpn = ndof_per_joint(m)
+    for j in m["joints"].values():
+        if "loads" in j and j["loads"]:
+            M = zeros((ndpn - dim,))
+            for d in j["loads"].keys():
+                if d >= dim:
+                    M[d - dim] = j["loads"][d]
                 if norm(M) > 0:
                     if dim == 2:
                         x, y = j["coordinates"]
@@ -690,6 +712,17 @@ def plot_loads(m, scale=1.0, radius=0.1):
                             scale * u,
                             scale * v,
                             scale * w,
+                            mutation_scale=20,
+                            arrowstyle="-|>",
+                            color="cyan",
+                        )
+                        ax.arrow3D(
+                            x,
+                            y,
+                            z,
+                            scale * 0.9 * u,
+                            scale * 0.9 * v,
+                            scale * 0.9 * w,
                             mutation_scale=20,
                             arrowstyle="-|>",
                             color="cyan",
