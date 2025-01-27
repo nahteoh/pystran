@@ -221,7 +221,10 @@ def add_links(m, jids, dof):
                     j1["links"][jid2].append(d)
 
 
-def characteristic_dimension(m):
+def bounding_box(m):
+    """
+    Compute the bounding box of the model.
+    """
     dim = m["dim"]
     box = numpy.array(
         concatenate([[numpy.inf for i in range(dim)], [-numpy.inf for i in range(dim)]])
@@ -231,6 +234,17 @@ def characteristic_dimension(m):
         for i in range(len(cj)):
             box[i] = min(box[i], cj[i])
             box[i + dim] = max(box[i + dim], cj[i])
+    return box
+
+
+def characteristic_dimension(m):
+    """
+    Compute the characteristic dimension of the model.
+
+    This is the average of the dimensions of the bounding box.
+    """
+    dim = m["dim"]
+    box = bounding_box(m)
     dl = [box[i + dim] - box[i] for i in range(dim)]
     return mean(array(dl))
 

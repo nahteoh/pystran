@@ -14,7 +14,7 @@ from numpy.linalg import norm
 from pystran.model import U1, U2, U3, UR1, UR2, UR3
 from pystran.model import ALL_DOFS
 from pystran.model import TRANSLATION_DOFS
-from pystran.model import ndof_per_joint, characteristic_dimension
+from pystran.model import ndof_per_joint, characteristic_dimension, bounding_box
 from pystran.truss import (
     truss_member_geometry,
     truss_strain_displacement,
@@ -123,7 +123,7 @@ def _arrow3D(ax, x, y, z, dx, dy, dz, *args, **kwargs):
 setattr(Axes3D, "arrow3D", _arrow3D)
 
 
-def plot_setup(m):
+def plot_setup(m, set_limits=False):
     """
     Setup the plot.
 
@@ -134,6 +134,11 @@ def plot_setup(m):
         ax = fig.add_subplot(projection="3d")
     else:
         ax = fig.gca()
+        if set_limits:
+            box = bounding_box(m)
+            cd = characteristic_dimension(m)
+            ax.set_xlim([box[0] - cd / 10, box[2] + cd / 10])
+            ax.set_ylim([box[1] - cd / 10, box[3] + cd / 10])
     return ax
 
 

@@ -719,3 +719,29 @@ def beam_3d_end_forces(member, i, j):
         Myj=Myj[0],
         Mzj=Mzj[0],
     )
+
+
+def beam_2d_end_forces(member, i, j):
+    """
+     Compute the end forces of a beam element in 3d.
+
+     The end forces of the beam are forces acting on the joints `i` and `j` by
+     the beam.
+
+     Dictionary with the keys `'Ni'`, `'Qzi'`, `'Myi'`,  `'Nj'`,
+    `'Qzj'`,  `'Myj'`,  is returned.
+    """
+    Ni = beam_2d_axial_force(member, i, j)
+    Nj = -Ni
+    Myi = beam_2d_moment(member, i, j, -1.0)
+    Myj = -beam_2d_moment(member, i, j, +1.0)
+    Qzi = beam_2d_shear_force(member, i, j, -1.0)
+    Qzj = -beam_2d_shear_force(member, i, j, +1.0)
+    return dict(
+        Ni=Ni[0],
+        Qzi=Qzi[0],
+        Myi=Myi[0],
+        Nj=Nj[0],
+        Qzj=Qzj[0],
+        Myj=Myj[0],
+    )
