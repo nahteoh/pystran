@@ -4,7 +4,7 @@ Define the functions for defining and manipulating a model.
 
 from math import sqrt
 import numpy
-from numpy import array, zeros, dot
+from numpy import array, zeros, dot, mean, concatenate
 import scipy
 import pystran.section
 
@@ -219,6 +219,20 @@ def add_links(m, jids, dof):
                     j1["links"][jid2] = []
                 for d, v in zip(*_dofs_values(m["dim"], dof, 0.0)):
                     j1["links"][jid2].append(d)
+
+
+def characteristic_dimension(m):
+    dim = m["dim"]
+    box = numpy.array(
+        concatenate([[numpy.inf for i in range(dim)], [-numpy.inf for i in range(dim)]])
+    )
+    for j in m["joints"].values():
+        cj = j["coordinates"]
+        for i in range(len(cj)):
+            box[i] = min(box[i], cj[i])
+            box[i + dim] = max(box[i + dim], cj[i])
+    dl = [box[i + dim] - box[i] for i in range(dim)]
+    return mean(array(dl))
 
 
 def _copy_dof_num_to_linked(m, j, d, n):
