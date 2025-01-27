@@ -176,6 +176,8 @@ def _plot_2d_beam_deflection(ax, member, i, j, scale):
     di, dj = i["displacements"], j["displacements"]
     ci, cj = i["coordinates"], j["coordinates"]
     e_x, e_z, h = beam_2d_member_geometry(i, j)
+    ui = dot(di[0:2], e_x)
+    uj = dot(dj[0:2], e_x)
     wi = dot(di[0:2], e_z)
     thi = di[2]
     wj = dot(dj[0:2], e_z)
@@ -187,8 +189,12 @@ def _plot_2d_beam_deflection(ax, member, i, j, scale):
         N = beam_2d_shape_fun(xi)
         w = N[0] * wi + (h / 2) * N[1] * thi + N[2] * wj + (h / 2) * N[3] * thj
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
-        xs[s] = x[0] + scale * w * e_z[0]
-        ys[s] = x[1] + scale * w * e_z[1]
+        xs[s] = x[0]
+        ys[s] = x[1]
+        xs[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[0]
+        ys[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[1]
+        xs[s] += scale * w * e_z[0]
+        ys[s] += scale * w * e_z[1]
     ax.plot(xs, ys, "m-")
 
 

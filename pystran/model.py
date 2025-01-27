@@ -93,7 +93,7 @@ def add_joint(m, jid: int, coordinates):
     """
     if jid in m["joints"]:
         raise RuntimeError("Joint already exists")
-    coordinates = array(coordinates)
+    coordinates = array(coordinates, dtype=numpy.float64)
     if coordinates.shape != (m["dim"],):
         raise RuntimeError("Coordinate dimension mismatch")
     m["joints"][jid] = {"jid": jid, "coordinates": array(coordinates)}
