@@ -18,6 +18,7 @@ The formulations are derived in the Finite element modeling with shells and beam
 
 - Two-dimensional and three-dimensional structures made up of truss (axial)
   members and beams (even in combination) can be handled.
+- The Bernoulli-Euler model is implemented, so no shear deformation is taken into account.
 - Only elastic models can be solved.
 - Only straight members are treated.
 - Only doubly symmetric cross sections can be handled in three dimensions. Hence
