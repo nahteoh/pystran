@@ -64,8 +64,10 @@ model.add_load(m["joints"][1], 0, -10000.0)
 model.add_load(m["joints"][1], 1, -10000.0 / 2.0)
 
 # The model is shown graphically, members are displayed with the member numbers attached.
+# The applied forces are also shown.
 plots.plot_setup(m)
 plots.plot_members(m)
+plots.plot_applied_forces(m, 1 / 3000.0)
 plots.plot_member_numbers(m)
 plots.show(m)
 

@@ -14,7 +14,7 @@ from numpy.linalg import norm
 from pystran.model import U1, U2, U3, UR1, UR2, UR3
 from pystran.model import ALL_DOFS
 from pystran.model import TRANSLATION_DOFS
-from pystran.model import ndof_per_joint
+from pystran.model import ndof_per_joint, characteristic_dimension
 from pystran.truss import (
     truss_member_geometry,
     truss_strain_displacement,
@@ -656,6 +656,7 @@ def plot_applied_forces(m, scale=1.0):
     ax = plt.gca()
     dim = m["dim"]
     ndpn = ndof_per_joint(m)
+    cd = characteristic_dimension(m)
     for j in m["joints"].values():
         if "loads" in j and j["loads"]:
             F = zeros((dim,))
@@ -666,14 +667,13 @@ def plot_applied_forces(m, scale=1.0):
                     if dim == 2:
                         x, y = j["coordinates"]
                         u, v = F
-                        al = scale * norm(F)
                         ax.arrow(
                             x,
                             y,
                             scale * u,
                             scale * v,
-                            head_width=al / 5,
-                            head_length=al / 5,
+                            head_width=cd / 20,
+                            head_length=cd / 20,
                             color="cyan",
                         )
                     else:
@@ -762,6 +762,7 @@ def plot_translation_supports(m, scale=1.0, shortest_arrow=1.0e-6):
     ax = plt.gca()
     dim = m["dim"]
     ndpn = ndof_per_joint(m)
+    cd = characteristic_dimension(m)
     for j in m["joints"].values():
         if "supports" in j and j["supports"]:
             for d in j["supports"].keys():
@@ -779,8 +780,8 @@ def plot_translation_supports(m, scale=1.0, shortest_arrow=1.0e-6):
                         y,
                         scale * u,
                         scale * v,
-                        head_width=1,
-                        head_length=1,
+                        head_width=cd / 20,
+                        head_length=cd / 20,
                         length_includes_head=True,
                         color="orange",
                     )
@@ -816,6 +817,7 @@ def plot_rotation_supports(m, scale=1.0, radius=0.1, shortest_arrow=1.0e-6):
     ndpn = ndof_per_joint(m)
     if ndpn == dim:
         return
+    cd = characteristic_dimension(m)
     for j in m["joints"].values():
         if "supports" in j and j["supports"]:
             for d in j["supports"].keys():
