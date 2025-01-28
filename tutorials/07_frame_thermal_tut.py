@@ -35,7 +35,7 @@ depth = 10  # depth of the beam section
 
 m = model.create(2)
 
-# Joints are added at their locations, and the supports of the clamped joints are specified.
+# The locations are in inches.
 model.add_joint(m, 1, [0.0, 0.0])
 model.add_joint(m, 2, [0.0, -12 * 12.0])
 model.add_joint(m, 3, [12 * 7.0, 0.0])
@@ -52,7 +52,7 @@ plots.plot_translation_supports(m)
 ax.set_title("Translation supports")
 plots.show(m)
 
-# # The rotation supports are shown next.
+# The rotation supports are shown next.
 ax = plots.plot_setup(m)
 plots.plot_joint_numbers(m)
 plots.plot_rotation_supports(m, radius=17)
@@ -80,20 +80,23 @@ plots.show(m)
 # The two joints of the beam member 2 are:
 i, j = [m["joints"][k] for k in m["beam_members"][2]["connectivity"]]
 
-# The fixed-end axial forces are added to the joints.   It is necessary to
-# consider the local frame orientation in order to apply the correct sense of
-# the thermal moments. The average temperature (the temperature at the neutral
-# axis) leads to an expansion in length (provided it is positive).
-model.add_load(i, model.U1, +CTE * (Ttop + Tbot) / 2 * E * A)
-model.add_load(j, model.U1, -CTE * (Ttop + Tbot) / 2 * E * A)
+# The fixed-end axial forces is due to the thermal loading are added to the
+# joints.  The average temperature (the temperature at the neutral axis) leads
+# to an expansion in length (provided it is positive).
+N_T = CTE * (Ttop + Tbot) / 2 * E * A
+model.add_load(i, model.U1, +N_T)
+model.add_load(j, model.U1, -N_T)
 
 # The thermal gradient (Ttop - Tbot) / depth generates thermal moments. It is
 # necessary to consider the local frame orientation in order to apply the
-# correct sense of the thermal moments.
-model.add_load(i, model.UR3, -CTE * (Ttop - Tbot) / depth * E * I)
-model.add_load(j, model.UR3, +CTE * (Ttop - Tbot) / depth * E * I)
+# correct sense of the thermal moments. The top surface of the beam is such that
+# its z-coordinate > z-coordinate of the bottom surface. Therefore the thermal moment
+M_T = CTE * (Ttop - Tbot) / depth * E * I
+# is positive.
+model.add_load(i, model.UR3, -M_T)
+model.add_load(j, model.UR3, +M_T)
 
-#
+# The nodal moments can be visualized with the following plot.
 ax = plots.plot_setup(m)
 plots.plot_members(m)
 ax = plots.plot_applied_moments(m, 0.1)
@@ -113,7 +116,7 @@ ax = plots.plot_deformations(m, 500.0)
 ax.set_title("Deformations (x500)")
 plots.show(m)
 
-# The displacements of the joints can be printed out. Recall that joints 3 and 4
+# The displacements of the joints can be printed out. Recall that joints 3 and 2
 # are clamped, and their displacements are therefore zero.
 for jid in [1]:
     j = m["joints"][jid]
@@ -124,32 +127,28 @@ ref1 = [-0.0191605, -0.00041134, 0.00068165]
 if norm(m["joints"][1]["displacements"] / ref1 - 1) > 1.0e-3:
     raise ValueError("Displacement calculation error")
 
-# The forces and the member with the thermal loading can be calculated using the `beam_2d_end_forces` function.
-# Let us compare to the reference values  Member 2 experiences a thermal force
-N_T = -CTE * (Ttop + Tbot) / 2 * E * A
-# and thermal moment
-M_T = CTE * (Ttop - Tbot) / depth * E * I
-# These need to be combined with the computed internal resultants. According to
-# the reference, the combined resultants should be at joint 3 (clamped) 360
-# (axial), 1710 (shear), and 184000 (bending moment), and 360
-# (axial), 1710 (shear), and 184000 (bending moment).
+# The forces end the member with the thermal loading included can be calculated
+# using the `beam_2d_end_forces` function and then adding the thermal moment and
+# force. According to the reference, the combined resultants should be at joint
+# 3 (clamped) 360 (axial), 1710 (shear), and -184000 (bending moment), and -360
+# (axial), -1710 (shear), and 40171 (bending moment).
 member = m["beam_members"][2]
 connectivity = member["connectivity"]
 i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
 f = beam.beam_2d_end_forces(member, i, j)
 print("Member 2 end forces at joint 3: ", f)
-if abs((f["Ni"] + (-136500)) / 360 - 1) > 1e-2:
+if abs((f["Ni"] + (-N_T)) / 360 - 1) > 1e-2:
     raise ValueError("Member 2, joint i, axial force error")
 if abs((f["Qzi"] - 1710) / 1710) > 1e-2:
     raise ValueError("Member 2, joint i, shear force error")
-if abs((f["Myi"] - 136500) / -184000 - 1) > 1e-2:
+if abs((f["Myi"] - M_T) / -184000 - 1) > 1e-2:
     raise ValueError("Member 2, joint i, bending moment error")
 print("Member 2 end forces at joint 1: ", f)
-if abs((f["Nj"] + (+136500)) / -360 - 1) > 1e-2:
+if abs((f["Nj"] - (-N_T)) / -360 - 1) > 1e-2:
     raise ValueError("Member 2, joint i, axial force error")
 if abs((f["Qzj"] + 1710) / 1710) > 1e-2:
     raise ValueError("Member 2, joint i, shear force error")
-if abs((f["Myj"] + 136500) / 40171 - 1) > 1e-2:
+if abs((f["Myj"] + M_T) / 40171 - 1) > 1e-2:
     raise ValueError("Member 2, joint i, bending moment error")
 
 # There are diagrams below are for the discrete model that is loaded with the
