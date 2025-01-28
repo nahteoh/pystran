@@ -54,6 +54,7 @@ model.add_joint(m, 2, [0.0, 0.0, L])
 model.add_joint(m, 3, [L, L, L])
 model.add_joint(m, 4, [L, 0.0, 0.0])
 
+# Only one of the joints is free, the others are clamped.
 model.add_support(m["joints"][2], model.ALL_DOFS)
 model.add_support(m["joints"][3], model.ALL_DOFS)
 model.add_support(m["joints"][4], model.ALL_DOFS)
@@ -67,12 +68,11 @@ ax.set_title("Translation supports")
 plots.show(m)
 
 # # The rotation supports are shown next.
-# ax = plots.plot_setup(m)
-# plots.plot_joint_numbers(m)
-# plots.plot_rotation_supports(m)
-# ax.view_init(elev=137, azim=-67, roll=30)
-# ax.set_title("Rotation supports")
-# plots.show(m)
+ax = plots.plot_setup(m)
+plots.plot_joint_numbers(m)
+plots.plot_rotation_supports(m)
+ax.set_title("Rotation supports")
+plots.show(m)
 
 
 # There are three beams. The cross sectional properties are the same, but the
@@ -106,12 +106,11 @@ plots.plot_joint_numbers(m)
 plots.plot_members(m)
 plots.plot_member_numbers(m)
 plots.plot_beam_orientation(m, 20)
-ax.set_title("Frame geometry")
+ax.set_title("Frame geometry (local coordinate systems)")
 plots.show(m)
 
 
-# Next we add the applied moment.
-
+# Next we add the applied moment, and
 model.add_load(m["joints"][1], model.UR2, M)
 
 
@@ -123,11 +122,7 @@ ax = plots.plot_applied_moments(m, 0.0003)
 ax.set_title("Applied moments")
 plots.show(m)
 
-# Now we can solve the static equilibrium of the frame. First we number the
-# degrees of freedom, and then we call the solver that will construct the
-# stiffness matrix, the right and side vector of applied generalized forces
-# (forces plus moments), and solve a system of equations. The solution is then
-# distributed to the joints.
+# Now we can solve the static equilibrium of the frame.
 model.number_dofs(m)
 model.solve_statics(m)
 
@@ -137,8 +132,7 @@ for jid in [1]:
     j = m["joints"][jid]
     print(jid, j["displacements"])
 
-# The displacements of the joints can be compared to the reference values.
-# These are the displacements of joint 1:
+# These are the displacements of joint 1 consistent with the referenced book:
 ref1 = [
     1.79380884e-03,
     -4.09369624e-07,
@@ -167,7 +161,7 @@ for k in m["beam_members"].keys():
         f"   Joint {connectivity[1]}: N={f['Nj']:.5}, Qy={f['Qyj']:.5}, Qz={f['Qzj']:.5}, T={f['Tj']:.5}, My={f['Myj']:.5}, Mz={f['Mzj']:.5}: "
     )
 
-# Let us compare to the reference values: Member 1, joint add the start of the member.
+# Let us compare to the reference values: Member 1, joint at the start of the member.
 member = m["beam_members"][1]
 connectivity = member["connectivity"]
 i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
@@ -191,29 +185,32 @@ ax = plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_beam_orientation(m, 20)
 ax = plots.plot_deformations(m, 80.0)
-
+ax.set_title("Deformations (x80)")
 plots.show(m)
 
 # The shear forces in the members can be visualized with diagrams.
 # For instance, the shear forces along the z-axis are shown.
+# Note that the shear forces are plotted in the plane in which they act.
 ax = plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_beam_orientation(m, 20)
 ax = plots.plot_shear_forces(m, scale=0.0050)
 ax.set_title("Shear forces along z-axis")
-
 plots.show(m)
 
 # Analogous diagrams can be produced for the torsional moments in the members.
+# The torsional moments are plotted in a local plane of the beam, but of course
+# they are axial.
 ax = plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_beam_orientation(m, 20)
 ax = plots.plot_torsion_moments(m, scale=0.5)
 ax.set_title("Torsional moments")
-
 plots.show(m)
 
-# Finally, the axial forces in the members can be visualized.
+# Finally, the axial forces in the members can be visualized. The axial forces
+# are by definition along the axis of the beam, but they are plotted orthogonal
+# to the axis in one of the coordinate planes of the beam.
 ax = plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_beam_orientation(m, 20)
