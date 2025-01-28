@@ -704,7 +704,7 @@ def plot_applied_forces(m, scale=1.0):
     return ax
 
 
-def plot_applied_moments(m, scale=1.0, radius=0.1):
+def plot_applied_moments(m, scale=1.0, radius=0.0):
     """
     Plot the applied moments at the joints.
 
@@ -717,6 +717,9 @@ def plot_applied_moments(m, scale=1.0, radius=0.1):
     ax = plt.gca()
     dim = m["dim"]
     ndpn = ndof_per_joint(m)
+    cd = characteristic_dimension(m)
+    if radius <= 0.0:
+        radius = cd / 10
     for j in m["joints"].values():
         if "loads" in j and j["loads"]:
             M = zeros((ndpn - dim,))
@@ -830,7 +833,7 @@ def plot_rotation_supports(m, scale=1.0, radius=0.0, shortest_arrow=1.0e-6):
         return
     cd = characteristic_dimension(m)
     if radius <= 0.0:
-        radius = cd
+        radius = cd / 10
     for j in m["joints"].values():
         if "supports" in j and j["supports"]:
             for d in j["supports"].keys():
