@@ -813,7 +813,7 @@ def plot_translation_supports(m, scale=1.0, shortest_arrow=1.0e-6):
     return ax
 
 
-def plot_rotation_supports(m, scale=1.0, radius=0.1, shortest_arrow=1.0e-6):
+def plot_rotation_supports(m, scale=1.0, radius=0.0, shortest_arrow=1.0e-6):
     """
     Plot the rotation supports at the joints.
 
@@ -829,6 +829,8 @@ def plot_rotation_supports(m, scale=1.0, radius=0.1, shortest_arrow=1.0e-6):
     if ndpn == dim:
         return
     cd = characteristic_dimension(m)
+    if radius <= 0.0:
+        radius = cd
     for j in m["joints"].values():
         if "supports" in j and j["supports"]:
             for d in j["supports"].keys():
