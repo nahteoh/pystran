@@ -1,8 +1,12 @@
 """
+pystran - Python package for structural analysis with trusses and beams 
+
+(C) 2025, Petr Krysl, pkrysl@ucsd.edu
+
 # Weaver 3D frame benchmark
 
-This example is a 3D frame with multiple independent solutions (hence, it is a
-benchmark).
+This example is a 3D frame for which multiple independent solutions are
+available in the open literature (hence, it is a benchmark).
 
 The original source is Weaver Jr., W., Computer Programs for Structural
 Analysis, page 146, problem 8.
@@ -51,7 +55,8 @@ M = 120
 # The model is created as three dimensional (3 as argument!).
 m = model.create(3)
 
-# Joints are added at their locations, and the supports of the clamped joints are specified.
+# Joints are added at their locations, and the supports of the clamped joints
+# are specified.
 model.add_joint(m, 3, [0.0, 0.0, 0.0])
 model.add_joint(m, 1, [0.0, L, 0.0])
 model.add_joint(m, 2, [2 * L, L, 0.0])
@@ -90,7 +95,7 @@ sect_1 = section.beam_3d_section(
 
 # The second section is for the inclined beam, whose local coordinate system
 # needs to be oriented so that one of the axes is parallel to the global plane
-# X-Z. We accomplish that hereby rotating the vector [0, 1, 0] by ninety degrees
+# X-Z. We accomplish that here by rotating the vector [0, 1, 0] by ninety degrees
 # about the axis of the beam.
 
 xz_vector = rotation.rotate(m["joints"][2], m["joints"][4], [0, 1, 0], 90)
@@ -147,7 +152,7 @@ plots.show(m)
 
 # Now we can solve the static equilibrium of the frame. First we number the
 # degrees of freedom, and then we call the solver that will construct the
-# stiffness matrix, the right and side vector of applied generalized forces
+# stiffness matrix, the right-hand side vector of applied generalized forces
 # (forces plus moments), and solve a system of equations. The solution is then
 # distributed to the joints.
 model.number_dofs(m)
@@ -216,7 +221,7 @@ if norm((react3 - ref) / ref) > 1e-3:
 print("Reaction calculation OK")
 
 # The frame can be considered, with the supports removed and replaced by
-# reactions, as a free body. Therefore we can formulate a condition that all
+# reactions, a free body. Therefore we can formulate a condition that all
 # forces and all moments need to add up to zero. The function below calculates
 # those resultants:
 
@@ -233,6 +238,7 @@ ax = plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_beam_orientation(m, 20)
 ax = plots.plot_deformations(m, 80.0)
+ax.set_title("Deformed shape (magnified 80 times)")
 ax.view_init(elev=137, azim=-67, roll=30)
 plots.show(m)
 

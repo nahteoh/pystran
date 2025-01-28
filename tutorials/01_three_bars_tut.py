@@ -3,6 +3,8 @@ pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
+# Three-bar truss example
+
 Three-bar example on page 32 from the book Analysis of Geometrically Nonlinear
 Structures Second Edition by Robert Levy and William R. Spillers.
 """
@@ -81,7 +83,7 @@ print("Free Degrees of Freedom = ", m["nfreedof"])
 # the balance of the joints.
 model.solve_statics(m)
 
-# The displacements are printed.
+# The displacements at all the joints are printed.
 for j in m["joints"].values():
     print(j["displacements"])
 
@@ -101,8 +103,8 @@ for b in m["truss_members"].values():
     eps = dot(B, u)
     print("Bar " + str(connectivity) + " force = ", E * A * eps[0])
 
-# The forces in the bars can be calculated using the `truss_axial_force` function.
-# That function simply does what was described in the loop above.
+# The forces in the bars can be simply calculated using the `truss_axial_force`
+# function. That function does what was described in the loop above.
 for b in m["truss_members"].values():
     connectivity = b["connectivity"]
     i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
@@ -111,6 +113,7 @@ for b in m["truss_members"].values():
 
 # These are the reference values of the forces from the book.
 print("Reference forces: ", -0.656854250e4, -0.48528137e4, -0.15685425e4)
+
 
 # The solution is visualized with deformed shape.
 plots.plot_setup(m)
