@@ -848,7 +848,7 @@ def plot_rotation_supports(m, scale=1.0, radius=0.1, shortest_arrow=1.0e-6):
                             st = 80
                             dl = 210
                             sense = -1
-                        _drawCirc(ax, radius, x, y, st, dl, sense, color_="orange")
+                        _drawCirc(ax, radius, x, y, st, dl, sense, color_="blue")
                     else:
                         x, y, z = j["coordinates"]
                         u, v, w = scale * R
@@ -861,7 +861,7 @@ def plot_rotation_supports(m, scale=1.0, radius=0.1, shortest_arrow=1.0e-6):
                             w,
                             mutation_scale=20,
                             arrowstyle="-|>",
-                            color="orange",
+                            color="blue",
                         )
                         if norm(R) > 0:
                             ax.arrow3D(
@@ -873,7 +873,7 @@ def plot_rotation_supports(m, scale=1.0, radius=0.1, shortest_arrow=1.0e-6):
                                 0.9 * w,
                                 mutation_scale=20,
                                 arrowstyle="-|>",
-                                color="orange",
+                                color="blue",
                             )
     return ax
 
