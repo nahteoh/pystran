@@ -28,6 +28,59 @@ def lin_basis(xi):
     return array([(xi - 1) / (-1 - 1), (xi - -1) / (1 - -1)])
 
 
+def herm_basis(xi):
+    """
+    Compute the Hermite basis functions.
+
+    An array of basis function values is returned (i.e. $[N_1(\\xi), ..., N_4(\\xi)]$).
+    """
+    return array(
+        [
+            (2 - 3 * xi + xi**3) / 4,
+            (-1 + xi + xi**2 - xi**3) / 4,
+            (2 + 3 * xi - xi**3) / 4,
+            (+1 + xi - xi**2 - xi**3) / 4,
+        ]
+    )
+
+
+def herm_basis_xi(xi):
+    """
+    Compute the first derivative wrt $\\xi$ of the Hermite basis functions.
+
+    An array of first derivatives of shape functions is returned (i.e.
+    $[dN_1(\\xi)/d\\xi, ..., dN_4(\\xi)/d\\xi]$).
+    """
+    return array(
+        [
+            (-3 + 3 * xi**2) / 4,
+            (+1 + 2 * xi - 3 * xi**2) / 4,
+            (3 - 3 * xi**2) / 4,
+            (+1 - 2 * xi - 3 * xi**2) / 4,
+        ]
+    )
+
+
+def herm_basis_xi2(xi):
+    """
+    Compute the second derivative wrt $\\xi$ of the Hermite basis functions.
+
+    An array of second derivatives of shape functions is returned (i.e.
+    $[d^2N_1(\\xi)/d\\xi^2, ..., d^2N_4(\\xi)/d\\xi^2]$).
+    """
+    return array([(6 * xi) / 4, (2 - 6 * xi) / 4, (-6 * xi) / 4, (-2 - 6 * xi) / 4])
+
+
+def herm_basis_xi3(xi):
+    """
+    Compute the third derivative wrt $\\xi$ of the Hermite basis functions.
+
+    An array of third derivatives of shape functions is returned (i.e.
+    $[d^3N_1(\\xi)/d\\xi^3, ..., d^3N_4(\\xi)/d\\xi^3]$).
+    """
+    return array([(6) / 4, (-6) / 4, (-6) / 4, (-6) / 4])
+
+
 def member_2d_geometry(i, j):
     """
     Compute 2d member geometry.

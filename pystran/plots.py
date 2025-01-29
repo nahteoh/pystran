@@ -20,7 +20,6 @@ from pystran.truss import (
     truss_axial_force,
 )
 from pystran.beam import (
-    beam_2d_shape_fun,
     beam_2d_moment,
     beam_2d_shear_force,
     beam_2d_axial_force,
@@ -33,7 +32,7 @@ from pystran.beam import (
     beam_3d_torsion_moment,
     beam_3d_axial_force,
 )
-from pystran.geometry import member_2d_geometry, member_3d_geometry
+from pystran.geometry import member_2d_geometry, member_3d_geometry, herm_basis
 
 
 # fig = plt.figure(figsize=(9,9))
@@ -184,7 +183,7 @@ def _plot_2d_beam_deflection(ax, member, i, j, scale):
     xs = zeros(n)
     ys = zeros(n)
     for s, xi in enumerate(linspace(-1, +1, n)):
-        N = beam_2d_shape_fun(xi)
+        N = herm_basis(xi)
         w = N[0] * wi + (h / 2) * N[1] * thi + N[2] * wj + (h / 2) * N[3] * thj
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
         xs[s] = x[0]

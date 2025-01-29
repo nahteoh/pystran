@@ -6,64 +6,9 @@ from math import sqrt
 from numpy import array, dot, outer, concatenate, zeros
 from numpy.linalg import norm, cross
 from pystran import geometry
+from pystran.geometry import herm_basis_xi2, herm_basis_xi3, herm_basis
 from pystran import assemble
 from pystran import truss
-
-
-def beam_2d_shape_fun(xi):
-    """
-    Compute the beam shape functions for deflection in the `x-z` plane (i.e. in 2d).
-
-    An array of shape function values is returned (i.e. $[N_1(\\xi), ..., N_4(\\xi)]$).
-    """
-    return array(
-        [
-            (2 - 3 * xi + xi**3) / 4,
-            (-1 + xi + xi**2 - xi**3) / 4,
-            (2 + 3 * xi - xi**3) / 4,
-            (+1 + xi - xi**2 - xi**3) / 4,
-        ]
-    )
-
-
-def beam_2d_shape_fun_xi(xi):
-    """
-    Compute the first derivative of the beam shape functions for deflection in
-    the `x-z` plane (i.e. in 2d).
-
-    An array of first derivatives of shape functions is returned (i.e.
-    $[dN_1(\\xi)/d\\xi, ..., dN_4(\\xi)/d\\xi]$).
-    """
-    return array(
-        [
-            (-3 + 3 * xi**2) / 4,
-            (+1 + 2 * xi - 3 * xi**2) / 4,
-            (3 - 3 * xi**2) / 4,
-            (+1 - 2 * xi - 3 * xi**2) / 4,
-        ]
-    )
-
-
-def beam_2d_shape_fun_xi2(xi):
-    """
-    Compute the second derivative of the beam shape functions for deflection in
-    the `x-z` plane (i.e. in 2d).
-
-    An array of second derivatives of shape functions is returned (i.e.
-    $[d^2N_1(\\xi)/d\\xi^2, ..., d^2N_4(\\xi)/d\\xi^2]$).
-    """
-    return array([(6 * xi) / 4, (2 - 6 * xi) / 4, (-6 * xi) / 4, (-2 - 6 * xi) / 4])
-
-
-def beam_2d_shape_fun_xi3(xi):
-    """
-    Compute the third derivative of the beam shape functions for deflection in
-    the `x-z` plane (i.e. in 2d).
-
-    An array of third derivatives of shape functions is returned (i.e.
-    $[d^3N_1(\\xi)/d\\xi^3, ..., d^3N_4(\\xi)/d\\xi^3]$).
-    """
-    return array([(6) / 4, (-6) / 4, (-6) / 4, (-6) / 4])
 
 
 def beam_3d_xz_shape_fun(xi):
@@ -72,7 +17,7 @@ def beam_3d_xz_shape_fun(xi):
 
     An array of shape function values is returned (i.e. $[N_1(\\xi), ..., N_4(\\xi)]$).
     """
-    return beam_2d_shape_fun(xi)
+    return herm_basis(xi)
 
 
 def beam_3d_xz_shape_fun_xi2(xi):
@@ -83,7 +28,7 @@ def beam_3d_xz_shape_fun_xi2(xi):
     An array of second derivatives of shape functions is returned (i.e.
     $[d^2N_1(\\xi)/d\\xi^2, ..., d^2N_4(\\xi)/d\\xi^2]$).
     """
-    return beam_2d_shape_fun_xi2(xi)
+    return herm_basis_xi2(xi)
 
 
 def beam_3d_xy_shape_fun(xi):
@@ -95,7 +40,7 @@ def beam_3d_xy_shape_fun(xi):
     functions is returned (i.e. $[N_1(\\xi), -N_2(\\xi),
     N_3(\\xi), -N_4(\\xi)]$).
     """
-    N = beam_2d_shape_fun(xi)
+    N = herm_basis(xi)
     N[1] *= -1.0
     N[3] *= -1.0
     return N
@@ -111,7 +56,7 @@ def beam_3d_xy_shape_fun_xi2(xi):
     functions is returned (i.e. $[d^2N_1(\\xi)/d\\xi^2, -d^2N_2(\\xi)/d\\xi^2,
     d^2N_3(\\xi)/d\\xi^2, -d^2N_4(\\xi)/d\\xi^2]$).
     """
-    d2Ndxi2 = beam_2d_shape_fun_xi2(xi)
+    d2Ndxi2 = herm_basis_xi2(xi)
     d2Ndxi2[1] *= -1.0
     d2Ndxi2[3] *= -1.0
     return d2Ndxi2
@@ -125,7 +70,7 @@ def beam_3d_xz_shape_fun_xi3(xi):
     An array of third derivatives of shape functions is returned (i.e.
     $[d^3N_1(\\xi)/d\\xi^3, ..., d^3N_4(\\xi)/d\\xi^3]$).
     """
-    return beam_2d_shape_fun_xi3(xi)
+    return herm_basis_xi3(xi)
 
 
 def beam_3d_xy_shape_fun_xi3(xi):
@@ -138,7 +83,7 @@ def beam_3d_xy_shape_fun_xi3(xi):
     functions is returned (i.e. $[d^3N_1(\\xi)/d\\xi^3, -d^3N_2(\\xi)/d\\xi^3,
     d^3N_3(\\xi)/d\\xi^3, -d^3N_4(\\xi)/d\\xi^3]$).
     """
-    d3Ndxi3 = beam_2d_shape_fun_xi3(xi)
+    d3Ndxi3 = herm_basis_xi3(xi)
     d3Ndxi3[1] *= -1.0
     d3Ndxi3[3] *= -1.0
     return d3Ndxi3
@@ -256,7 +201,7 @@ def beam_2d_curv_displ_matrix(e_z, h, xi):
     component at each joint are assumed, so the matrix $B$ has one row and six
     columns.
     """
-    d2Ndxi2 = beam_2d_shape_fun_xi2(xi)
+    d2Ndxi2 = herm_basis_xi2(xi)
     B = zeros((1, 6))
     B[0, 0:2] = d2Ndxi2[0] * (2 / h) ** 2 * e_z
     B[0, 2] = (h / 2) * d2Ndxi2[1] * (2 / h) ** 2
@@ -278,7 +223,7 @@ def beam_2d_3rd_deriv_displ_matrix(e_z, h, xi):
     component at each joint are assumed, so the matrix $B$ has one row and six
     columns.
     """
-    d2Ndxi3 = beam_2d_shape_fun_xi3(xi)
+    d2Ndxi3 = herm_basis_xi3(xi)
     B = zeros((1, 6))
     B[0, 0:2] = d2Ndxi3[0] * (2 / h) ** 3 * e_z
     B[0, 2] = (h / 2) * d2Ndxi3[1] * (2 / h) ** 3
@@ -568,7 +513,7 @@ def assemble_mass(Mg, member, i, j):
     if beam_is_2d:
         e_x, e_z, h = geometry.member_2d_geometry(i, j)
         I = sect["I"]
-        m = beam_2d_mass(e_x, h, rho, A, I)
+        m = beam_2d_mass(e_x, e_z, h, rho, A, I)
     else:
         e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
         Ix, Iy, Iz = sect["Ix"], sect["Iy"], sect["Iz"]
@@ -577,18 +522,42 @@ def assemble_mass(Mg, member, i, j):
     return Mg
 
 
-def beam_2d_mass(e_x, h, rho, A, I):
+def beam_2d_mass(e_x, e_z, h, rho, A, I):
     """
     Compute beam mass matrix.
+
+    The mass matrix is consistent, which means that it is computed as discrete
+    form of the kinetic energy of the element,
+
+    $\\int \\rho A \\left(\\dot u \\cdot \\dot u +  \\dot w \\cdot \\dot
+    w\\right)dx$
+
+    where $\\dot u$ and $\\dot w$ are the velocities in the $x$ and $z$
+    directions.
+
+    The velocity $\\dot u$ is assumed to very linearly along the element, and
+    the velocity $\\dot w$ is assumed to vary according to the Hermite shape
+    functions.
     """
-    HLIy = rho * I * h / 2.0
-    n1 = len(e_x) + 1
-    m = zeros((2 * n1, 2 * n1))
-    for i in range(len(e_x)):
-        m[i, i] = rho * A * h / 2
-        m[i + n1, i + n1] = rho * A * h / 2
-    m[n1 - 1, n1 - 1] = HLIy
-    m[2 * n1 - 1, 2 * n1 - 1] = HLIy
+    xiG = [-1 / sqrt(3), 1 / sqrt(3)]
+    WG = [1, 1]
+    n = (len(e_x) + 1) * 2
+    m = zeros((n, n))
+    for q in range(2):
+        N = geometry.lin_basis(xiG[q])
+        extN = concatenate([N[0] * e_x, [0.0], N[1] * e_x, [0.0]])
+        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
+        N = geometry.herm_basis(xiG[q])
+        extN = concatenate([N[0] * e_z, [(h/2)*N[1]], N[2] * e_z, [(h/2)*N[3]]])
+        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
+    # HLIy = rho * I * h / 2.0
+    # n1 = len(e_x) + 1
+    # m = zeros((2 * n1, 2 * n1))
+    # for i in range(len(e_x)):
+    #     m[i, i] = rho * A * h / 2
+    #     m[i + n1, i + n1] = rho * A * h / 2
+    # m[n1 - 1, n1 - 1] = HLIy
+    # m[2 * n1 - 1, 2 * n1 - 1] = HLIy
     return m
 
 

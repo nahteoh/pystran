@@ -24,8 +24,11 @@ def truss_2d_mass(e_x, e_z, h, rho, A):
     Compute 2d truss mass matrix.
 
     The mass matrix is consistent, which means that it is computed as discrete
-    form of the kinetic energy of the element, $\\int \\rho A \\dot u \\cdot
-    \\dot u dx$.
+    form of the kinetic energy of the element,
+
+    $\\int \\rho A \\left(\\dot u \\cdot \\dot u +  \\dot w \\cdot \\dot w\\right)dx$
+
+    where $\\dot u$ and $\\dot w$ are the velocities in the $x$ and $z$ directions.
 
     """
     xiG = [-1 / sqrt(3), 1 / sqrt(3)]
@@ -36,9 +39,35 @@ def truss_2d_mass(e_x, e_z, h, rho, A):
         N = geometry.lin_basis(xiG[q])
         extN = concatenate([N[0] * e_x, N[1] * e_x])
         m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
+        extN = concatenate([N[0] * e_z, N[1] * e_z])
+        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
+    return m
 
-    # for i in range(n):
-    #     m[i, i] = rho * A * h / 2
+
+def truss_3d_mass(e_x, e_y, e_z, h, rho, A):
+    """
+    Compute 3d truss mass matrix.
+
+    The mass matrix is consistent, which means that it is computed as discrete
+    form of the kinetic energy of the element,
+
+    $\\int \\rho A \\left(\\dot u \\cdot \\dot u +  \\dot v \\cdot \\dot v +  \\dot w \\cdot \\dot w\\right)dx$
+
+    where $\\dot u$, $\\dot v$, and $\\dot w$ are the velocities in the $x$, $y$, and $z$ directions.
+
+    """
+    xiG = [-1 / sqrt(3), 1 / sqrt(3)]
+    WG = [1, 1]
+    n = len(e_x) * 2
+    m = zeros((n, n))
+    for q in range(2):
+        N = geometry.lin_basis(xiG[q])
+        extN = concatenate([N[0] * e_x, N[1] * e_x])
+        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
+        extN = concatenate([N[0] * e_y, N[1] * e_y])
+        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
+        extN = concatenate([N[0] * e_z, N[1] * e_z])
+        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
     return m
 
 
@@ -90,12 +119,13 @@ def assemble_mass(Mg, member, i, j):
         raise ValueError("Mass density must be positive")
     if A <= 0.0:
         raise ValueError("Area must be positive")
-    dim = len(e_x)
+    dim = len(i["coordinates"])
     if dim == 2:
         e_x, e_z, h = geometry.member_2d_geometry(i, j)
+        m = truss_2d_mass(e_x, e_z, h, rho, A)
     else:
         e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, array([]))
-    m = truss_mass(e_x, h, rho, A)
+        m = truss_3d_mass(e_x, e_y, e_z, h, rho, A)
     dim = len(e_x)
     dof = concatenate([i["dof"][0:dim], j["dof"][0:dim]])
     return assemble.assemble(Mg, dof, m)
