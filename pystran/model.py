@@ -538,3 +538,43 @@ def free_body_check(m):
                         # Add contributions of forces and moments
                         allforces[dof] += value
         return allforces
+
+
+def refine_member(m, mid, n):
+    """
+    Refine a beam member by replacing it with `n` new members.
+
+    The new joints are numbered starting from the maximum joint identifier in
+    the model.
+
+    - `m` = the model,
+    - `mid` = the member identifier,
+    - `n` = the number of new beam members to replace the old member with.
+    """
+    if n < 2:
+        raise RuntimeError("Number of new members must be at least 2")
+    member = m["beam_members"][mid]
+    connectivity = member["connectivity"]
+    i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+    ci, cj = i["coordinates"], j["coordinates"]
+    # First replacement member
+    start = -1.0 + 2.0 / n
+    c = (-1 + start) / (-2) * ci + (1 + start) / 2 * cj
+    newjid = max(m["joints"].keys()) + 1
+    add_joint(m, newjid, c)
+    newmid = max(m["beam_members"].keys()) + 1
+    add_beam_member(m, newmid, [i["jid"], newjid], member["section"])
+    prevjid = newjid
+    for k in range(n - 2):
+        start += 2.0 / n
+        c = (-1 + start) / (-2) * ci + (1 + start) / 2 * cj
+        newjid = max(m["joints"].keys()) + 1
+        add_joint(m, newjid, c)
+        newmid = max(m["beam_members"].keys()) + 1
+        add_beam_member(m, newmid, [prevjid, newjid], member["section"])
+        prevjid = newjid
+    # Last replacement member
+    newmid = max(m["beam_members"].keys()) + 1
+    add_beam_member(m, newmid, [newjid, j["jid"]], member["section"])
+    # Remove the old member
+    del m["beam_members"][mid]
