@@ -53,7 +53,8 @@ plots.show(m)
 
 # All members will now be refined into eight finite elements. Without the
 # refinement, the reference solutions cannot be reproduced: there simply
-# wouldn't be enough degrees of freedom.
+# wouldn't be enough degrees of freedom. Unfortunately the reference publication
+# does not mention the numbers of finite elements used per member.
 nref = 8
 for i in range(6):
     model.refine_member(m, i + 1, nref)
