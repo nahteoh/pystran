@@ -7,6 +7,7 @@ from numpy import array, dot, outer, concatenate, zeros
 from numpy.linalg import norm, cross
 from pystran import geometry
 from pystran.geometry import herm_basis_xi2, herm_basis_xi3, herm_basis
+from pystran import gauss
 from pystran import assemble
 from pystran import truss
 
@@ -104,12 +105,11 @@ def beam_2d_bending_stiffness(e_z, h, E, I_y):
     moment of area about the `y` axis (which is orthogonal to the plane of
     bending).
     """
-    xiG = [-1 / sqrt(3), 1 / sqrt(3)]
-    WG = [1, 1]
+    xiG, WG = gauss.rule(2)
     K = zeros((6, 6))
-    for q in range(2):
-        B = beam_2d_curv_displ_matrix(e_z, h, xiG[q])
-        K += E * I_y * outer(B.T, B) * WG[q] * (h / 2)
+    for xi, W in zip(xiG, WG):
+        B = beam_2d_curv_displ_matrix(e_z, h, xi)
+        K += E * I_y * outer(B.T, B) * W * (h / 2)
     return K
 
 
@@ -175,16 +175,15 @@ def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
     second moment of area about the `y` axis, and `I_z`  is the second moment of
     area about the `z` axis.
     """
-    xiG = [-1 / sqrt(3), 1 / sqrt(3)]
-    WG = [1, 1]
+    xiG, WG = gauss.rule(2)
     Kxy = zeros((12, 12))
-    for q in range(2):
-        B = beam_3d_xy_curv_displ_matrix(e_y, e_z, h, xiG[q])
-        Kxy += E * Iz * outer(B.T, B) * WG[q] * (h / 2)
+    for xi, W in zip(xiG, WG):
+        B = beam_3d_xy_curv_displ_matrix(e_y, e_z, h, xi)
+        Kxy += E * Iz * outer(B.T, B) * W * (h / 2)
     Kxz = zeros((12, 12))
-    for q in range(2):
-        B = beam_3d_xz_curv_displ_matrix(e_y, e_z, h, xiG[q])
-        Kxz += E * Iy * outer(B.T, B) * WG[q] * (h / 2)
+    for xi, W in zip(xiG, WG):
+        B = beam_3d_xz_curv_displ_matrix(e_y, e_z, h, xi)
+        Kxz += E * Iy * outer(B.T, B) * W * (h / 2)
     return Kxy, Kxz
 
 
@@ -538,26 +537,19 @@ def beam_2d_mass(e_x, e_z, h, rho, A, I):
     The velocity $\\dot u$ is assumed to very linearly along the element, and
     the velocity $\\dot w$ is assumed to vary according to the Hermite shape
     functions.
+
+    Gauss quadrature is used to compute the mass matrix.
     """
-    xiG = [-1 / sqrt(3), 1 / sqrt(3)]
-    WG = [1, 1]
+    xiG, WG = gauss.rule(3)
     n = (len(e_x) + 1) * 2
     m = zeros((n, n))
-    for q in range(2):
-        N = geometry.lin_basis(xiG[q])
+    for xi, W in zip(xiG, WG):
+        N = geometry.lin_basis(xi)
         extN = concatenate([N[0] * e_x, [0.0], N[1] * e_x, [0.0]])
-        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
-        N = geometry.herm_basis(xiG[q])
-        extN = concatenate([N[0] * e_z, [(h/2)*N[1]], N[2] * e_z, [(h/2)*N[3]]])
-        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
-    # HLIy = rho * I * h / 2.0
-    # n1 = len(e_x) + 1
-    # m = zeros((2 * n1, 2 * n1))
-    # for i in range(len(e_x)):
-    #     m[i, i] = rho * A * h / 2
-    #     m[i + n1, i + n1] = rho * A * h / 2
-    # m[n1 - 1, n1 - 1] = HLIy
-    # m[2 * n1 - 1, 2 * n1 - 1] = HLIy
+        m += rho * A * outer(extN, extN) * W * (h / 2)
+        N = geometry.herm_basis(xi)
+        extN = concatenate([N[0] * e_z, [(h / 2) * N[1]], N[2] * e_z, [(h / 2) * N[3]]])
+        m += rho * A * outer(extN, extN) * W * (h / 2)
     return m
 
 
@@ -565,31 +557,48 @@ def beam_3d_mass(e_x, e_y, e_z, h, rho, A, Ix, Iy, Iz):
     """
     Compute beam mass matrix.
 
-    The matrix is lumped and rotation inertias are included.
+    The mass matrix is consistent, which means that it is computed as discrete
+    form of the kinetic energy of the element,
+
+    $\\int \\rho A \\left(\\dot u \\cdot \\dot u + \\dot v \\cdot \\dot v + \\dot w \\cdot \\dot
+    w\\right)dx$
+
+    where $\\dot u$, $\\dot v$, and $\\dot w$ are the velocities in the $x$, $y$, and $z$
+    directions.
+
+    The velocity $\\dot u$ is assumed to very linearly along the element, and
+    the velocity $\\dot v$, $\\dot w$ is assumed to vary according to the Hermite shape
+    functions.
+
+    Gauss quadrature is used to compute the mass matrix.
     """
-    n1 = len(e_x)
-    m = zeros((4 * n1, 4 * n1))
-    HLM = A * rho * h / 2.0
-    HLIx = rho * Ix * h / 2.0
-    HLIy = rho * Iy * h / 2.0
-    HLIz = rho * Iz * h / 2.0
-    m[0, 0] = HLM
-    m[1, 1] = HLM
-    m[2, 2] = HLM
-    m[6, 6] = HLM
-    m[7, 7] = HLM
-    m[8, 8] = HLM
-    R = zeros((3, 3))
-    R[0:3, 0] = e_x
-    R[0:3, 1] = e_y
-    R[0:3, 2] = e_z
-    msub = zeros((3, 3))
-    msub[0, 0] = +HLIx
-    msub[1, 1] = +HLIy
-    msub[2, 2] = +HLIz
-    msub = dot(dot(R, msub), R.T)
-    m[3:6, 3:6] = msub
-    m[9:12, 9:12] = msub
+    xiG, WG = gauss.rule(2)
+    n = len(e_x) * 4
+    m = zeros((n, n))
+    for xi, W in zip(xiG, WG):
+        N = geometry.lin_basis(xi)
+        # Translations
+        extN = concatenate([N[0] * e_x, [0.0, 0.0, 0.0], N[1] * e_x, [0.0, 0.0, 0.0]])
+        m += rho * A * outer(extN, extN) * W * (h / 2)
+        extN = concatenate([N[0] * e_y, [0.0, 0.0, 0.0], N[1] * e_y, [0.0, 0.0, 0.0]])
+        m += rho * A * outer(extN, extN) * W * (h / 2)
+        extN = concatenate([N[0] * e_z, [0.0, 0.0, 0.0], N[1] * e_z, [0.0, 0.0, 0.0]])
+        m += rho * A * outer(extN, extN) * W * (h / 2)
+        # Torsion
+        extN = concatenate([[0.0, 0.0, 0.0], N[0] * e_x, [0.0, 0.0, 0.0], N[1] * e_x])
+        m += rho * Ix * outer(extN, extN) * W * (h / 2)
+        # Transverse displacements and rotations about y and z
+        N = beam_3d_xz_shape_fun(xi)
+        extN = concatenate(
+            [N[0] * e_z, (h / 2) * N[1] * e_y, N[2] * e_z, (h / 2) * N[3] * e_y]
+        )
+        m += rho * Iy * outer(extN, extN) * W * (h / 2)
+        N = beam_3d_xy_shape_fun(xi)
+        extN = concatenate(
+            [N[0] * e_y, (h / 2) * N[1] * e_z, N[2] * e_y, (h / 2) * N[3] * e_z]
+        )
+        m += rho * Iz * outer(extN, extN) * W * (h / 2)
+
     return m
 
 

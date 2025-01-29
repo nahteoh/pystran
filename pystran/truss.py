@@ -6,6 +6,7 @@ from math import sqrt
 from numpy import reshape, outer, concatenate, zeros, dot, array
 from pystran import geometry
 from pystran import assemble
+from pystran import gauss
 
 
 def truss_stiffness(e_x, h, E, A):
@@ -31,7 +32,7 @@ def truss_2d_mass(e_x, e_z, h, rho, A):
     where $\\dot u$ and $\\dot w$ are the velocities in the $x$ and $z$ directions.
 
     """
-    xiG = [-1 / sqrt(3), 1 / sqrt(3)]
+    xiG, WG = gauss.rule(2)
     WG = [1, 1]
     n = len(e_x) * 2
     m = zeros((n, n))
@@ -56,8 +57,7 @@ def truss_3d_mass(e_x, e_y, e_z, h, rho, A):
     where $\\dot u$, $\\dot v$, and $\\dot w$ are the velocities in the $x$, $y$, and $z$ directions.
 
     """
-    xiG = [-1 / sqrt(3), 1 / sqrt(3)]
-    WG = [1, 1]
+    xiG, WG = gauss.rule(2)
     n = len(e_x) * 2
     m = zeros((n, n))
     for q in range(2):
