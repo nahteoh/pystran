@@ -103,7 +103,7 @@ model.add_beam_member(m, 16, [24, 21], shoriz)
 # accuracy of the frequencies will be driven by the number of elements, since a
 # single element cannot represent the deflections in the interior of the
 # members.
-nref = 2
+nref = 3
 for i in range(16):
     model.refine_member(m, i + 1, nref)
 
