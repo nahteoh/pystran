@@ -144,66 +144,6 @@ def beam_3d_xy_shape_fun_xi3(xi):
     return d3Ndxi3
 
 
-def beam_2d_member_geometry(i, j):
-    """
-    Compute 2d beam geometry.
-
-    A local coordinate system is attached to the beam such that the `x` axis is
-    along the beam axis. The deformation of the beam is considered in the x-z
-    plane.
-
-    Vector `e_x` is the direction vector along the axis of the beam. `e_z` is
-    the direction vector perpendicular to the axis of the beam. These two
-    vectors form a left-handed coordinate system (consistent with the sign
-    convention in the book): The deflection `w` is measured positive downwards,
-    while the `x` coordinate is measured left to right. So in two dimensions
-    `e_x` and `e_z` form a left-handed coordinate system. In reality, the
-    complete coordinate system is right-handed, as the not-used basis vector is
-    `e_y`, which points out of the plane of the screen (page).
-    """
-    e_x = geometry.delt(i["coordinates"], j["coordinates"])
-    h = geometry.vlen(i["coordinates"], j["coordinates"])
-    if h <= 0.0:
-        raise ZeroDivisionError("Length of element must be positive")
-    e_x /= h
-    e_z = array([e_x[1], -e_x[0]])
-    return e_x, e_z, h
-
-
-def beam_3d_member_geometry(i, j, xz_vector):
-    """
-    Compute 3d beam geometry.
-
-    A local coordinate system is attached to the beam such that the `x` axis is
-    along the beam axis. The deformation of the beam is considered in the `x-y`
-    and `x-z` plane.
-
-    Vector `e_x` is the direction vector along the axis of the beam. `e_z` is
-    the direction vector perpendicular to the axis of the beam. These two
-    vectors form a right-handed coordinate system, completed by `e_y`.
-
-    The plane `x-z` is defined by the vector `xz_vector` and the beam axis (i.e.
-    `e_x`). Therefore, the vector `xz_vector` must not be parallel to the beam
-    axis.
-
-    - `i` and `j` = the two joints of the beam.
-    - `xz_vector` = the vector that defines the `x-z` plane of the beam-local
-      coordinate system. It does not need to be of unit length, but it must not
-      be parallel to the beam axis.
-    """
-    e_x = geometry.delt(i["coordinates"], j["coordinates"])
-    h = geometry.vlen(i["coordinates"], j["coordinates"])
-    if h <= 0.0:
-        raise ZeroDivisionError("Length of element must be positive")
-    e_x /= h  # normalize the unit length
-    if abs(dot(e_x, xz_vector)) > 0.99 * norm(xz_vector):
-        raise ZeroDivisionError("xz_vector must not be parallel to the beam axis")
-    e_y = cross(xz_vector, e_x)
-    e_y = e_y / norm(e_y)
-    e_z = cross(e_x, e_y)
-    return e_x, e_y, e_z, h
-
-
 def beam_2d_bending_stiffness(e_z, h, E, I_y):
     """
     Compute 2d beam stiffness matrix.
@@ -403,7 +343,7 @@ def beam_2d_moment(member, i, j, xi):
     The curvature is computed with the curvature-displacement matrix $B$ by the function
     `beam_2d_curv_displ_matrix`.
     """
-    e_x, e_z, h = beam_2d_member_geometry(i, j)
+    e_x, e_z, h = geometry.member_2d_geometry(i, j)
     sect = member["section"]
     E, I = sect["E"], sect["I"]
     ui, uj = i["displacements"], j["displacements"]
@@ -427,7 +367,7 @@ def beam_3d_moment(member, i, j, axis, xi):
     respectively.
     """
     sect = member["section"]
-    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+    e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
     E, Iy, Iz = sect["E"], sect["Iy"], sect["Iz"]
     ui, uj = i["displacements"], j["displacements"]
     u = concatenate([ui, uj])
@@ -453,7 +393,7 @@ def beam_3d_torsion_moment(member, i, j):
     The torsion moment is uniform along the beam.
     """
     sect = member["section"]
-    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+    e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
     G, J = sect["G"], sect["J"]
     ui, uj = i["displacements"][3:6], j["displacements"][3:6]
     u = concatenate([ui, uj])
@@ -472,7 +412,7 @@ def beam_2d_axial_force(member, i, j):
     The axial force is uniform along the beam.
     """
     sect = member["section"]
-    e_x, e_z, h = beam_2d_member_geometry(i, j)
+    e_x, e_z, h = geometry.member_2d_geometry(i, j)
     E, A = sect["E"], sect["A"]
     ui, uj = i["displacements"][0:2], j["displacements"][0:2]
     u = concatenate([ui, uj])
@@ -488,7 +428,7 @@ def beam_3d_axial_force(member, i, j):
     The axial force is uniform along the beam.
     """
     sect = member["section"]
-    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+    e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
     E, A = sect["E"], sect["A"]
     ui, uj = i["displacements"][0:3], j["displacements"][0:3]
     u = concatenate([ui, uj])
@@ -503,7 +443,7 @@ def beam_3d_shear_force(member, i, j, axis, xi):
     shear force in the direction of axis `axis`  (`'y'` or `'z'`) is uniform along the beam.
     """
     sect = member["section"]
-    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+    e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
     E, Iy, Iz = sect["E"], sect["Iy"], sect["Iz"]
     ui, uj = i["displacements"], j["displacements"]
     u = concatenate([ui, uj])
@@ -521,7 +461,7 @@ def beam_2d_shear_force(member, i, j, xi):
     Compute 2d beam shear force based on the displacements stored at the joints.
     The shear force is computed at the parametric location `xi` along the beam.
     """
-    e_x, e_z, h = beam_2d_member_geometry(i, j)
+    e_x, e_z, h = geometry.member_2d_geometry(i, j)
     sect = member["section"]
     E, I = sect["E"], sect["I"]
     ui, uj = i["displacements"], j["displacements"]
@@ -586,14 +526,14 @@ def assemble_stiffness(Kg, member, i, j):
     beam_is_2d = len(i["coordinates"]) == len(j["coordinates"]) == 2
     dof = concatenate([i["dof"], j["dof"]])
     if beam_is_2d:
-        e_x, e_z, h = beam_2d_member_geometry(i, j)
+        e_x, e_z, h = geometry.member_2d_geometry(i, j)
         sect = member["section"]
         E, I = sect["E"], sect["I"]
         k = beam_2d_bending_stiffness(e_z, h, E, I)
         Kg = assemble.assemble(Kg, dof, k)
     else:
         sect = member["section"]
-        e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+        e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
         E, Iy, Iz = sect["E"], sect["Iy"], sect["Iz"]
         kxy, kxz = beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz)
         Kg = assemble.assemble(Kg, dof, kxy)
@@ -608,7 +548,7 @@ def assemble_stiffness(Kg, member, i, j):
     Kg = assemble.assemble(Kg, dof, k)
     if not beam_is_2d:
         # Add stiffness in torsion.
-        e_x, h = truss.truss_member_geometry(i, j)
+        e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
         sect = member["section"]
         G, J = sect["G"], sect["J"]
         k = beam_3d_torsion_stiffness(e_x, h, G, J)
@@ -626,11 +566,11 @@ def assemble_mass(Mg, member, i, j):
     sect = member["section"]
     rho, A = sect["rho"], sect["A"]
     if beam_is_2d:
-        e_x, e_z, h = beam_2d_member_geometry(i, j)
+        e_x, e_z, h = geometry.member_2d_geometry(i, j)
         I = sect["I"]
         m = beam_2d_mass(e_x, h, rho, A, I)
     else:
-        e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+        e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
         Ix, Iy, Iz = sect["Ix"], sect["Iy"], sect["Iz"]
         m = beam_3d_mass(e_x, e_y, e_z, h, rho, A, Ix, Iy, Iz)
     Mg = assemble.assemble(Mg, dof, m)

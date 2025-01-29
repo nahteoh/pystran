@@ -2,24 +2,10 @@
 Define truss mechanical quantities.
 """
 
-from numpy import reshape, outer, concatenate, zeros, dot
+from math import sqrt
+from numpy import reshape, outer, concatenate, zeros, dot, array
 from pystran import geometry
 from pystran import assemble
-
-
-def truss_member_geometry(i, j):
-    """
-    Compute truss geometry.
-
-    Vector `e_x` is the unit vector along the truss member, and `h` is the
-    length of the member.
-    """
-    e_x = geometry.delt(i["coordinates"], j["coordinates"])
-    h = geometry.vlen(i["coordinates"], j["coordinates"])
-    if h <= 0.0:
-        raise ZeroDivisionError("Length of element must be positive")
-    e_x /= h
-    return e_x, h
 
 
 def truss_stiffness(e_x, h, E, A):
@@ -33,16 +19,26 @@ def truss_stiffness(e_x, h, E, A):
     return E * A * outer(B.T, B) * h
 
 
-def truss_mass(e_x, h, rho, A):
+def truss_2d_mass(e_x, e_z, h, rho, A):
     """
-    Compute truss mass matrix.
+    Compute 2d truss mass matrix.
 
-    The mass each joint gets is computed as $m = \\rho A h / 2$.
+    The mass matrix is consistent, which means that it is computed as discrete
+    form of the kinetic energy of the element, $\\int \\rho A \\dot u \\cdot
+    \\dot u dx$.
+
     """
+    xiG = [-1 / sqrt(3), 1 / sqrt(3)]
+    WG = [1, 1]
     n = len(e_x) * 2
     m = zeros((n, n))
-    for i in range(n):
-        m[i, i] = rho * A * h / 2
+    for q in range(2):
+        N = geometry.lin_basis(xiG[q])
+        extN = concatenate([N[0] * e_x, N[1] * e_x])
+        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
+
+    # for i in range(n):
+    #     m[i, i] = rho * A * h / 2
     return m
 
 
@@ -68,15 +64,18 @@ def assemble_stiffness(Kg, member, i, j):
     - `member` is the truss member,
     - `i`, `j` are the joints.
     """
-    e_x, h = truss_member_geometry(i, j)
     sect = member["section"]
     E, A = sect["E"], sect["A"]
     if E <= 0.0:
         raise ValueError("Elastic modulus must be positive")
     if A <= 0.0:
         raise ValueError("Area must be positive")
+    dim = len(i["coordinates"])
+    if dim == 2:
+        e_x, e_z, h = geometry.member_2d_geometry(i, j)
+    else:
+        e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, array([]))
     k = truss_stiffness(e_x, h, E, A)
-    dim = len(e_x)
     dof = concatenate([i["dof"][0:dim], j["dof"][0:dim]])
     return assemble.assemble(Kg, dof, k)
 
@@ -85,14 +84,18 @@ def assemble_mass(Mg, member, i, j):
     """
     Assemble truss mass matrix.
     """
-    e_x, h = truss_member_geometry(i, j)
     sect = member["section"]
     rho, A = sect["rho"], sect["A"]
     if rho <= 0.0:
         raise ValueError("Mass density must be positive")
     if A <= 0.0:
         raise ValueError("Area must be positive")
-    m = mass(e_x, h, rho, A)
+    dim = len(e_x)
+    if dim == 2:
+        e_x, e_z, h = geometry.member_2d_geometry(i, j)
+    else:
+        e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, array([]))
+    m = truss_mass(e_x, h, rho, A)
     dim = len(e_x)
     dof = concatenate([i["dof"][0:dim], j["dof"][0:dim]])
     return assemble.assemble(Mg, dof, m)
@@ -108,9 +111,14 @@ def truss_axial_force(member, i, j):
     axial stiffness.
     """
     sect = member["section"]
-    e_x, h = truss_member_geometry(i, j)
     E, A = sect["E"], sect["A"]
-    ui, uj = i["displacements"][0:3], j["displacements"][0:3]
+    dim = len(i["coordinates"])
+    if dim == 2:
+        e_x, e_z, h = geometry.member_2d_geometry(i, j)
+        ui, uj = i["displacements"][0:2], j["displacements"][0:2]
+    else:
+        e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, array([]))
+        ui, uj = i["displacements"][0:3], j["displacements"][0:3]
     u = concatenate([ui, uj])
     B = truss_strain_displacement(e_x, h)
     N = E * A * dot(B, u)

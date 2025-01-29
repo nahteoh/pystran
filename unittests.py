@@ -108,20 +108,6 @@ class UnitTestsPlaneTrusses(unittest.TestCase):
         else:
             print("Displacement calculation OK")
 
-        # for b in m['truss_members'].values():
-        #     connectivity = b['connectivity']
-        #     i, j = m['joints'][connectivity[0]], m['joints'][connectivity[1]]
-        #     e_x, L = truss.truss_member_geometry(i, j)
-        #     B = truss.strain_displacement(e_x, L)
-        #     u = concatenate((i['displacements'], j['displacements']))
-        #     eps = dot(B, u)
-        #     print('Bar ' + str(connectivity) + ' force = ', E * A * eps[0])
-
-        # plots.plot_setup(m)
-        # plots.plot_members(m)
-        # plots.plot_deformations(m, 5.0)
-        # plots.show(m)
-
 
 class UnitTestsPlanarFrames(unittest.TestCase):
 

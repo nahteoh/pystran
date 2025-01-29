@@ -16,19 +16,16 @@ from pystran.model import ALL_DOFS
 from pystran.model import TRANSLATION_DOFS
 from pystran.model import ndof_per_joint, characteristic_dimension, bounding_box
 from pystran.truss import (
-    truss_member_geometry,
     truss_strain_displacement,
     truss_axial_force,
 )
 from pystran.beam import (
-    beam_2d_member_geometry,
     beam_2d_shape_fun,
     beam_2d_moment,
     beam_2d_shear_force,
     beam_2d_axial_force,
 )
 from pystran.beam import (
-    beam_3d_member_geometry,
     beam_3d_xz_shape_fun,
     beam_3d_xy_shape_fun,
     beam_3d_moment,
@@ -36,6 +33,7 @@ from pystran.beam import (
     beam_3d_torsion_moment,
     beam_3d_axial_force,
 )
+from pystran.geometry import member_2d_geometry, member_3d_geometry
 
 
 # fig = plt.figure(figsize=(9,9))
@@ -175,7 +173,7 @@ def plot_members(m):
 def _plot_2d_beam_deflection(ax, member, i, j, scale):
     di, dj = i["displacements"], j["displacements"]
     ci, cj = i["coordinates"], j["coordinates"]
-    e_x, e_z, h = beam_2d_member_geometry(i, j)
+    e_x, e_z, h = member_2d_geometry(i, j)
     ui = dot(di[0:2], e_x)
     uj = dot(dj[0:2], e_x)
     wi = dot(di[0:2], e_z)
@@ -202,7 +200,7 @@ def _plot_3d_beam_deflection(ax, member, i, j, scale):
     sect = member["section"]
     di, dj = i["displacements"], j["displacements"]
     ci, cj = i["coordinates"], j["coordinates"]
-    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+    e_x, e_y, e_z, h = member_3d_geometry(i, j, sect["xz_vector"])
     ui = dot(di[0:3], e_x)
     uj = dot(dj[0:3], e_x)
     wi = dot(di[0:3], e_z)
@@ -341,7 +339,7 @@ def plot_joint_numbers(m):
 
 
 def _plot_2d_beam_moments(ax, member, i, j, scale):
-    e_x, e_z, h = beam_2d_member_geometry(i, j)
+    e_x, e_z, h = member_2d_geometry(i, j)
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     for s, xi in enumerate(linspace(-1, +1, n)):
@@ -364,7 +362,7 @@ def _plot_2d_beam_moments(ax, member, i, j, scale):
 
 def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
     sect = member["section"]
-    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+    e_x, e_y, e_z, h = member_3d_geometry(i, j, sect["xz_vector"])
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     dirv = e_y
@@ -408,7 +406,7 @@ def plot_bending_moments(m, scale=1.0, axis="y"):
 
 
 def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
-    e_x, e_z, h = beam_2d_member_geometry(i, j)
+    e_x, e_z, h = member_2d_geometry(i, j)
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     for s, xi in enumerate(linspace(-1, +1, n)):
@@ -428,7 +426,7 @@ def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
 
 def _plot_3d_beam_shear_forces(ax, member, i, j, axis, scale):
     sect = member["section"]
-    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+    e_x, e_y, e_z, h = member_3d_geometry(i, j, sect["xz_vector"])
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     dirv = e_z
@@ -472,7 +470,7 @@ def plot_shear_forces(m, scale=1.0, axis="z"):
 
 
 def _plot_2d_beam_axial_forces(ax, member, i, j, scale):
-    e_x, e_z, h = beam_2d_member_geometry(i, j)
+    e_x, e_z, h = member_2d_geometry(i, j)
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     for s, xi in enumerate(linspace(-1, +1, n)):
@@ -491,10 +489,9 @@ def _plot_2d_beam_axial_forces(ax, member, i, j, scale):
 
 
 def _plot_2d_truss_axial_forces(ax, member, i, j, scale):
-    e_x, h = truss_member_geometry(i, j)
+    e_x, e_z, h = member_2d_geometry(i, j)
     ci, cj = i["coordinates"], j["coordinates"]
     N = truss_axial_force(member, i, j)
-    e_z = array([e_x[1], -e_x[0]])
     n = 13
     for s, xi in enumerate(linspace(-1, +1, n)):
         x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
@@ -512,7 +509,7 @@ def _plot_2d_truss_axial_forces(ax, member, i, j, scale):
 
 def _plot_3d_beam_axial_forces(ax, member, i, j, scale):
     sect = member["section"]
-    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+    e_x, e_y, e_z, h = member_3d_geometry(i, j, sect["xz_vector"])
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     dirv = e_z
@@ -560,7 +557,7 @@ def plot_axial_forces(m, scale=1.0):
 
 def _plot_3d_beam_torsion_moments(ax, member, i, j, scale):
     sect = member["section"]
-    e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+    e_x, e_y, e_z, h = member_3d_geometry(i, j, sect["xz_vector"])
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     dirv = e_z
@@ -607,7 +604,7 @@ def plot_beam_orientation(m, scale=1.0):
         ci, cj = i["coordinates"], j["coordinates"]
         xm = (ci + cj) / 2.0
         if m["dim"] == 3:
-            e_x, e_y, e_z, h = beam_3d_member_geometry(i, j, sect["xz_vector"])
+            e_x, e_y, e_z, h = member_3d_geometry(i, j, sect["xz_vector"])
             xs = zeros(2)
             ys = zeros(2)
             zs = zeros(2)
@@ -639,7 +636,7 @@ def plot_beam_orientation(m, scale=1.0):
             zs[1] = zs[0] + scale * e_z[2]
             ax.plot(xs, ys, zs, "b-", lw=3)
         else:
-            e_x, e_z, h = beam_2d_member_geometry(i, j)
+            e_x, e_z, h = member_2d_geometry(i, j)
             xs = zeros(2)
             ys = zeros(2)
             xs[0] = xm[0]
