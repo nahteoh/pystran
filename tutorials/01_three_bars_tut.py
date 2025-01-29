@@ -19,6 +19,7 @@ from numpy.linalg import norm
 from numpy import concatenate, dot
 from pystran import model
 from pystran import section
+from pystran import geometry
 from pystran import truss
 from pystran import plots
 
@@ -97,8 +98,8 @@ print("Displacement calculation OK")
 for b in m["truss_members"].values():
     connectivity = b["connectivity"]
     i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-    e_x, L = truss.truss_member_geometry(i, j)
-    B = truss.truss_strain_displacement(e_x, L)
+    e_x, e_z, h = geometry.member_2d_geometry(i, j)
+    B = truss.truss_strain_displacement(e_x, h)
     u = concatenate((i["displacements"], j["displacements"]))
     eps = dot(B, u)
     print("Bar " + str(connectivity) + " force = ", E * A * eps[0])
