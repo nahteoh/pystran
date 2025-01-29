@@ -540,7 +540,7 @@ def beam_2d_mass(e_x, e_z, h, rho, A, I):
 
     Gauss quadrature is used to compute the mass matrix.
     """
-    xiG, WG = gauss.rule(3)
+    xiG, WG = gauss.rule(4)
     n = (len(e_x) + 1) * 2
     m = zeros((n, n))
     for xi, W in zip(xiG, WG):
@@ -568,11 +568,15 @@ def beam_3d_mass(e_x, e_y, e_z, h, rho, A, Ix, Iy, Iz):
 
     The velocity $\\dot u$ is assumed to very linearly along the element, and
     the velocity $\\dot v$, $\\dot w$ is assumed to vary according to the Hermite shape
-    functions.
+    functions. Rotations about $y$ and $z$ are ignored in the kinetic energy.
+
+    For spinning of the beam about its axis, the kinetic energy is given by the formula
+
+    $\\int \\rho Ix \\dot \\theta_x \\cdot \\dot \\theta_x dx$.
 
     Gauss quadrature is used to compute the mass matrix.
     """
-    xiG, WG = gauss.rule(2)
+    xiG, WG = gauss.rule(4)
     n = len(e_x) * 4
     m = zeros((n, n))
     for xi, W in zip(xiG, WG):
