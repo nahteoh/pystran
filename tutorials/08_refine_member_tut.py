@@ -3,10 +3,13 @@ pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
-# Continuous beam with two spans
+# Continuous beam with two spans: refine a member
 
 Introductory example 7.1 from Structural Mechanics. Analytical and Numerical
 Approaches for Structural Analysis by Lingyi Lu, Junbo Jia, Zhuo Tang.
+
+Variation on  02_continuous_beam_2_spans_consist_tut.py. The member 2 is refined
+into three members automatically.
 """
 
 from numpy import dot
@@ -49,7 +52,7 @@ I = 1.152e-5
 s2 = section.beam_2d_section("section_2", E, A, I)
 model.add_beam_member(m, 2, [2, 3], s2)
 
-#
+# Let's have a look at the model before it is refined.
 plots.plot_setup(m, set_limits=True)
 plots.plot_members(m)
 plots.plot_member_numbers(m)
@@ -57,8 +60,11 @@ ax = plots.plot_joint_numbers(m)
 ax.set_title("Structure before refinement of member 2")
 plots.show(m)
 
+# The member 2 is refined into three members. The model is updated with new
+# joints ant members. The old member 2 is removed.
 model.refine_member(m, 2, 3)
 
+# The model is shown after the refinement.
 plots.plot_setup(m, set_limits=True)
 plots.plot_members(m)
 plots.plot_member_numbers(m)
@@ -66,6 +72,7 @@ ax = plots.plot_joint_numbers(m)
 ax.set_title("Structure after refinement of member 2")
 plots.show(m)
 
+# Next we add the loads and solve the model.|
 
 # The loads are  moments at the joints.
 model.add_load(m["joints"][1], model.UR3, -15e3)
@@ -74,18 +81,7 @@ model.add_load(m["joints"][3], model.UR3, +35e3)
 
 # The model is solved.
 model.number_dofs(m)
-nt = m["ntotaldof"]
-nf = m["nfreedof"]
-print("Total Degrees of Freedom = ", nt)
-print("Free Degrees of Freedom = ", nf)
-
 model.solve_statics(m)
-
-# The stiffness matrix for the free degrees of freedom can be printed.
-print(m["K"][0:3, 0:3])
-
-# Here are the calculated free degrees of freedom:
-print(m["U"][0:3])
 
 # These displacements can be compared with the reference values from literature.
 if norm(m["U"][0:3] - [-0.02969075, -0.02742406, 0.03952194]) > 1.0e-3:
@@ -93,27 +89,7 @@ if norm(m["U"][0:3] - [-0.02969075, -0.02742406, 0.03952194]) > 1.0e-3:
 else:
     print("Displacement calculation OK")
 
-
-# We can calculate the reactions at the supports. This is the manual approach to
-# that using the partitioning of the stiffness matrix and the displacement
-# vector.
-Kdf = m["K"][nf:nt, 0:nf]
-Kdd = m["K"][nf:nt, nf:nt]
-Uf = m["U"][0:nf]
-Ud = m["U"][nf:nt]
-
-# The reactions follow:
-R = dot(Kdf, Uf) + dot(Kdd, Ud)
-print("Reactions = ", R)
-
-# In order to understand moment and shear diagrams, we start by plotting the
-# geometry with the orientation of the local coordinate system on each beam.
-plots.plot_setup(m)
-plots.plot_members(m)
-ax = plots.plot_beam_orientation(m, 1.0)
-ax.set_title("Local coordinate systems (red -- local x, blue -- local z)")
-plots.show(m)
-
+# The displacements can be seen to be the same as in  02_continuous_beam_2_spans_consist_tut.py.
 # The deformed shape shows the curvatures of the beam.
 plots.plot_setup(m)
 plots.plot_members(m)
@@ -121,14 +97,14 @@ ax = plots.plot_deformations(m, 10.0)
 ax.set_title("Deformed shape (magnified 10 times)")
 plots.show(m)
 
-# The bending moment can be compared with the curvature of the beam.
+# And the internal forces too. The bending moment:
 plots.plot_setup(m)
 plots.plot_members(m)
 ax = plots.plot_bending_moments(m, 0.0001)
 ax.set_title("Moments")
 plots.show(m)
 
-# The shear forces are the slopes of the moment diagram.
+# The shear forces:
 plots.plot_setup(m)
 plots.plot_members(m)
 ax = plots.plot_shear_forces(m, 0.0001)
