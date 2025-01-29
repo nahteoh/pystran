@@ -153,7 +153,7 @@ if abs((f["Myj"] + M_T) / 40171 - 1) > 1e-2:
 
 # There are diagrams below are for the discrete model that is loaded with the
 # negative reactions at the fixed joints. These resultants are not combined with
-# the thermal forces.
+# the thermal forces, they represent the response of the frame with the nodal loads.
 
 # The shear forces in the members can be visualized with diagrams.
 ax = plots.plot_setup(m)
