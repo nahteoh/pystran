@@ -5,6 +5,21 @@ A simple structural analysis tool in Python.
 Linear statics and dynamics can be analyzed in structures consisting of truss and beam members, both in two dimensions and in three dimensions.
 
 The formulations are derived in the Finite element modeling with shells and beams [book](http://hogwarts.ucsd.edu/~pkrysl/femstructures-book/).
+The approach here is modern as opposed to classic.
+
+Classically, the geometrical transformations are developed explicitly to push the
+stiffness and mass matrices from special orientations to the real orientation in space. This requires multiplication 
+of the stiffness and mass matrices by large transformation matrices on the left and right. 
+The matrices in special orientations are usually developed analytically, and these explicit expressions become the starting point
+for developing computations. So for instance for spatial beams, the starting point are 12x12 matrices.
+
+The modern approach develops an expression for the strains in a basic element, for instance curvature in beams.
+This leads to a small basic stiffness matrix, 4x4 matrix in the case of a 2D beam.
+The geometrical transformation is then introduced implicitly by projecting displacements in the real space
+onto the local basis vectors of the element. The Galerkin weighted residual method then completes the development.
+
+The three dimensional beam is in such a modern framework treated as a superposition of four stiffness mechanisms,
+each with its own strain-displacement matrix. The stiffness and mass matrices are obtained readily using numerical integration.
 
 ![Alt pystran capabilities in graphic abstract](docs/splash.png)
 
