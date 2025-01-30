@@ -425,9 +425,11 @@ def beam_3d_stretch_displ_matrix(e_x, h):
     return truss.truss_strain_displacement(e_x, h)
 
 
-def beam_3d_axial_stiffness(e_x, h, E, A):
+def beam_2d_3d_axial_stiffness(e_x, h, E, A):
     """
     Compute axial stiffness matrix.
+
+    This function works both for 2D and 3D beams.
 
     The axial stiffness matrix is computed as $K = EA B^T B h$. Here $B$ is the
     stretch-displacement matrix, computed by `beam_3d_stretch_displ_matrix`.
@@ -470,30 +472,31 @@ def assemble_stiffness(Kg, member, i, j):
     beam_is_2d = len(i["coordinates"]) == len(j["coordinates"]) == 2
     dof = concatenate([i["dof"], j["dof"]])
     if beam_is_2d:
-        e_x, e_z, h = geometry.member_2d_geometry(i, j)
         sect = member["section"]
+        e_x, e_z, h = geometry.member_2d_geometry(i, j)
+        # Add stiffness in bending.
         E, I = sect["E"], sect["I"]
         k = beam_2d_bending_stiffness(e_z, h, E, I)
+        Kg = assemble.assemble(Kg, dof, k)
+        # Add stiffness in the axial direction.
+        E, A = sect["E"], sect["A"]
+        k = beam_2d_3d_axial_stiffness(e_x, h, E, A)
+        dof = concatenate([i["dof"][0:2], j["dof"][0:2]])
         Kg = assemble.assemble(Kg, dof, k)
     else:
         sect = member["section"]
         e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
+        # Add stiffness in bending.
         E, Iy, Iz = sect["E"], sect["Iy"], sect["Iz"]
         kxy, kxz = beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz)
         Kg = assemble.assemble(Kg, dof, kxy)
         Kg = assemble.assemble(Kg, dof, kxz)
-    # Add stiffness in the axial direction.
-    E, A = sect["E"], sect["A"]
-    k = beam_3d_axial_stiffness(e_x, h, E, A)
-    if beam_is_2d:
-        dof = concatenate([i["dof"][0:2], j["dof"][0:2]])
-    else:
+        # Add stiffness in the axial direction.
+        E, A = sect["E"], sect["A"]
+        k = beam_2d_3d_axial_stiffness(e_x, h, E, A)
         dof = concatenate([i["dof"][0:3], j["dof"][0:3]])
-    Kg = assemble.assemble(Kg, dof, k)
-    if not beam_is_2d:
+        Kg = assemble.assemble(Kg, dof, k)
         # Add stiffness in torsion.
-        e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
-        sect = member["section"]
         G, J = sect["G"], sect["J"]
         k = beam_3d_torsion_stiffness(e_x, h, G, J)
         dof = concatenate([i["dof"][3:6], j["dof"][3:6]])
