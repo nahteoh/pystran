@@ -28,6 +28,14 @@ def lin_basis(xi):
     return array([(xi - 1) / (-1 - 1), (xi - -1) / (1 - -1)])
 
 
+def interpolate(xi, x1, x2):
+    """
+    Interpolate linearly between two quantities.
+    """
+    N = lin_basis(xi)
+    return N[0] * x1 + N[1] * x2
+
+
 def herm_basis(xi):
     """
     Compute the Hermite basis functions.

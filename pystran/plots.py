@@ -32,7 +32,12 @@ from pystran.beam import (
     beam_3d_torsion_moment,
     beam_3d_axial_force,
 )
-from pystran.geometry import member_2d_geometry, member_3d_geometry, herm_basis
+from pystran.geometry import (
+    member_2d_geometry,
+    member_3d_geometry,
+    herm_basis,
+    interpolate,
+)
 
 
 # fig = plt.figure(figsize=(9,9))
@@ -183,13 +188,14 @@ def _plot_2d_beam_deflection(ax, member, i, j, scale):
     xs = zeros(n)
     ys = zeros(n)
     for s, xi in enumerate(linspace(-1, +1, n)):
+        u = interpolate(xi, ui, uj)
         N = herm_basis(xi)
         w = N[0] * wi + (h / 2) * N[1] * thi + N[2] * wj + (h / 2) * N[3] * thj
-        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        x = interpolate(xi, ci, cj)
         xs[s] = x[0]
         ys[s] = x[1]
-        xs[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[0]
-        ys[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[1]
+        xs[s] += scale * u * e_x[0]
+        ys[s] += scale * u * e_x[1]
         xs[s] += scale * w * e_z[0]
         ys[s] += scale * w * e_z[1]
     ax.plot(xs, ys, "m-")
@@ -215,13 +221,14 @@ def _plot_3d_beam_deflection(ax, member, i, j, scale):
     ys = zeros(n)
     zs = zeros(n)
     for s, xi in enumerate(linspace(-1, +1, n)):
-        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        x = interpolate(xi, ci, cj)
+        u = interpolate(xi, ui, uj)
         xs[s] = x[0]
         ys[s] = x[1]
         zs[s] = x[2]
-        xs[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[0]
-        ys[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[1]
-        zs[s] += scale * ((1 - xi) / 2 * ui + (1 + xi) / 2 * uj) * e_x[2]
+        xs[s] += scale * u * e_x[0]
+        ys[s] += scale * u * e_x[1]
+        zs[s] += scale * u * e_x[2]
         N = beam_3d_xz_shape_fun(xi)
         w = N[0] * wi + (h / 2) * N[1] * thyi + N[2] * wj + (h / 2) * N[3] * thyj
         xs[s] += scale * w * e_z[0]
@@ -343,7 +350,7 @@ def _plot_2d_beam_moments(ax, member, i, j, scale):
     n = 13
     for s, xi in enumerate(linspace(-1, +1, n)):
         M = beam_2d_moment(member, i, j, xi)
-        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        x = interpolate(xi, ci, cj)
         # The convention: moment is plotted next to fibers in tension
         xs = zeros(2)
         ys = zeros(2)
@@ -369,7 +376,7 @@ def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
         dirv = e_z
     for s, xi in enumerate(linspace(-1, +1, n)):
         M = beam_3d_moment(member, i, j, axis, xi)
-        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
         zs = zeros(2)
@@ -410,7 +417,7 @@ def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
     n = 13
     for s, xi in enumerate(linspace(-1, +1, n)):
         Q = beam_2d_shear_force(member, i, j, xi)
-        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
         xs[0] = x[0]
@@ -433,7 +440,7 @@ def _plot_3d_beam_shear_forces(ax, member, i, j, axis, scale):
         dirv = e_y
     for s, xi in enumerate(linspace(-1, +1, n)):
         Q = beam_3d_shear_force(member, i, j, axis, xi)
-        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
         zs = zeros(2)
@@ -474,7 +481,7 @@ def _plot_2d_beam_axial_forces(ax, member, i, j, scale):
     n = 13
     for s, xi in enumerate(linspace(-1, +1, n)):
         N = beam_2d_axial_force(member, i, j)
-        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
         xs[0] = x[0]
@@ -493,7 +500,7 @@ def _plot_2d_truss_axial_forces(ax, member, i, j, scale):
     N = truss_axial_force(member, i, j)
     n = 13
     for s, xi in enumerate(linspace(-1, +1, n)):
-        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
         xs[0] = x[0]
@@ -514,7 +521,7 @@ def _plot_3d_beam_axial_forces(ax, member, i, j, scale):
     dirv = e_z
     for s, xi in enumerate(linspace(-1, +1, n)):
         N = beam_3d_axial_force(member, i, j)
-        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
         zs = zeros(2)
@@ -562,7 +569,7 @@ def _plot_3d_beam_torsion_moments(ax, member, i, j, scale):
     dirv = e_z
     for s, xi in enumerate(linspace(-1, +1, n)):
         T = beam_3d_torsion_moment(member, i, j)
-        x = (1 - xi) / 2 * ci + (1 + xi) / 2 * cj
+        x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
         zs = zeros(2)
