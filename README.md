@@ -28,8 +28,6 @@ A simple structural analysis tool in Python, for structures consisting of truss 
 - Degrees of freedom are only along the cartesian axes. Skew supports are not included.
 - Offsets are currently not implemented.
 
-For more information refer to [pystran.py](pystran/pystran.py) and the HTML [documentation](html/index.html)).
-
 ## Requirements
 
 - NumPy
