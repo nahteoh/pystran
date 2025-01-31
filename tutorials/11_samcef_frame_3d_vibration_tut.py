@@ -107,10 +107,18 @@ nref = 3
 for i in range(16):
     model.refine_member(m, i + 1, nref)
 
+# Solve the problem. 
 model.number_dofs(m)
+# The number of free degrees of freedom is 
+print(f"Number of degrees of freedom: {m['nfreedof']}")
 model.solve_free_vibration(m)
 
+# The textbook cites the following frequencies (apparently for a single element
+# per member):
 reffs = [3.08, 4.65, 7.87, 8.23]
+
+# Plot the modes and compare the frequencies. The mode shapes correlate with
+# those published in the reference.
 for mode in range(0, 4):
     print(f"Mode {mode}: {m["frequencies"][mode]:.3f} Hz")
     print(f"  Reference: ", reffs[mode])
