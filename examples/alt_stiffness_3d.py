@@ -98,7 +98,7 @@ K[8, 10] = 6 * E * Iy / h**2
 
 
 i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-e_x, e_y, e_z, h = pystran.beam.beam_3d_member_geometry(i, j, xz_vector)
+e_x, e_y, e_z, h = pystran.geometry.member_3d_geometry(i, j, xz_vector)
 
 # Transformation matrix
 T = zeros(K.shape)
