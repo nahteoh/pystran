@@ -65,7 +65,7 @@ if norm((m["frequencies"][0:3] - expected) / expected) > 1.0e-2:
 for mode in range(3):
     plots.plot_setup(m)
     plots.plot_members(m)
-    model.copy_mode(m, mode)
+    model.set_solution(m, m["eigvecs"][:, mode])
     ax = plots.plot_deformations(m, 50.0)
     ax.set_title(f"Mode {mode}: f = {sqrt(m['eigvals'][mode])/2/pi:.3f} Hz")
     plots.show(m)

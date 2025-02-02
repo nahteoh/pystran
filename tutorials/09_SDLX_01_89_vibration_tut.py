@@ -81,7 +81,7 @@ for mode in range(0, 4):
     print(f"Mode {mode}: ", m["frequencies"][mode])
     ax = plots.plot_setup(m)
     plots.plot_members(m)
-    model.copy_mode(m, mode)
+    model.set_solution(m, m["eigvecs"][:, mode])
     plots.plot_deformations(m, 0.2)
     ax.set_title(f"Mode {mode}, frequency = {m['frequencies'][mode]:.2f} Hz")
     plots.show(m)

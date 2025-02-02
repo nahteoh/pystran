@@ -446,14 +446,22 @@ def solve_free_vibration(m):
     return
 
 
-def copy_mode(m, mode):
+def set_solution(m, V):
     """
-    Copy a mode to the displacement field of the model.
+    Set the displacement solution from a vector. 
 
-    `solve_free_vibration` must be called before this function.
+    - `m` = the model,
+    - `V` = the displacement vector. Either of length for only the free degrees
+      of freedom or for the total number of degrees of freedom.
     """
     nf = m["nfreedof"]
-    m["U"][0:nf] = m["eigvecs"][:, mode]
+    nt = m["ntotaldof"]
+    if len(V) == nf:
+        m["U"][0:nf] = V
+    elif len(V) == nt:
+        m["U"][0:nf] = V
+    else:
+        raise RuntimeError("Invalid vector length")
     for joint in m["joints"].values():
         joint["displacements"] = m["U"][joint["dof"]]
 

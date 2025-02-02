@@ -151,7 +151,7 @@ model.solve_free_vibration(m)
 
 plots.plot_setup(m)
 plots.plot_members(m)
-model.copy_mode(m, 0)
+model.set_solution(m, m["eigvecs"][:, 0])
 plots.plot_deformations(m, 500.0)
 # ax = plots.plot_shear_forces(m, scale=0.50e-3)
 # ax.set_title('Shear forces')
