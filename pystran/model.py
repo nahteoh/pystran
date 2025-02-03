@@ -217,7 +217,7 @@ def add_links(m, jids, dof):
                     j1["links"] = {}
                 if jid2 not in j1["links"]:
                     j1["links"][jid2] = []
-                for d, v in zip(*_dofs_values(m["dim"], dof, 0.0)):
+                for d, _ in zip(*_dofs_values(m["dim"], dof, 0.0)):
                     j1["links"][jid2].append(d)
 
 
@@ -231,9 +231,9 @@ def bounding_box(m):
     )
     for j in m["joints"].values():
         cj = j["coordinates"]
-        for i in range(len(cj)):
-            box[i] = min(box[i], cj[i])
-            box[i + dim] = max(box[i + dim], cj[i])
+        for i, v in enumerate(cj):
+            box[i] = min(box[i], v)
+            box[i + dim] = max(box[i + dim], v)
     return box
 
 
@@ -388,7 +388,7 @@ def statics_reactions(m):
     for joint in m["joints"].values():
         if "supports" in joint:
             reactions = {}
-            for dof, value in joint["supports"].items():
+            for dof, _ in joint["supports"].items():
                 gr = joint["dof"][dof]
                 reactions[dof] = R[gr]
             joint["reactions"] = reactions
@@ -448,7 +448,7 @@ def solve_free_vibration(m):
 
 def set_solution(m, V):
     """
-    Set the displacement solution from a vector. 
+    Set the displacement solution from a vector.
 
     - `m` = the model,
     - `V` = the displacement vector. Either of length for only the free degrees
@@ -573,7 +573,7 @@ def refine_member(m, mid, n):
     newmid = max(m["beam_members"].keys()) + 1
     add_beam_member(m, newmid, [i["jid"], newjid], member["section"])
     prevjid = newjid
-    for k in range(n - 2):
+    for _ in range(n - 2):
         start += 2.0 / n
         c = (-1 + start) / (-2) * ci + (1 + start) / 2 * cj
         newjid = max(m["joints"].keys()) + 1

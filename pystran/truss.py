@@ -2,7 +2,6 @@
 Define truss mechanical quantities.
 """
 
-from math import sqrt
 from numpy import reshape, outer, concatenate, zeros, dot, array
 from pystran import geometry
 from pystran import assemble
@@ -52,9 +51,11 @@ def truss_3d_mass(e_x, e_y, e_z, h, rho, A):
     The mass matrix is consistent, which means that it is computed as discrete
     form of the kinetic energy of the element,
 
-    $\\int \\rho A \\left(\\dot u \\cdot \\dot u +  \\dot v \\cdot \\dot v +  \\dot w \\cdot \\dot w\\right)dx$
+    $\\int \\rho A \\left(\\dot u \\cdot \\dot u + \\dot v \\cdot \\dot v +
+    \\dot w \\cdot \\dot w\\right)dx$
 
-    where $\\dot u$, $\\dot v$, and $\\dot w$ are the velocities in the $x$, $y$, and $z$ directions.
+    where $\\dot u$, $\\dot v$, and $\\dot w$ are the velocities in the $x$,
+    $y$, and $z$ directions.
 
     """
     xiG, WG = gauss.rule(2)
@@ -101,9 +102,9 @@ def assemble_stiffness(Kg, member, i, j):
         raise ValueError("Area must be positive")
     dim = len(i["coordinates"])
     if dim == 2:
-        e_x, e_z, h = geometry.member_2d_geometry(i, j)
+        e_x, _, h = geometry.member_2d_geometry(i, j)
     else:
-        e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, array([]))
+        e_x, _, _, h = geometry.member_3d_geometry(i, j, array([]))
     k = truss_stiffness(e_x, h, E, A)
     dof = concatenate([i["dof"][0:dim], j["dof"][0:dim]])
     return assemble.assemble(Kg, dof, k)
@@ -144,10 +145,10 @@ def truss_axial_force(member, i, j):
     E, A = sect["E"], sect["A"]
     dim = len(i["coordinates"])
     if dim == 2:
-        e_x, e_z, h = geometry.member_2d_geometry(i, j)
+        e_x, _, h = geometry.member_2d_geometry(i, j)
         ui, uj = i["displacements"][0:2], j["displacements"][0:2]
     else:
-        e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, array([]))
+        e_x, _, _, h = geometry.member_3d_geometry(i, j, array([]))
         ui, uj = i["displacements"][0:3], j["displacements"][0:3]
     u = concatenate([ui, uj])
     B = truss_strain_displacement(e_x, h)

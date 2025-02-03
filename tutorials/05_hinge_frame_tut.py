@@ -12,12 +12,10 @@ Displacements and internal forces are provided in the book, and we can check our
 solution against these reference values.
 """
 
-from numpy import dot
 from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
-from pystran import beam
 from pystran import plots
 
 # US customary units, inches, pounds, seconds are assumed.
@@ -61,7 +59,7 @@ model.add_beam_member(m, 3, [4, 3], s1)
 model.add_load(m["joints"][2], model.U1, 1000.0)
 
 # The discrete model can now be reviewed. Note the orientations of the local
-# coordinate systems. 
+# coordinate systems.
 plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_member_numbers(m)

@@ -2,7 +2,6 @@
 Simple geometry utilities.
 """
 
-from math import sqrt
 from numpy import array, dot
 from numpy.linalg import norm, cross
 

@@ -107,9 +107,9 @@ nref = 3
 for i in range(16):
     model.refine_member(m, i + 1, nref)
 
-# Solve the problem. 
+# Solve the problem.
 model.number_dofs(m)
-# The number of free degrees of freedom is 
+# The number of free degrees of freedom is
 print(f"Number of degrees of freedom: {m['nfreedof']}")
 model.solve_free_vibration(m)
 
@@ -121,7 +121,7 @@ reffs = [3.08, 4.65, 7.87, 8.23]
 # those published in the reference.
 for mode in range(0, 4):
     print(f"Mode {mode}: {m["frequencies"][mode]:.3f} Hz")
-    print(f"  Reference: ", reffs[mode])
+    print("  Reference: ", reffs[mode])
     ax = plots.plot_setup(m)
     plots.plot_members(m)
     model.set_solution(m, m["eigvecs"][:, mode])

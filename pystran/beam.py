@@ -2,9 +2,7 @@
 Define beam mechanical quantities.
 """
 
-from math import sqrt
-from numpy import array, dot, outer, concatenate, zeros
-from numpy.linalg import norm, cross
+from numpy import dot, outer, concatenate, zeros
 from pystran import geometry
 from pystran.geometry import herm_basis_xi2, herm_basis_xi3, herm_basis
 from pystran import gauss
@@ -287,7 +285,7 @@ def beam_2d_moment(member, i, j, xi):
     The curvature is computed with the curvature-displacement matrix $B$ by the function
     `beam_2d_curv_displ_matrix`.
     """
-    e_x, e_z, h = geometry.member_2d_geometry(i, j)
+    _, e_z, h = geometry.member_2d_geometry(i, j)
     sect = member["section"]
     E, I = sect["E"], sect["I"]
     ui, uj = i["displacements"], j["displacements"]
@@ -311,7 +309,7 @@ def beam_3d_moment(member, i, j, axis, xi):
     respectively.
     """
     sect = member["section"]
-    e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
+    _, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
     E, Iy, Iz = sect["E"], sect["Iy"], sect["Iz"]
     ui, uj = i["displacements"], j["displacements"]
     u = concatenate([ui, uj])
@@ -337,7 +335,7 @@ def beam_3d_torsion_moment(member, i, j):
     The torsion moment is uniform along the beam.
     """
     sect = member["section"]
-    e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
+    e_x, _, _, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
     G, J = sect["G"], sect["J"]
     ui, uj = i["displacements"][3:6], j["displacements"][3:6]
     u = concatenate([ui, uj])
@@ -356,7 +354,7 @@ def beam_2d_axial_force(member, i, j):
     The axial force is uniform along the beam.
     """
     sect = member["section"]
-    e_x, e_z, h = geometry.member_2d_geometry(i, j)
+    e_x, _, h = geometry.member_2d_geometry(i, j)
     E, A = sect["E"], sect["A"]
     ui, uj = i["displacements"][0:2], j["displacements"][0:2]
     u = concatenate([ui, uj])
@@ -372,7 +370,7 @@ def beam_3d_axial_force(member, i, j):
     The axial force is uniform along the beam.
     """
     sect = member["section"]
-    e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
+    e_x, _, _, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
     E, A = sect["E"], sect["A"]
     ui, uj = i["displacements"][0:3], j["displacements"][0:3]
     u = concatenate([ui, uj])
@@ -381,13 +379,13 @@ def beam_3d_axial_force(member, i, j):
     return N
 
 
-def beam_3d_shear_force(member, i, j, axis, xi):
+def beam_3d_shear_force(member, i, j, axis):
     """
     Compute 3d shear force based on the displacements stored at the joints. The
     shear force in the direction of axis `axis`  (`'y'` or `'z'`) is uniform along the beam.
     """
     sect = member["section"]
-    e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
+    _, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
     E, Iy, Iz = sect["E"], sect["Iy"], sect["Iz"]
     ui, uj = i["displacements"], j["displacements"]
     u = concatenate([ui, uj])
@@ -405,7 +403,7 @@ def beam_2d_shear_force(member, i, j, xi):
     Compute 2d beam shear force based on the displacements stored at the joints.
     The shear force is computed at the parametric location `xi` along the beam.
     """
-    e_x, e_z, h = geometry.member_2d_geometry(i, j)
+    _, e_z, h = geometry.member_2d_geometry(i, j)
     sect = member["section"]
     E, I = sect["E"], sect["I"]
     ui, uj = i["displacements"], j["displacements"]
@@ -514,8 +512,7 @@ def assemble_mass(Mg, member, i, j):
     rho, A = sect["rho"], sect["A"]
     if beam_is_2d:
         e_x, e_z, h = geometry.member_2d_geometry(i, j)
-        I = sect["I"]
-        m = beam_2d_mass(e_x, e_z, h, rho, A, I)
+        m = beam_2d_mass(e_x, e_z, h, rho, A)
     else:
         e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
         Ix, Iy, Iz = sect["Ix"], sect["Iy"], sect["Iz"]
@@ -524,7 +521,7 @@ def assemble_mass(Mg, member, i, j):
     return Mg
 
 
-def beam_2d_mass(e_x, e_z, h, rho, A, I):
+def beam_2d_mass(e_x, e_z, h, rho, A):
     """
     Compute beam mass matrix.
 
@@ -535,7 +532,8 @@ def beam_2d_mass(e_x, e_z, h, rho, A, I):
     w\\right)dx$
 
     where $\\dot u$ and $\\dot w$ are the velocities in the $x$ and $z$
-    directions.
+    directions. Note that the rotational velocities of the cross sections do not
+    play a role.
 
     The velocity $\\dot u$ is assumed to very linearly along the element, and
     the velocity $\\dot w$ is assumed to vary according to the Hermite shape
@@ -626,10 +624,10 @@ def beam_3d_end_forces(member, i, j):
     Myj = -beam_3d_moment(member, i, j, "y", +1.0)
     Mzi = beam_3d_moment(member, i, j, "z", -1.0)
     Mzj = -beam_3d_moment(member, i, j, "z", +1.0)
-    Qyi = beam_3d_shear_force(member, i, j, "y", -1.0)
-    Qyj = -beam_3d_shear_force(member, i, j, "y", +1.0)
-    Qzi = beam_3d_shear_force(member, i, j, "z", -1.0)
-    Qzj = -beam_3d_shear_force(member, i, j, "z", +1.0)
+    Qyi = beam_3d_shear_force(member, i, j, "y")
+    Qyj = -beam_3d_shear_force(member, i, j, "y")
+    Qzi = beam_3d_shear_force(member, i, j, "z")
+    Qzj = -beam_3d_shear_force(member, i, j, "z")
     return dict(
         Ni=Ni[0],
         Qyi=Qyi[0],

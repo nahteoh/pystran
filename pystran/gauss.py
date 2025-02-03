@@ -2,8 +2,6 @@
 Define numerical integration rules.
 """
 
-from math import sqrt
-import numpy
 from numpy import array
 
 

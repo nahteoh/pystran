@@ -8,15 +8,11 @@ from matplotlib.patches import Arc, RegularPolygon
 from mpl_toolkits.mplot3d.proj3d import proj_transform
 from mpl_toolkits.mplot3d.axes3d import Axes3D
 import numpy
-from numpy import linspace, dot, zeros, array
+from numpy import linspace, dot, zeros
 from numpy import radians as rad
 from numpy.linalg import norm
-from pystran.model import U1, U2, U3, UR1, UR2, UR3
-from pystran.model import ALL_DOFS
-from pystran.model import TRANSLATION_DOFS
 from pystran.model import ndof_per_joint, characteristic_dimension, bounding_box
 from pystran.truss import (
-    truss_strain_displacement,
     truss_axial_force,
 )
 from pystran.beam import (
@@ -102,17 +98,17 @@ class _Arrow3D(FancyArrowPatch):
         x1, y1, z1 = self._xyz
         dx, dy, dz = self._dxdydz
         x2, y2, z2 = (x1 + dx, y1 + dy, z1 + dz)
-        xs, ys, zs = proj_transform((x1, x2), (y1, y2), (z1, z2), self.axes.M)
+        xs, ys, _ = proj_transform((x1, x2), (y1, y2), (z1, z2), self.axes.M)
         self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
         super().draw(renderer)
 
-    def do_3d_projection(self, renderer=None):
-        x1, y1, z1 = self._xyz
-        dx, dy, dz = self._dxdydz
-        x2, y2, z2 = (x1 + dx, y1 + dy, z1 + dz)
-        xs, ys, zs = proj_transform((x1, x2), (y1, y2), (z1, z2), self.axes.M)
-        self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
-        return numpy.min(zs)
+    # def do_3d_projection(self, renderer=None):
+    #     x1, y1, z1 = self._xyz
+    #     dx, dy, dz = self._dxdydz
+    #     x2, y2, z2 = (x1 + dx, y1 + dy, z1 + dz)
+    #     xs, ys, zs = proj_transform((x1, x2), (y1, y2), (z1, z2), self.axes.M)
+    #     self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
+    #     return numpy.min(zs)
 
 
 def _arrow3D(ax, x, y, z, dx, dy, dz, *args, **kwargs):
@@ -345,10 +341,10 @@ def plot_joint_numbers(m):
 
 
 def _plot_2d_beam_moments(ax, member, i, j, scale):
-    e_x, e_z, h = member_2d_geometry(i, j)
+    _, e_z, _ = member_2d_geometry(i, j)
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
-    for s, xi in enumerate(linspace(-1, +1, n)):
+    for _, xi in enumerate(linspace(-1, +1, n)):
         M = beam_2d_moment(member, i, j, xi)
         x = interpolate(xi, ci, cj)
         # The convention: moment is plotted next to fibers in tension
@@ -368,13 +364,13 @@ def _plot_2d_beam_moments(ax, member, i, j, scale):
 
 def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
     sect = member["section"]
-    e_x, e_y, e_z, h = member_3d_geometry(i, j, sect["xz_vector"])
+    _, e_y, e_z, _ = member_3d_geometry(i, j, sect["xz_vector"])
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     dirv = e_y
     if axis == "y":
         dirv = e_z
-    for s, xi in enumerate(linspace(-1, +1, n)):
+    for _, xi in enumerate(linspace(-1, +1, n)):
         M = beam_3d_moment(member, i, j, axis, xi)
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
@@ -412,10 +408,10 @@ def plot_bending_moments(m, scale=1.0, axis="y"):
 
 
 def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
-    e_x, e_z, h = member_2d_geometry(i, j)
+    _, e_z, _ = member_2d_geometry(i, j)
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
-    for s, xi in enumerate(linspace(-1, +1, n)):
+    for _, xi in enumerate(linspace(-1, +1, n)):
         Q = beam_2d_shear_force(member, i, j, xi)
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
@@ -432,14 +428,14 @@ def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
 
 def _plot_3d_beam_shear_forces(ax, member, i, j, axis, scale):
     sect = member["section"]
-    e_x, e_y, e_z, h = member_3d_geometry(i, j, sect["xz_vector"])
+    _, e_y, e_z, _ = member_3d_geometry(i, j, sect["xz_vector"])
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     dirv = e_z
     if axis == "y":
         dirv = e_y
-    for s, xi in enumerate(linspace(-1, +1, n)):
-        Q = beam_3d_shear_force(member, i, j, axis, xi)
+    for _, xi in enumerate(linspace(-1, +1, n)):
+        Q = beam_3d_shear_force(member, i, j, axis)
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
@@ -476,10 +472,10 @@ def plot_shear_forces(m, scale=1.0, axis="z"):
 
 
 def _plot_2d_beam_axial_forces(ax, member, i, j, scale):
-    e_x, e_z, h = member_2d_geometry(i, j)
+    _, e_z, _ = member_2d_geometry(i, j)
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
-    for s, xi in enumerate(linspace(-1, +1, n)):
+    for _, xi in enumerate(linspace(-1, +1, n)):
         N = beam_2d_axial_force(member, i, j)
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
@@ -495,11 +491,11 @@ def _plot_2d_beam_axial_forces(ax, member, i, j, scale):
 
 
 def _plot_2d_truss_axial_forces(ax, member, i, j, scale):
-    e_x, e_z, h = member_2d_geometry(i, j)
+    _, e_z, _ = member_2d_geometry(i, j)
     ci, cj = i["coordinates"], j["coordinates"]
     N = truss_axial_force(member, i, j)
     n = 13
-    for s, xi in enumerate(linspace(-1, +1, n)):
+    for _, xi in enumerate(linspace(-1, +1, n)):
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
@@ -513,13 +509,13 @@ def _plot_2d_truss_axial_forces(ax, member, i, j, scale):
     return ax
 
 
-def _plot_3d_beam_axial_forces(ax, member, i, j, scale):
+def _plot_3d_truss_beam_axial_forces(ax, member, i, j, scale):
     sect = member["section"]
-    e_x, e_y, e_z, h = member_3d_geometry(i, j, sect["xz_vector"])
+    _, _, e_z, _ = member_3d_geometry(i, j, sect["xz_vector"])
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     dirv = e_z
-    for s, xi in enumerate(linspace(-1, +1, n)):
+    for _, xi in enumerate(linspace(-1, +1, n)):
         N = beam_3d_axial_force(member, i, j)
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
@@ -548,14 +544,14 @@ def plot_axial_forces(m, scale=1.0):
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         if m["dim"] == 3:
-            _plot_3d_truss_axial_forces(ax, member, i, j, scale)
+            _plot_3d_truss_beam_axial_forces(ax, member, i, j, scale)
         else:
             _plot_2d_truss_axial_forces(ax, member, i, j, scale)
     for member in m["beam_members"].values():
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         if m["dim"] == 3:
-            _plot_3d_beam_axial_forces(ax, member, i, j, scale)
+            _plot_3d_truss_beam_axial_forces(ax, member, i, j, scale)
         else:
             _plot_2d_beam_axial_forces(ax, member, i, j, scale)
     return ax
@@ -563,11 +559,11 @@ def plot_axial_forces(m, scale=1.0):
 
 def _plot_3d_beam_torsion_moments(ax, member, i, j, scale):
     sect = member["section"]
-    e_x, e_y, e_z, h = member_3d_geometry(i, j, sect["xz_vector"])
+    _, _, e_z, _ = member_3d_geometry(i, j, sect["xz_vector"])
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     dirv = e_z
-    for s, xi in enumerate(linspace(-1, +1, n)):
+    for _, xi in enumerate(linspace(-1, +1, n)):
         T = beam_3d_torsion_moment(member, i, j)
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
@@ -610,7 +606,7 @@ def plot_beam_orientation(m, scale=1.0):
         ci, cj = i["coordinates"], j["coordinates"]
         xm = (ci + cj) / 2.0
         if m["dim"] == 3:
-            e_x, e_y, e_z, h = member_3d_geometry(i, j, sect["xz_vector"])
+            e_x, e_y, e_z, _ = member_3d_geometry(i, j, sect["xz_vector"])
             xs = zeros(2)
             ys = zeros(2)
             zs = zeros(2)
@@ -642,7 +638,7 @@ def plot_beam_orientation(m, scale=1.0):
             zs[1] = zs[0] + scale * e_z[2]
             ax.plot(xs, ys, zs, "b-", lw=3)
         else:
-            e_x, e_z, h = member_2d_geometry(i, j)
+            e_x, e_z, _ = member_2d_geometry(i, j)
             xs = zeros(2)
             ys = zeros(2)
             xs[0] = xm[0]
@@ -669,7 +665,6 @@ def plot_applied_forces(m, scale=1.0):
     """
     ax = plt.gca()
     dim = m["dim"]
-    ndpn = ndof_per_joint(m)
     cd = characteristic_dimension(m)
     for j in m["joints"].values():
         if "loads" in j and j["loads"]:
@@ -778,7 +773,6 @@ def plot_translation_supports(m, scale=1.0, shortest_arrow=1.0e-6):
     """
     ax = plt.gca()
     dim = m["dim"]
-    ndpn = ndof_per_joint(m)
     cd = characteristic_dimension(m)
     for j in m["joints"].values():
         if "supports" in j and j["supports"]:
