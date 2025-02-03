@@ -424,6 +424,10 @@ def solve_free_vibration(m):
             for dof, value in j["mass"].items():
                 gr = j["dof"][dof]
                 M[gr, gr] += value
+        if "spring" in j:
+            for dof, value in j["spring"].items():
+                gr = j["dof"][dof]
+                K[gr, gr] += value
 
     m["K"] = K
     m["M"] = M
@@ -586,3 +590,25 @@ def refine_member(m, mid, n):
     add_beam_member(m, newmid, [newjid, j["jid"]], member["section"])
     # Remove the old member
     del m["beam_members"][mid]
+
+
+def zero_loads(m):
+    """
+    Zero all the nodal loads in the model.
+    """
+    for joint in m["joints"].values():
+        if "loads" in joint:
+            joint["loads"] = {}
+
+
+def add_spring_to_ground(j, dof, value):
+    """
+    Add a grounded spring to a joint.
+
+    - `j` = the joint,
+    - `dof` = the degree of freedom,
+    - `value` = the amount of the spring stiffness.
+    """
+    if "spring" not in j:
+        j["spring"] = {}
+    j["spring"][dof] = value
