@@ -15,7 +15,7 @@ A simple structural analysis tool in Python, for structures consisting of truss 
 ## Features & Limitations
 
 - Two-dimensional and three-dimensional structures made up of truss (axial)
-  members and beams (even in combination) can be handled.
+  members and beams (even in combination), with added masses and springs at joints, can be handled.
 - Linear statics and dynamics (free vibration) solvers are included.
 - The Bernoulli-Euler model is implemented, so no shear deformation is taken into account.
 - Only elastic models can be solved.
