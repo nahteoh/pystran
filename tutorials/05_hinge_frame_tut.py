@@ -37,16 +37,16 @@ model.add_joint(m, 3, [L, L])
 model.add_joint(m, 4, [L, 0.0])
 
 # There needs to be a hinge (not transferring bending moments, but ensuring
-# continuity of displacements) at the joint 2. We add a joint at the same
+# continuity of displacements) at the joint 2. We add another joint, 5, at the same
 # location, and we link the degrees of freedom that needs to be the same.
 model.add_joint(m, 5, [0, L])
 
-# We supply the list of joints that need to be linked, and the degrees of
-# freedom that are to be the same.
+# We supply the list of joints that need to be linked (2 and 5), and the degrees
+# of freedom that are to be the same.
 model.add_links(m, [2, 5], model.U1)
 model.add_links(m, [2, 5], model.U2)
 
-# Both bottom joints are simply supported (pinned).
+# Now we apply the supports -- both bottom joints are simply supported (pinned).
 model.add_support(m["joints"][1], model.TRANSLATION_DOFS)
 model.add_support(m["joints"][4], model.TRANSLATION_DOFS)
 
@@ -61,9 +61,8 @@ model.add_beam_member(m, 3, [4, 3], s1)
 model.add_load(m["joints"][2], model.U1, 1000.0)
 
 # The discrete model can now be reviewed. Note the orientations of the local
-# coordinate systems. Because the frame is represented with just a horizontal
-# line, we allow the plot setup to set the limits for nicer display.
-plots.plot_setup(m, set_limits=True)
+# coordinate systems. 
+plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_member_numbers(m)
 plots.plot_joint_numbers(m)
