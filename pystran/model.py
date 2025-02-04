@@ -323,14 +323,9 @@ def number_dofs(m):
     m["ntotaldof"] = n
 
 
-def solve_statics(m):
-    """
-    Solve the static equilibrium of the discrete model.
-
-    `number_dofs` must be called before this function.
-    """
+def _build_stiffness_matrix(m):
     nt, nf = m["ntotaldof"], m["nfreedof"]
-    # Assemble global stiffness matrix
+    # Assemble global stiffness matrix and mass matrix
     K = zeros((nt, nt))
     for member in m["truss_members"].values():
         connectivity = member["connectivity"]
@@ -340,11 +335,52 @@ def solve_statics(m):
         connectivity = member["connectivity"]
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         pystran.beam.assemble_stiffness(K, member, i, j)
+    for j in m["joints"].values():
+        if "spring" in j:
+            for dof, value in j["spring"].items():
+                gr = j["dof"][dof]
+                K[gr, gr] += value
+    return K
+
+
+def _build_mass_matrix(m):
+    nt, nf = m["ntotaldof"], m["nfreedof"]
+    M = zeros((nt, nt))
+    for member in m["truss_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        pystran.truss.assemble_mass(M, member, i, j)
+    for member in m["beam_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        pystran.beam.assemble_mass(M, member, i, j)
+    for j in m["joints"].values():
+        if "mass" in j:
+            for dof, value in j["mass"].items():
+                gr = j["dof"][dof]
+                M[gr, gr] += value
+    return M
+
+
+def solve_statics(m):
+    """
+    Solve the static equilibrium of the discrete model.
+
+    `number_dofs` must be called before this function.
+    """
+    nt, nf = m["ntotaldof"], m["nfreedof"]
+    if nt <= 0:
+        raise RuntimeError("No degrees of freedom")
+    if nf <= 0:
+        raise RuntimeError("No free degrees of freedom")
+
+    # Assemble global stiffness matrix
+    K = _build_stiffness_matrix(m)
 
     m["K"] = K
 
     # Compute the active load vector
-    F = zeros(m["ntotaldof"])
+    F = zeros(nt)
     for joint in m["joints"].values():
         if "loads" in joint:
             for dof, value in joint["loads"].items():
@@ -407,27 +443,8 @@ def solve_free_vibration(m):
     """
     nt, nf = m["ntotaldof"], m["nfreedof"]
     # Assemble global stiffness matrix and mass matrix
-    K = zeros((nt, nt))
-    M = zeros((nt, nt))
-    for member in m["truss_members"].values():
-        connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        pystran.truss.assemble_stiffness(K, member, i, j)
-        pystran.truss.assemble_mass(M, member, i, j)
-    for member in m["beam_members"].values():
-        connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        pystran.beam.assemble_stiffness(K, member, i, j)
-        pystran.beam.assemble_mass(M, member, i, j)
-    for j in m["joints"].values():
-        if "mass" in j:
-            for dof, value in j["mass"].items():
-                gr = j["dof"][dof]
-                M[gr, gr] += value
-        if "spring" in j:
-            for dof, value in j["spring"].items():
-                gr = j["dof"][dof]
-                K[gr, gr] += value
+    K = _build_stiffness_matrix(m)
+    M = _build_mass_matrix(m)
 
     m["K"] = K
     m["M"] = M
