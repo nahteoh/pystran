@@ -5,11 +5,18 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Spatial frame with a hinge and spring supports
 
-AFNOR SSLL04/89 test case. 
+Spatial frame with spring supports and a spherical ball hinge. This is AFNOR
+SSLL04/89 test case. 
 
-Spatial frame with spring supports and a spherical ball hinge.
+Original source: "Guide de validation des progiciels de calcul de structures"
+publié par l'AFNOR 1990 (ISBN 2-12-486611-7). Ces tests ont été élaborés par la
+Société Française des Mécaniciens (SFM) avec pour objectif de "contribuer à
+l'amélioration de la qualité et de la fiabilité des progiciels de calcul de
+structures, outils indispensables à la conception et au dimensionnement des
+équipements mécaniques". 
 
-ICAB Force Exemples Exemples de calculs de statique pour ICAB Force www.icab.fr
+Data taken from: ICAB Force Exemples Exemples de calculs de statique pour ICAB
+Force. www.icab.fr
 
 Displacements and internal forces are provided in the verification manual.
 """
