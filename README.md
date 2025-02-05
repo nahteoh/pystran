@@ -7,6 +7,7 @@ A simple structural analysis tool in Python, for structures consisting of truss 
 
 ## News
 
+- 02/05/2025: Add general springs to ground.
 - 01/30/2025: Add tutorials.
 - 01/22/2025: Implement initial functionality. 
 
@@ -14,8 +15,9 @@ A simple structural analysis tool in Python, for structures consisting of truss 
 
 ## Features & Limitations
 
-- Two-dimensional and three-dimensional structures made up of truss (axial)
-  members and beams (even in combination), with added masses and springs at joints, can be handled.
+- The package analyzes two-dimensional and three-dimensional structures made up
+  of truss (axial) members and beams (even in combination), with added masses
+  and springs at joints.
 - Linear statics and dynamics (free vibration) solvers are included.
 - The Bernoulli-Euler model is implemented, so no shear deformation is taken into account.
 - Only elastic models can be solved.
@@ -25,7 +27,8 @@ A simple structural analysis tool in Python, for structures consisting of truss 
 - Warping of the cross sections is not modelled, hence only free torsion effects are included.
 - Member loading is not considered. All member loading needs to be converted to nodal forces.
 - Internal hinges can be modelled with linked joints. No member end releases are implemented.
-- Degrees of freedom are only along the cartesian axes. Skew supports are not included.
+- Degrees of freedom are only along the cartesian axes. Skew supports are not
+  included (except with a penalty method based on springs)
 - Offsets are currently not implemented.
 
 ## Requirements

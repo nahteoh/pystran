@@ -10,6 +10,7 @@ from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import rotation
 from pystran import plots
 

@@ -14,6 +14,7 @@ from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 
 m = model.create(2)
@@ -85,7 +86,7 @@ if (
 
 plots.plot_setup(m)
 plots.plot_members(m)
-plots.plot_loads(m, scale=0.00001, radius=1.0)
+plots.plot_applied_moments(m, scale=0.00001, radius=1.0)
 plots.show(m)
 
 plots.plot_setup(m)

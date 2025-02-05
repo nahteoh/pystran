@@ -7,6 +7,7 @@ Linked cantilevers through their tips, with a force acting at the linked joints.
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 from pystran import beam
 

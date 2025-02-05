@@ -5,7 +5,7 @@ Simple cantilever under a concentrated force at the end.
 from context import pystran
 from pystran import model
 from pystran import section
-from pystran import geometry
+from pystran import freedoms
 from pystran import plots
 from math import sqrt
 

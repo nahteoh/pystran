@@ -13,6 +13,7 @@ area are the same four y and z here.
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 from pystran import beam
 

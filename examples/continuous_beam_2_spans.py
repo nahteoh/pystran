@@ -10,6 +10,7 @@ from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 
 m = model.create(2)
@@ -71,7 +72,7 @@ else:
 plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_beam_orientation(m, 1.0)
-plots.plot_loads(m, scale=1.0, radius=0.9)
+plots.plot_applied_moments(m, scale=1.0, radius=0.9)
 plots.show(m)
 
 plots.plot_setup(m)

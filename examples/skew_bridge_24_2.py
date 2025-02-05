@@ -10,6 +10,7 @@ Example 24.2 - Skew Bridge
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 
 L = 6.0

@@ -11,6 +11,7 @@ from numpy.linalg import cross
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 
 h = 8.0
 E = 2.0e6

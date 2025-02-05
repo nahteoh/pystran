@@ -13,6 +13,7 @@ from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 
 m = model.create(2)
 

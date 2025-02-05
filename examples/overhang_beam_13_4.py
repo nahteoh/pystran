@@ -8,7 +8,7 @@ Structural Analysis by Lingyi Lu, Junbo Jia, Zhuo Tang.
 from context import pystran
 from pystran import model
 from pystran import section
-from pystran import geometry
+from pystran import freedoms
 from pystran import plots
 from numpy import dot
 from numpy.linalg import norm

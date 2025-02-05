@@ -18,6 +18,7 @@ from mpl_toolkits.mplot3d.axes3d import Axes3D
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 from pystran import beam
 
@@ -91,7 +92,7 @@ for jid in [1]:
 plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_member_numbers(m)
-plots.plot_loads(m, 0.00004)
+plots.plot_applied_forces(m, 0.00004)
 plots.plot_deformations(m, 100.0)
 ax = plots.plot_beam_orientation(m, 0.5)
 # plots.plot_bending_moments(m, 0.00001, "y")

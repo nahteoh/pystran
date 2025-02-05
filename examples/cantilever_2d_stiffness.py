@@ -7,7 +7,7 @@ from context import pystran
 from pystran import model
 from pystran import section
 from pystran import geometry
-from pystran import plots
+from pystran import freedoms
 from math import sqrt
 
 m = model.create(2)
