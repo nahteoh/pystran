@@ -17,6 +17,7 @@ from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import beam
 from pystran import plots
 
@@ -37,11 +38,11 @@ model.add_joint(m, 3, [2 * L, 0.0])
 
 # The left hand side is clamped (all degrees of freedom set to zero), the other
 # joints are simply supported.
-model.add_support(m["joints"][1], model.ALL_DOFS)
+model.add_support(m["joints"][1], freedoms.ALL_DOFS)
 # The middle support moves down by 0.25 inches (notice the non zero value of the
 # enforced displacement).
-model.add_support(m["joints"][2], model.U2, -0.25)
-model.add_support(m["joints"][3], model.U2)
+model.add_support(m["joints"][2], freedoms.U2, -0.25)
+model.add_support(m["joints"][3], freedoms.U2)
 
 # Define the beam members.
 s1 = section.beam_2d_section("s1", E, A, I)
@@ -51,6 +52,9 @@ model.add_beam_member(m, 2, [2, 3], s1)
 # Solve the discrete model.
 model.number_dofs(m)
 model.solve_statics(m)
+
+for j in m["joints"].values():
+    print("Joint", j["jid"], "displacements", j["displacements"])
 
 # The first sanity check is the plot of the deformation.
 plots.plot_setup(m)

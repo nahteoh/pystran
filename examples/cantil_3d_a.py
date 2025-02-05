@@ -31,21 +31,21 @@ def test(e_x, e_y, e_z, F, refdefl, refslope):
     clamped = m["joints"][1]
     freeend = m["joints"][2]
 
-    model.add_support(clamped, model.U1)
-    model.add_support(clamped, model.U2)
-    model.add_support(clamped, model.U3)
-    model.add_support(clamped, model.UR1)
-    model.add_support(clamped, model.UR2)
-    model.add_support(clamped, model.UR3)
+    model.add_support(clamped, freedoms.U1)
+    model.add_support(clamped, freedoms.U2)
+    model.add_support(clamped, freedoms.U3)
+    model.add_support(clamped, freedoms.UR1)
+    model.add_support(clamped, freedoms.UR2)
+    model.add_support(clamped, freedoms.UR3)
 
     s1 = section.beam_3d_section(
         "sect_1", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=e_z
     )
     model.add_beam_member(m, 1, [1, 2], s1)
 
-    model.add_load(freeend, model.U1, F[0])
-    model.add_load(freeend, model.U2, F[1])
-    model.add_load(freeend, model.U3, F[2])
+    model.add_load(freeend, freedoms.U1, F[0])
+    model.add_load(freeend, freedoms.U2, F[1])
+    model.add_load(freeend, freedoms.U3, F[2])
 
     model.number_dofs(m)
 

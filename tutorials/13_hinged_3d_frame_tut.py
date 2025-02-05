@@ -28,9 +28,9 @@ from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 from pystran import beam
-from pystran import rotation
 
 # Define a few constants:
 E = 2.1e11  # N/m^2
@@ -94,29 +94,30 @@ plots.show(m)
 # Next we add the link between the two joints that form the hinge. The hinge is
 # ball joint, meaning all three translations are the same for joints at the
 # hinge.
-model.add_links(m, [6, 5], model.U1)
-model.add_links(m, [6, 5], model.U2)
-model.add_links(m, [6, 5], model.U3)
+model.add_links(m, [6, 5], freedoms.U1)
+model.add_links(m, [6, 5], freedoms.U2)
+model.add_links(m, [6, 5], freedoms.U3)
 
 # The supports are next. The original source refers to the supports at N_A and
 # N_B.
-model.add_support(m["joints"][1], model.U1)
-model.add_support(m["joints"][1], model.U3)
-model.add_support(m["joints"][1], model.UR2)
+model.add_support(m["joints"][1], freedoms.U1)
+model.add_support(m["joints"][1], freedoms.U3)
+model.add_support(m["joints"][1], freedoms.UR2)
 
-model.add_support(m["joints"][2], model.U2)
-model.add_support(m["joints"][2], model.U3)
-model.add_support(m["joints"][2], model.UR1)
+model.add_support(m["joints"][2], freedoms.U2)
+model.add_support(m["joints"][2], freedoms.U3)
+model.add_support(m["joints"][2], freedoms.UR1)
 
 # Next we add the springs to the ground. The translation and rotation spring
-# constants have the same numerical value.
-model.add_spring_to_ground(m["joints"][1], model.U2, K)
-model.add_spring_to_ground(m["joints"][1], model.UR1, K)
-model.add_spring_to_ground(m["joints"][1], model.UR3, K)
+# constants have the same numerical value. First at joint 1.
+model.add_extension_spring_to_ground(m["joints"][1], 1, [0, 1, 0], K)
+model.add_moment_spring_to_ground(m["joints"][1], 1, [1, 0, 0], K)
+model.add_moment_spring_to_ground(m["joints"][1], 2, [0, 0, 1], K)
+# Then at joint 3.
+model.add_extension_spring_to_ground(m["joints"][2], 1, [1, 0, 0], K)
+model.add_moment_spring_to_ground(m["joints"][2], 1, [0, 1, 0], K)
+model.add_moment_spring_to_ground(m["joints"][2], 2, [0, 0, 1], K)
 
-model.add_spring_to_ground(m["joints"][2], model.U1, K)
-model.add_spring_to_ground(m["joints"][2], model.UR2, K)
-model.add_spring_to_ground(m["joints"][2], model.UR3, K)
 
 # Let us look at the translation and rotation supports:
 ax = plots.plot_setup(m)
@@ -134,7 +135,7 @@ ax.set_title("Rotation supports")
 plots.show(m)
 
 # Next we add the forces and moments applied at the joint N_D.
-model.add_load(m["joints"][4], model.U3, -F)
+model.add_load(m["joints"][4], freedoms.U3, -F)
 
 
 # Now we can solve the static equilibrium of the frame.
@@ -149,6 +150,10 @@ plots.plot_joint_numbers(m)
 ax = plots.plot_deformations(m, 2.0)
 ax.set_title("Deformed shape (magnified 2 times)")
 plots.show(m)
+
+# These are the displacements at all the joints.
+for j in m["joints"].values():
+    print(j["jid"], ": ", j["displacements"])
 
 # The displacements of the joints can be compared to the reference values.
 # These are the displacements of joint 1:

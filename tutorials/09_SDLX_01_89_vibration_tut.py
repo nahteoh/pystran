@@ -11,6 +11,7 @@ SCIA Engineer 24.0.1020 test case SDLX 01/89
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 
 # The material is steel, SI units (m).
@@ -32,7 +33,7 @@ model.add_joint(m, 5, [-0.3, 0.360])
 model.add_joint(m, 6, [0.3, 0.360])
 
 for jid in [1, 3]:
-    model.add_support(m["joints"][jid], model.ALL_DOFS)
+    model.add_support(m["joints"][jid], freedoms.ALL_DOFS)
 
 s1 = section.beam_2d_section("section_1", E, A, I, rho)
 

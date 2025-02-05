@@ -39,11 +39,11 @@ model.add_joint(m, 2, [L, 0, 0.0])
 model.add_joint(m, 3, [2 * L, 0, 0])
 model.add_joint(m, 4, [L, 0, 0.0])
 
-model.add_links(m, [2, 4], model.TRANSLATION_DOFS)
+model.add_links(m, [2, 4], freedoms.TRANSLATION_DOFS)
 
-model.add_support(m["joints"][1], model.ALL_DOFS)
-model.add_support(m["joints"][3], model.ALL_DOFS)
-model.add_support(m["joints"][4], model.U2, 0.003)
+model.add_support(m["joints"][1], freedoms.ALL_DOFS)
+model.add_support(m["joints"][3], freedoms.ALL_DOFS)
+model.add_support(m["joints"][4], freedoms.U2, 0.003)
 
 model.add_beam_member(m, 1, [1, 2], sect_1)
 model.add_beam_member(m, 2, [3, 4], sect_2)
@@ -89,8 +89,8 @@ for jid in [1]:
 j2 = m["joints"][2]
 j4 = m["joints"][4]
 print("Linked displacements:")
-print(j2["displacements"][model.U2])
-print(j4["displacements"][model.U2])
+print(j2["displacements"][freedoms.U2])
+print(j4["displacements"][freedoms.U2])
 
 plots.plot_setup(m)
 plots.plot_members(m)

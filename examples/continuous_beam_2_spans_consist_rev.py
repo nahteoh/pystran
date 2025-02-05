@@ -17,12 +17,12 @@ m = model.create(2)
 model.add_joint(m, 1, [0.0, 0.0])
 model.add_joint(m, 2, [5.0, 0.0])
 model.add_joint(m, 3, [12.0, 0.0])
-model.add_support(m["joints"][1], model.U1)
-model.add_support(m["joints"][1], model.U2)
-model.add_support(m["joints"][2], model.U1)
-model.add_support(m["joints"][2], model.U2)
-model.add_support(m["joints"][3], model.U1)
-model.add_support(m["joints"][3], model.U2)
+model.add_support(m["joints"][1], freedoms.U1)
+model.add_support(m["joints"][1], freedoms.U2)
+model.add_support(m["joints"][2], freedoms.U1)
+model.add_support(m["joints"][2], freedoms.U2)
+model.add_support(m["joints"][3], freedoms.U1)
+model.add_support(m["joints"][3], freedoms.U2)
 
 E = 3e10
 A = 0.001

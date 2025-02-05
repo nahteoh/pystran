@@ -5,47 +5,10 @@ Define the functions for defining and manipulating a model.
 from math import sqrt
 import numpy
 from numpy import array, zeros, dot, mean, concatenate
+from numpy.linalg import norm
 import scipy
-import pystran.section
-
-U1 = 0
-"""
-This is a designation of the degree of freedom as translation along `X`.
-"""
-U2 = 1
-"""
-This is a designation of the degree of freedom as translation along `Z` (in 2D models)
-or along `Y` (in 3D models).
-"""
-U3 = 2
-"""
-This is a designation of the degree of freedom as translation along `Z` (in 3D models).
-"""
-UR1 = 3
-"""
-This is a designation of the degree of freedom as rotation about  `X` (in 3D models).
-"""
-UR2 = 4
-"""
-This is a designation of the degree of freedom as rotation about  `Y` (in 3D models).
-"""
-UR3 = 5
-"""
-This is a designation of the degree of freedom as rotation about  `Y` (in 2D
-models) or rotation about `Z`  (in 3D models).
-"""
-ALL_DOFS = 100
-"""
-This is a designation of all the degrees of freedom, translations and rotations
-(`U1`, `U2`, `UR3` in 2D models, or `U1`, `U2`, `U3`, `UR1`, `UR2`, `UR3` in 3D
-models). It may be used to specify the clamped condition for the joint.
-"""
-TRANSLATION_DOFS = 200
-"""
-This is a designation of the translation degrees of freedom (`U1`, `U2`,  in 2D
-models, or `U1`, `U2`,  `U3` in 3D models). It may be used to specify the pinned
-condition for the joint.
-"""
+import pystran
+from pystran import freedoms
 
 
 def create(dim=2):
@@ -59,27 +22,23 @@ def create(dim=2):
     m["joints"] = {}
     m["truss_members"] = {}
     m["beam_members"] = {}
-
-    global U1
-    global U2
-    global U3
-    global UR1
-    global UR2
-    global UR3
+    # Depending on the number of space dimensions, a set of degrees of freedom
+    # will consist of either two translations and one rotation, or three
+    # translations and three rotations.
     if m["dim"] == 2:
-        U1 = 0
-        U2 = 1
-        UR3 = 2
-        U3 = -1000  # invalid
-        UR1 = -1000  # invalid
-        UR2 = -1000  # invalid
+        freedoms.U1 = 0
+        freedoms.U2 = 1
+        freedoms.UR3 = 2
+        freedoms.U3 = -1000  # invalid
+        freedoms.UR1 = -1000  # invalid
+        freedoms.UR2 = -1000  # invalid
     else:
-        U1 = 0
-        U2 = 1
-        U3 = 2
-        UR1 = 3
-        UR2 = 4
-        UR3 = 5
+        freedoms.U1 = 0
+        freedoms.U2 = 1
+        freedoms.U3 = 2
+        freedoms.UR1 = 3
+        freedoms.UR2 = 4
+        freedoms.UR3 = 5
     return m
 
 
@@ -134,28 +93,6 @@ def add_beam_member(m, mid: int, connectivity, sect):
         }
 
 
-def _pinned_dofs(dim):
-    if dim == 2:
-        return [U1, U2]
-    else:
-        return [U1, U2, U3]
-
-
-def _clamped_dofs(dim):
-    if dim == 2:
-        return [U1, U2, UR3]
-    else:
-        return [U1, U2, U3, UR1, UR2, UR3]
-
-
-def _dofs_values(dim, dof, value):
-    if dof == ALL_DOFS:
-        return _clamped_dofs(dim), [0.0 for d in _clamped_dofs(dim)]
-    elif dof == TRANSLATION_DOFS:
-        return _pinned_dofs(dim), [0.0 for d in _pinned_dofs(dim)]
-    return [dof], [value]
-
-
 def add_support(j, dof, value=0.0):
     """
     Add a support to a joint.
@@ -167,7 +104,7 @@ def add_support(j, dof, value=0.0):
     if "supports" not in j:
         j["supports"] = {}
     dim = len(j["coordinates"])
-    for d, v in zip(*_dofs_values(dim, dof, value)):
+    for d, v in zip(*freedoms.prescribed_dofs_and_values(dim, dof, value)):
         j["supports"][d] = v
 
 
@@ -217,7 +154,9 @@ def add_links(m, jids, dof):
                     j1["links"] = {}
                 if jid2 not in j1["links"]:
                     j1["links"][jid2] = []
-                for d, _ in zip(*_dofs_values(m["dim"], dof, 0.0)):
+                for d, _ in zip(
+                    *freedoms.prescribed_dofs_and_values(m["dim"], dof, 0.0)
+                ):
                     j1["links"][jid2].append(d)
 
 
@@ -264,7 +203,7 @@ def _have_rotations(m):
     for j in m["joints"].values():
         if "supports" in j and j["supports"]:
             for dof in j["supports"].keys():
-                if dof == UR1 or dof == UR2 or dof == UR3:
+                if dof == freedoms.UR1 or dof == freedoms.UR2 or dof == freedoms.UR3:
                     return True
     return False
 
@@ -324,7 +263,7 @@ def number_dofs(m):
 
 
 def _build_stiffness_matrix(m):
-    nt, nf = m["ntotaldof"], m["nfreedof"]
+    nt = m["ntotaldof"]
     # Assemble global stiffness matrix and mass matrix
     K = zeros((nt, nt))
     for member in m["truss_members"].values():
@@ -337,14 +276,13 @@ def _build_stiffness_matrix(m):
         pystran.beam.assemble_stiffness(K, member, i, j)
     for j in m["joints"].values():
         if "spring" in j:
-            for dof, value in j["spring"].items():
-                gr = j["dof"][dof]
-                K[gr, gr] += value
+            pystran.spring.assemble_stiffness(K, j)
+
     return K
 
 
 def _build_mass_matrix(m):
-    nt, nf = m["ntotaldof"], m["nfreedof"]
+    nt = m["ntotaldof"]
     M = zeros((nt, nt))
     for member in m["truss_members"].values():
         connectivity = member["connectivity"]
@@ -618,14 +556,42 @@ def zero_loads(m):
             joint["loads"] = {}
 
 
-def add_spring_to_ground(j, dof, value):
+def add_extension_spring_to_ground(j, sid, direction, coefficient=1.0):
     """
-    Add a grounded spring to a joint.
+    Add a grounded extension spring to a joint.
 
-    - `j` = the joint,
-    - `dof` = the degree of freedom,
-    - `value` = the amount of the spring stiffness.
+    - `j` = the joint.
+    - `sid` = spring identifier; This allows a joint to have multiple springs
+      attached.
+    - `direction` = the direction along the spring,
+    - `coefficient` = the amount of the spring stiffness.
     """
+    # Make the direction of unit length
+    direction = array(direction, dtype=numpy.float64)
+    direction /= norm(direction)
     if "spring" not in j:
         j["spring"] = {}
-    j["spring"][dof] = value
+    if "extension" not in j["spring"]:
+        j["spring"]["extension"] = {}
+    j["spring"]["extension"][sid] = {"direction": direction, "coefficient": coefficient}
+
+
+def add_moment_spring_to_ground(j, sid, direction, coefficient=1.0):
+    """
+    Add a grounded moment spring to a joint.
+
+    - `j` = the joint.
+    - `sid` = spring identifier; This allows a joint to have multiple springs
+      attached.
+    - `direction` = the direction about which a moment spring acts.
+      For a rotation in 2D, the direction is [1.0].
+    - `coefficient` = the amount of the spring stiffness.
+    """
+    # Make the direction of unit length
+    direction = array(direction, dtype=numpy.float64)
+    direction = direction / norm(direction)
+    if "spring" not in j:
+        j["spring"] = {}
+    if "moment" not in j["spring"]:
+        j["spring"]["moment"] = {}
+    j["spring"]["moment"][sid] = {"direction": direction, "coefficient": coefficient}

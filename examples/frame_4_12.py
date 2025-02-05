@@ -27,19 +27,19 @@ model.add_joint(m, 3, [13000.0, 0.0, 0.0])
 model.add_joint(m, 4, [8000.0, 0.0, 40])
 
 a = m["joints"][1]
-model.add_support(a, model.U1)
-model.add_support(a, model.U2)
-model.add_support(a, model.U3)
-model.add_support(a, model.UR1)
-model.add_support(a, model.UR2)
-model.add_support(a, model.UR3)
+model.add_support(a, freedoms.U1)
+model.add_support(a, freedoms.U2)
+model.add_support(a, freedoms.U3)
+model.add_support(a, freedoms.UR1)
+model.add_support(a, freedoms.UR2)
+model.add_support(a, freedoms.UR3)
 c = m["joints"][3]
-model.add_support(c, model.U1)
-model.add_support(c, model.U2)
-model.add_support(c, model.U3)
-model.add_support(c, model.UR1)
-model.add_support(c, model.UR2)
-model.add_support(c, model.UR3)
+model.add_support(c, freedoms.U1)
+model.add_support(c, freedoms.U2)
+model.add_support(c, freedoms.U3)
+model.add_support(c, freedoms.UR1)
+model.add_support(c, freedoms.UR2)
+model.add_support(c, freedoms.UR3)
 
 A = 6000
 Iy = 200e6
@@ -76,7 +76,7 @@ s3 = section.beam_3d_section(
 model.add_beam_member(m, 3, [4, 2], s3)
 
 d = m["joints"][4]
-model.add_load(d, model.U2, -1e3)
+model.add_load(d, freedoms.U2, -1e3)
 
 # plots.plot_setup(m)
 # plots.plot_members(m)

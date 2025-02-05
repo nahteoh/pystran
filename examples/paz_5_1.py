@@ -31,10 +31,10 @@ model.add_joint(m, 3, [0.0, -L, 0.0])
 model.add_joint(m, 4, [0.0, 0.0, +L])
 model.add_joint(m, 5, [0.0, 0.0, -L])
 
-model.add_support(m["joints"][2], model.ALL_DOFS)
-model.add_support(m["joints"][3], model.ALL_DOFS)
-model.add_support(m["joints"][4], model.ALL_DOFS)
-model.add_support(m["joints"][5], model.ALL_DOFS)
+model.add_support(m["joints"][2], freedoms.ALL_DOFS)
+model.add_support(m["joints"][3], freedoms.ALL_DOFS)
+model.add_support(m["joints"][4], freedoms.ALL_DOFS)
+model.add_support(m["joints"][5], freedoms.ALL_DOFS)
 
 # Member 1, 2: W18x130
 A, Ix, Iy, Iz, J = section.i_beam(19.3, 11.2, 1.2, 0.67)
@@ -68,10 +68,10 @@ model.add_beam_member(m, 3, [1, 4], sect_3)
 model.add_beam_member(m, 4, [1, 5], sect_4)
 
 
-model.add_load(m["joints"][1], model.U1, 1000)
-model.add_load(m["joints"][12], model.U2, 500)
-model.add_load(m["joints"][1], model.U3, -2 * L / 2)
-model.add_load(m["joints"][1], model.UR1, 2 * L**2 / 12)
+model.add_load(m["joints"][1], freedoms.U1, 1000)
+model.add_load(m["joints"][12], freedoms.U2, 500)
+model.add_load(m["joints"][1], freedoms.U3, -2 * L / 2)
+model.add_load(m["joints"][1], freedoms.UR1, 2 * L**2 / 12)
 
 model.number_dofs(m)
 

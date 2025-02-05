@@ -33,6 +33,7 @@ from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 from pystran import beam
 from pystran import rotation
@@ -62,8 +63,8 @@ model.add_joint(m, 1, [0.0, L, 0.0])
 model.add_joint(m, 2, [2 * L, L, 0.0])
 model.add_joint(m, 4, [3 * L, 0.0, L])
 
-model.add_support(m["joints"][3], model.ALL_DOFS)
-model.add_support(m["joints"][4], model.ALL_DOFS)
+model.add_support(m["joints"][3], freedoms.ALL_DOFS)
+model.add_support(m["joints"][4], freedoms.ALL_DOFS)
 
 # At this point we can visualize the supports. The translation supports are
 # shown with arrow heads.
@@ -126,9 +127,9 @@ plots.show(m)
 
 # Next we add the forces and moments applied at the joints.
 
-model.add_load(m["joints"][1], model.U1, F)
-model.add_load(m["joints"][2], model.U2, -P)
-model.add_load(m["joints"][2], model.UR3, -M)
+model.add_load(m["joints"][1], freedoms.U1, F)
+model.add_load(m["joints"][2], freedoms.U2, -P)
+model.add_load(m["joints"][2], freedoms.UR3, -M)
 
 
 # And the applied forces can now be rendered.

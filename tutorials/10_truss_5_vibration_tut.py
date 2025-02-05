@@ -16,6 +16,7 @@ from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 
 # The material properties and the geometry of the truss are assumed here at
@@ -58,9 +59,9 @@ model.add_truss_member(m, 7, [2, 5], s1)
 model.add_truss_member(m, 8, [2, 6], s1)
 model.add_truss_member(m, 9, [3, 6], s1)
 
-model.add_support(m["joints"][1], model.U1)
-model.add_support(m["joints"][1], model.U2)
-model.add_support(m["joints"][4], model.U2)
+model.add_support(m["joints"][1], freedoms.U1)
+model.add_support(m["joints"][1], freedoms.U2)
+model.add_support(m["joints"][4], freedoms.U2)
 
 # The free vibration problem is solved.
 

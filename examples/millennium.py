@@ -81,15 +81,15 @@ model.add_joint(m, 15, [+4.0, -20.0, -1.5])
 model.add_joint(m, 16, [-4.0, +20.0, -1.5])
 model.add_joint(m, 17, [+4.0, +20.0, -1.5])
 
-model.add_support(m["joints"][3], model.TRANSLATION_DOFS)
-model.add_support(m["joints"][5], model.TRANSLATION_DOFS)
-model.add_support(m["joints"][6], model.ALL_DOFS)
-model.add_support(m["joints"][9], model.ALL_DOFS)
+model.add_support(m["joints"][3], freedoms.TRANSLATION_DOFS)
+model.add_support(m["joints"][5], freedoms.TRANSLATION_DOFS)
+model.add_support(m["joints"][6], freedoms.ALL_DOFS)
+model.add_support(m["joints"][9], freedoms.ALL_DOFS)
 
-model.add_support(m["joints"][14], model.ALL_DOFS)
-model.add_support(m["joints"][15], model.ALL_DOFS)
-model.add_support(m["joints"][16], model.ALL_DOFS)
-model.add_support(m["joints"][17], model.ALL_DOFS)
+model.add_support(m["joints"][14], freedoms.ALL_DOFS)
+model.add_support(m["joints"][15], freedoms.ALL_DOFS)
+model.add_support(m["joints"][16], freedoms.ALL_DOFS)
+model.add_support(m["joints"][17], freedoms.ALL_DOFS)
 
 model.add_beam_member(m, 1, [100, 200], sdeck)
 model.add_beam_member(m, 2, [200, 3], sdeck)
@@ -119,7 +119,7 @@ model.add_truss_member(m, 6, [8, 13], scable)
 model.add_truss_member(m, 7, [13, 11], scable)
 model.add_truss_member(m, 8, [11, 17], scable)
 
-model.add_load(m["joints"][1], model.U3, -5e3 - 7.5e3)
+model.add_load(m["joints"][1], freedoms.U3, -5e3 - 7.5e3)
 
 
 model.number_dofs(m)

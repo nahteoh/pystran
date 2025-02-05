@@ -21,7 +21,7 @@ from pystran import model
 from pystran import section
 from pystran import plots
 from pystran import beam
-from pystran import rotation
+from pystran import freedoms
 
 # Define a few constants:
 # US customary units, inches, pounds, seconds are assumed.
@@ -41,8 +41,8 @@ model.add_joint(m, 2, [0.0, -12 * 12.0])
 model.add_joint(m, 3, [12 * 7.0, 0.0])
 
 # Only one of the joints is free, the others are clamped.
-model.add_support(m["joints"][2], model.ALL_DOFS)
-model.add_support(m["joints"][3], model.ALL_DOFS)
+model.add_support(m["joints"][2], freedoms.ALL_DOFS)
+model.add_support(m["joints"][3], freedoms.ALL_DOFS)
 
 # At this point we can visualize the supports. The translation supports are
 # shown with arrow heads.
@@ -84,8 +84,8 @@ i, j = [m["joints"][k] for k in m["beam_members"][2]["connectivity"]]
 # joints.  The average temperature (the temperature at the neutral axis) leads
 # to an expansion in length (provided it is positive).
 N_T = CTE * (Ttop + Tbot) / 2 * E * A
-model.add_load(i, model.U1, +N_T)
-model.add_load(j, model.U1, -N_T)
+model.add_load(i, freedoms.U1, +N_T)
+model.add_load(j, freedoms.U1, -N_T)
 
 # The thermal gradient (Ttop - Tbot) / depth generates thermal moments. It is
 # necessary to consider the local frame orientation in order to apply the
@@ -93,8 +93,8 @@ model.add_load(j, model.U1, -N_T)
 # its z-coordinate > z-coordinate of the bottom surface. Therefore the thermal moment
 M_T = CTE * (Ttop - Tbot) / depth * E * I
 # is positive.
-model.add_load(i, model.UR3, -M_T)
-model.add_load(j, model.UR3, +M_T)
+model.add_load(i, freedoms.UR3, -M_T)
+model.add_load(j, freedoms.UR3, +M_T)
 
 # The nodal moments can be visualized with the following plot.
 ax = plots.plot_setup(m)

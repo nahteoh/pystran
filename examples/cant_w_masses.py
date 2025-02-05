@@ -39,18 +39,18 @@ model.add_joint(m, 2, [0.0, 2 * L])
 model.add_joint(m, 3, [0.0, 1 * L])
 model.add_joint(m, 4, [0.0, 0.0])
 
-model.add_support(m["joints"][4], model.ALL_DOFS)
+model.add_support(m["joints"][4], freedoms.ALL_DOFS)
 
 model.add_beam_member(m, 1, [1, 2], sbar)
 model.add_beam_member(m, 2, [2, 3], sbar)
 model.add_beam_member(m, 3, [3, 4], sbar)
 
-model.add_mass(m["joints"][1], model.U1, 4 * W / g)
-model.add_mass(m["joints"][1], model.U2, 4 * W / g)
-model.add_mass(m["joints"][2], model.U1, W / g)
-model.add_mass(m["joints"][2], model.U2, W / g)
-model.add_mass(m["joints"][3], model.U1, W / g)
-model.add_mass(m["joints"][3], model.U2, W / g)
+model.add_mass(m["joints"][1], freedoms.U1, 4 * W / g)
+model.add_mass(m["joints"][1], freedoms.U2, 4 * W / g)
+model.add_mass(m["joints"][2], freedoms.U1, W / g)
+model.add_mass(m["joints"][2], freedoms.U2, W / g)
+model.add_mass(m["joints"][3], freedoms.U1, W / g)
+model.add_mass(m["joints"][3], freedoms.U2, W / g)
 
 model.number_dofs(m)
 

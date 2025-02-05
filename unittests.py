@@ -8,7 +8,7 @@ from numpy import array, dot, outer, concatenate
 from numpy.linalg import norm
 from pystran import model
 from pystran import section
-from pystran import plots
+from pystran import freedoms
 from pystran import beam
 from pystran import rotation
 
@@ -151,18 +151,18 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         model.add_joint(m, 3, [0.0, 1 * L])
         model.add_joint(m, 4, [0.0, 0.0])
 
-        model.add_support(m["joints"][4], model.ALL_DOFS)
+        model.add_support(m["joints"][4], freedoms.ALL_DOFS)
 
         model.add_beam_member(m, 1, [1, 2], sbar)
         model.add_beam_member(m, 2, [2, 3], sbar)
         model.add_beam_member(m, 3, [3, 4], sbar)
 
-        model.add_mass(m["joints"][1], model.U1, 4 * W / g)
-        model.add_mass(m["joints"][1], model.U2, 4 * W / g)
-        model.add_mass(m["joints"][2], model.U1, W / g)
-        model.add_mass(m["joints"][2], model.U2, W / g)
-        model.add_mass(m["joints"][3], model.U1, W / g)
-        model.add_mass(m["joints"][3], model.U2, W / g)
+        model.add_mass(m["joints"][1], freedoms.U1, 4 * W / g)
+        model.add_mass(m["joints"][1], freedoms.U2, 4 * W / g)
+        model.add_mass(m["joints"][2], freedoms.U1, W / g)
+        model.add_mass(m["joints"][2], freedoms.U2, W / g)
+        model.add_mass(m["joints"][3], freedoms.U1, W / g)
+        model.add_mass(m["joints"][3], freedoms.U2, W / g)
 
         model.number_dofs(m)
 
@@ -216,10 +216,10 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         model.add_joint(m, 3, [2 * L, 0.0])
 
         # The left hand side is clamped, the other joints are simply supported.
-        model.add_support(m["joints"][1], model.ALL_DOFS)
+        model.add_support(m["joints"][1], freedoms.ALL_DOFS)
         # The middle support moves down by 0.25 inches.
-        model.add_support(m["joints"][2], model.U2, -0.25)
-        model.add_support(m["joints"][3], model.U2)
+        model.add_support(m["joints"][2], freedoms.U2, -0.25)
+        model.add_support(m["joints"][3], freedoms.U2)
 
         # Define the beam members.
         s1 = section.beam_2d_section("s1", E, A, I)
@@ -306,8 +306,8 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         model.add_joint(m, 4, [L, 0.0])
 
         # The left hand side is clamped, the other joints are simply supported.
-        model.add_support(m["joints"][1], model.TRANSLATION_DOFS)
-        model.add_support(m["joints"][4], model.TRANSLATION_DOFS)
+        model.add_support(m["joints"][1], freedoms.TRANSLATION_DOFS)
+        model.add_support(m["joints"][4], freedoms.TRANSLATION_DOFS)
 
         # Define the beam members.
         s1 = section.beam_2d_section("s1", E, A, I)
@@ -315,10 +315,10 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         model.add_beam_member(m, 2, [5, 3], s1)
         model.add_beam_member(m, 3, [4, 3], s1)
 
-        model.add_links(m, [2, 5], model.U1)
-        model.add_links(m, [2, 5], model.U2)
+        model.add_links(m, [2, 5], freedoms.U1)
+        model.add_links(m, [2, 5], freedoms.U2)
 
-        model.add_load(m["joints"][2], model.U1, 1000.0)
+        model.add_load(m["joints"][2], freedoms.U1, 1000.0)
 
         model.number_dofs(m)
 
@@ -421,7 +421,7 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         model.add_joint(m, 6, [0.3, 0.360])
 
         for jid in [1, 3]:
-            model.add_support(m["joints"][jid], model.ALL_DOFS)
+            model.add_support(m["joints"][jid], freedoms.ALL_DOFS)
 
         s1 = section.beam_2d_section("section_1", E, A, I, rho)
 
@@ -516,20 +516,20 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         model.add_joint(m, 1, [0.0, 0.0])
         model.add_joint(m, 2, [da, 0.0])
         model.add_joint(m, 3, [da + db, 0.0])
-        model.add_support(m["joints"][1], model.U1)
-        model.add_support(m["joints"][3], model.U1)
+        model.add_support(m["joints"][1], freedoms.U1)
+        model.add_support(m["joints"][3], freedoms.U1)
 
         s2 = section.beam_2d_section("s2", E, A, I, rho)
         model.add_beam_member(m, 1, [1, 2], s2)
         model.add_beam_member(m, 2, [2, 3], s2)
 
-        model.add_mass(m["joints"][2], model.U1, M)
-        model.add_mass(m["joints"][2], model.U2, M)
+        model.add_mass(m["joints"][2], freedoms.U1, M)
+        model.add_mass(m["joints"][2], freedoms.U2, M)
 
         # In the vertical direction, the spring stiffness is K. A spring is added at
         # either end of the beam.
-        model.add_spring_to_ground(m["joints"][1], model.U2, K)
-        model.add_spring_to_ground(m["joints"][3], model.U2, K)
+        model.add_extension_spring_to_ground(m["joints"][1], 1, [0, 1, 0], K)
+        model.add_extension_spring_to_ground(m["joints"][3], 2, [0, 1, 0], K)
 
         model.number_dofs(m)
         model.solve_free_vibration(m)
@@ -584,8 +584,8 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_joint(m, jD, [3 * L, 0.0, L])
         model.add_joint(m, jE, [L, L, 0.0])
 
-        model.add_support(m["joints"][jA], model.ALL_DOFS)
-        model.add_support(m["joints"][jD], model.ALL_DOFS)
+        model.add_support(m["joints"][jA], freedoms.ALL_DOFS)
+        model.add_support(m["joints"][jD], freedoms.ALL_DOFS)
 
         xz_vector = [1, 0, 0]
         s1 = section.beam_3d_section(
@@ -600,10 +600,10 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_beam_member(m, 3, [jE, jC], s2)
         model.add_beam_member(m, 4, [jC, jD], s1)
 
-        model.add_load(m["joints"][jB], model.U1, 2 * P)
-        model.add_load(m["joints"][jE], model.U3, 4 * P)
-        model.add_load(m["joints"][jC], model.U2, -P)
-        model.add_load(m["joints"][jC], model.UR3, -P * L)
+        model.add_load(m["joints"][jB], freedoms.U1, 2 * P)
+        model.add_load(m["joints"][jE], freedoms.U3, 4 * P)
+        model.add_load(m["joints"][jC], freedoms.U2, -P)
+        model.add_load(m["joints"][jC], freedoms.UR3, -P * L)
 
         model.number_dofs(m)
 
@@ -696,8 +696,8 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_joint(m, 2, [2 * L, L, 0.0])
         model.add_joint(m, 4, [3 * L, 0.0, L])
 
-        model.add_support(m["joints"][3], model.ALL_DOFS)
-        model.add_support(m["joints"][4], model.ALL_DOFS)
+        model.add_support(m["joints"][3], freedoms.ALL_DOFS)
+        model.add_support(m["joints"][4], freedoms.ALL_DOFS)
 
         xz_vector = [1, 0, 0]
         sect_1 = section.beam_3d_section(
@@ -711,9 +711,9 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_beam_member(m, 2, [1, 2], sect_2)
         model.add_beam_member(m, 3, [2, 4], sect_2)
 
-        model.add_load(m["joints"][1], model.U1, F)
-        model.add_load(m["joints"][2], model.U2, -P)
-        model.add_load(m["joints"][2], model.UR3, -M)
+        model.add_load(m["joints"][1], freedoms.U1, F)
+        model.add_load(m["joints"][2], freedoms.U2, -P)
+        model.add_load(m["joints"][2], freedoms.UR3, -M)
 
         model.number_dofs(m)
 
@@ -785,8 +785,8 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_joint(m, 2, [2 * L, L, 0.0])
         model.add_joint(m, 4, [3 * L, 0.0, L])
 
-        model.add_support(m["joints"][3], model.ALL_DOFS)
-        model.add_support(m["joints"][4], model.ALL_DOFS)
+        model.add_support(m["joints"][3], freedoms.ALL_DOFS)
+        model.add_support(m["joints"][4], freedoms.ALL_DOFS)
 
         xz_vector = [0, 0, 1]
         sect_1 = section.beam_3d_section(
@@ -805,9 +805,9 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_beam_member(m, 2, [3, 1], sect_2)
         model.add_beam_member(m, 3, [2, 4], sect_3)
 
-        model.add_load(m["joints"][1], model.U1, F)
-        model.add_load(m["joints"][2], model.U2, -P)
-        model.add_load(m["joints"][2], model.UR3, -M)
+        model.add_load(m["joints"][1], freedoms.U1, F)
+        model.add_load(m["joints"][2], freedoms.U2, -P)
+        model.add_load(m["joints"][2], freedoms.UR3, -M)
 
         model.number_dofs(m)
 
@@ -945,17 +945,17 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_joint(m, 3, [2 * L, 0, 0])
         model.add_joint(m, 4, [L, 0, 0.0])
 
-        model.add_support(m["joints"][1], model.ALL_DOFS)
-        model.add_support(m["joints"][3], model.ALL_DOFS)
+        model.add_support(m["joints"][1], freedoms.ALL_DOFS)
+        model.add_support(m["joints"][3], freedoms.ALL_DOFS)
 
         model.add_beam_member(m, 1, [1, 2], sect_1)
         model.add_beam_member(m, 2, [3, 4], sect_2)
 
-        model.add_load(m["joints"][4], model.U3, -P)
+        model.add_load(m["joints"][4], freedoms.U3, -P)
 
-        model.add_links(m, [2, 4], model.U1)
-        model.add_links(m, [2, 4], model.U2)
-        model.add_links(m, [2, 4], model.U3)
+        model.add_links(m, [2, 4], freedoms.U1)
+        model.add_links(m, [2, 4], freedoms.U2)
+        model.add_links(m, [2, 4], freedoms.U3)
 
         model.number_dofs(m)
 
@@ -1038,11 +1038,11 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_joint(m, 3, [2 * L, 0, 0])
         model.add_joint(m, 4, [L, 0, 0.0])
 
-        model.add_links(m, [2, 4], model.TRANSLATION_DOFS)
+        model.add_links(m, [2, 4], freedoms.TRANSLATION_DOFS)
 
-        model.add_support(m["joints"][1], model.ALL_DOFS)
-        model.add_support(m["joints"][3], model.ALL_DOFS)
-        model.add_support(m["joints"][4], model.U2, 0.003)
+        model.add_support(m["joints"][1], freedoms.ALL_DOFS)
+        model.add_support(m["joints"][3], freedoms.ALL_DOFS)
+        model.add_support(m["joints"][4], freedoms.U2, 0.003)
 
         model.add_beam_member(m, 1, [1, 2], sect_1)
         model.add_beam_member(m, 2, [3, 4], sect_2)
@@ -1088,7 +1088,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         j4 = m["joints"][4]
 
         self.assertAlmostEqual(
-            j2["displacements"][model.U2], j4["displacements"][model.U2]
+            j2["displacements"][freedoms.U2], j4["displacements"][freedoms.U2]
         )
 
         # plots.plot_setup(m)
@@ -1133,19 +1133,19 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_joint(m, 7, [0, -L, 0.0])
         model.add_joint(m, 8, [0, L, 0.0])
 
-        model.add_support(m["joints"][5], model.ALL_DOFS)
-        model.add_support(m["joints"][6], model.ALL_DOFS)
-        model.add_support(m["joints"][7], model.ALL_DOFS)
-        model.add_support(m["joints"][8], model.ALL_DOFS)
+        model.add_support(m["joints"][5], freedoms.ALL_DOFS)
+        model.add_support(m["joints"][6], freedoms.ALL_DOFS)
+        model.add_support(m["joints"][7], freedoms.ALL_DOFS)
+        model.add_support(m["joints"][8], freedoms.ALL_DOFS)
 
         model.add_beam_member(m, 1, [1, 5], sect_2)
         model.add_beam_member(m, 2, [2, 6], sect_2)
         model.add_beam_member(m, 3, [3, 7], sect_2)
         model.add_beam_member(m, 4, [4, 8], sect_2)
 
-        model.add_load(m["joints"][4], model.U3, -P)
+        model.add_load(m["joints"][4], freedoms.U3, -P)
 
-        model.add_links(m, [1, 2, 3, 4], model.TRANSLATION_DOFS)
+        model.add_links(m, [1, 2, 3, 4], freedoms.TRANSLATION_DOFS)
 
         model.number_dofs(m)
 
@@ -1224,19 +1224,19 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_joint(m, 4, [8000.0, 0.0, 40])
 
         a = m["joints"][1]
-        model.add_support(a, model.U1)
-        model.add_support(a, model.U2)
-        model.add_support(a, model.U3)
-        model.add_support(a, model.UR1)
-        model.add_support(a, model.UR2)
-        model.add_support(a, model.UR3)
+        model.add_support(a, freedoms.U1)
+        model.add_support(a, freedoms.U2)
+        model.add_support(a, freedoms.U3)
+        model.add_support(a, freedoms.UR1)
+        model.add_support(a, freedoms.UR2)
+        model.add_support(a, freedoms.UR3)
         c = m["joints"][3]
-        model.add_support(c, model.U1)
-        model.add_support(c, model.U2)
-        model.add_support(c, model.U3)
-        model.add_support(c, model.UR1)
-        model.add_support(c, model.UR2)
-        model.add_support(c, model.UR3)
+        model.add_support(c, freedoms.U1)
+        model.add_support(c, freedoms.U2)
+        model.add_support(c, freedoms.U3)
+        model.add_support(c, freedoms.UR1)
+        model.add_support(c, freedoms.UR2)
+        model.add_support(c, freedoms.UR3)
 
         A = 6000
         Iy = 200e6
@@ -1273,7 +1273,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_beam_member(m, 3, [4, 2], s3)
 
         d = m["joints"][4]
-        model.add_load(d, model.U2, -1e3)
+        model.add_load(d, freedoms.U2, -1e3)
 
         # plots.plot_setup(m)
         # plots.plot_members(m)
@@ -1421,7 +1421,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # Fix the bottoms of the columns.
         for jid in range(1, 5):
-            model.add_support(m["joints"][jid], model.ALL_DOFS)
+            model.add_support(m["joints"][jid], freedoms.ALL_DOFS)
 
         # Add the members.
         model.add_beam_member(m, 1, [1, 11], sverti)
@@ -1559,29 +1559,29 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         # Next we add the link between the two joints that form the hinge. The hinge is
         # ball joint, meaning all three translations are the same for joints at the
         # hinge.
-        model.add_links(m, [6, 5], model.U1)
-        model.add_links(m, [6, 5], model.U2)
-        model.add_links(m, [6, 5], model.U3)
+        model.add_links(m, [6, 5], freedoms.U1)
+        model.add_links(m, [6, 5], freedoms.U2)
+        model.add_links(m, [6, 5], freedoms.U3)
 
         # The supports are next. The original source refers to the supports at N_A and
         # N_B.
-        model.add_support(m["joints"][1], model.U1)
-        model.add_support(m["joints"][1], model.U3)
-        model.add_support(m["joints"][1], model.UR2)
+        model.add_support(m["joints"][1], freedoms.U1)
+        model.add_support(m["joints"][1], freedoms.U3)
+        model.add_support(m["joints"][1], freedoms.UR2)
 
-        model.add_support(m["joints"][2], model.U2)
-        model.add_support(m["joints"][2], model.U3)
-        model.add_support(m["joints"][2], model.UR1)
+        model.add_support(m["joints"][2], freedoms.U2)
+        model.add_support(m["joints"][2], freedoms.U3)
+        model.add_support(m["joints"][2], freedoms.UR1)
 
         # Next we add the springs to the ground. The translation and rotation spring
-        # constants have the same numerical value.
-        model.add_spring_to_ground(m["joints"][1], model.U2, K)
-        model.add_spring_to_ground(m["joints"][1], model.UR1, K)
-        model.add_spring_to_ground(m["joints"][1], model.UR3, K)
-
-        model.add_spring_to_ground(m["joints"][2], model.U1, K)
-        model.add_spring_to_ground(m["joints"][2], model.UR2, K)
-        model.add_spring_to_ground(m["joints"][2], model.UR3, K)
+        # constants have the same numerical value. First at joint 1.
+        model.add_extension_spring_to_ground(m["joints"][1], 1, [0, 1, 0], K)
+        model.add_moment_spring_to_ground(m["joints"][1], 1, [1, 0, 0], K)
+        model.add_moment_spring_to_ground(m["joints"][1], 2, [0, 0, 1], K)
+        # Then at joint 3.
+        model.add_extension_spring_to_ground(m["joints"][2], 1, [1, 0, 0], K)
+        model.add_moment_spring_to_ground(m["joints"][2], 1, [0, 1, 0], K)
+        model.add_moment_spring_to_ground(m["joints"][2], 2, [0, 0, 1], K)
 
         # Let us look at the translation and rotation supports:
         # ax = plots.plot_setup(m)
@@ -1599,7 +1599,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         # plots.show(m)
 
         # Next we add the forces and moments applied at the joint N_D.
-        model.add_load(m["joints"][4], model.U3, -F)
+        model.add_load(m["joints"][4], freedoms.U3, -F)
 
         # Now we can solve the static equilibrium of the frame.
         model.number_dofs(m)

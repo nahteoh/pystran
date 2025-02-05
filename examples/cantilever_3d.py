@@ -15,17 +15,17 @@ h = 8.0
 model.add_joint(m, 1, [0.0, 0.0, 0.0])
 model.add_joint(m, 2, [h, 0.0, 0.0])
 a = m["joints"][1]
-model.add_support(a, model.U1)
-model.add_support(a, model.U2)
-model.add_support(a, model.U3)
-model.add_support(a, model.UR1)
-model.add_support(a, model.UR2)
-model.add_support(a, model.UR3)
+model.add_support(a, freedoms.U1)
+model.add_support(a, freedoms.U2)
+model.add_support(a, freedoms.U3)
+model.add_support(a, freedoms.UR1)
+model.add_support(a, freedoms.UR2)
+model.add_support(a, freedoms.UR3)
 a = m["joints"][2]
-model.add_support(a, model.U1)
-model.add_support(a, model.U2)
-model.add_support(a, model.UR1)
-model.add_support(a, model.UR3)
+model.add_support(a, freedoms.U1)
+model.add_support(a, freedoms.U2)
+model.add_support(a, freedoms.UR1)
+model.add_support(a, freedoms.UR3)
 
 E = 2.0e11
 G = E / (2 * (1 + 0.3))
@@ -42,7 +42,7 @@ model.add_beam_member(m, 1, [1, 2], s1)
 
 d = m["joints"][2]
 F = 10e3
-model.add_load(d, model.U3, F)
+model.add_load(d, freedoms.U3, F)
 
 model.number_dofs(m)
 

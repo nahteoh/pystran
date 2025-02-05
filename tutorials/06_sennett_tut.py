@@ -24,9 +24,9 @@ from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 from pystran import beam
-from pystran import rotation
 
 # Important note: Our orientation of the local coordinate system is such that
 # web of the H-beams is parallel to z axis! This is different from the
@@ -55,9 +55,9 @@ model.add_joint(m, 3, [L, L, L])
 model.add_joint(m, 4, [L, 0.0, 0.0])
 
 # Only one of the joints is free, the others are clamped.
-model.add_support(m["joints"][2], model.ALL_DOFS)
-model.add_support(m["joints"][3], model.ALL_DOFS)
-model.add_support(m["joints"][4], model.ALL_DOFS)
+model.add_support(m["joints"][2], freedoms.ALL_DOFS)
+model.add_support(m["joints"][3], freedoms.ALL_DOFS)
+model.add_support(m["joints"][4], freedoms.ALL_DOFS)
 
 # At this point we can visualize the supports. The translation supports are
 # shown with arrow heads.
@@ -111,7 +111,7 @@ plots.show(m)
 
 
 # Next we add the applied moment, and
-model.add_load(m["joints"][1], model.UR2, M)
+model.add_load(m["joints"][1], freedoms.UR2, M)
 
 
 # we can render the applied moment:

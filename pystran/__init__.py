@@ -8,6 +8,7 @@ pystran - Python package for structural analysis with trusses and beams
 __all__ = [
     "pystran",
     "gauss",
+    "freedoms",
     "model",
     "section",
     "rotation",
@@ -15,10 +16,12 @@ __all__ = [
     "assemble",
     "truss",
     "beam",
+    "spring",
     "plots",
 ]
 
 # Import the submodules
+from . import freedoms
 from . import model
 from . import section
 from . import rotation
@@ -27,4 +30,5 @@ from . import gauss
 from . import assemble
 from . import truss
 from . import beam
+from . import spring
 from . import plots

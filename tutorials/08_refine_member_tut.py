@@ -17,6 +17,7 @@ from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 
 # Create a two dimensional (planar) model.
@@ -28,16 +29,16 @@ model.add_joint(m, 2, [5.0, 0.0])
 model.add_joint(m, 3, [12.0, 0.0])
 
 # The supports are added to the model. The pinned supports are added to the
-# joint by listing the degree of freedom designations, `model.U1` and
-# `model.U2`. These degrees of freedom are suppressed (set to zero). Note that
-# each of the joints also has a rotation degree of freedom, `model.UR3`, which
+# joint by listing the degree of freedom designations, `freedoms.U1` and
+# `freedoms.U2`. These degrees of freedom are suppressed (set to zero). Note that
+# each of the joints also has a rotation degree of freedom, `freedoms.UR3`, which
 # are free at all joints.
-model.add_support(m["joints"][1], model.U1)
-model.add_support(m["joints"][1], model.U2)
-model.add_support(m["joints"][2], model.U1)
-model.add_support(m["joints"][2], model.U2)
-model.add_support(m["joints"][3], model.U1)
-model.add_support(m["joints"][3], model.U2)
+model.add_support(m["joints"][1], freedoms.U1)
+model.add_support(m["joints"][1], freedoms.U2)
+model.add_support(m["joints"][2], freedoms.U1)
+model.add_support(m["joints"][2], freedoms.U2)
+model.add_support(m["joints"][3], freedoms.U1)
+model.add_support(m["joints"][3], freedoms.U2)
 
 # The beam members have different material properties and cross sectional
 # properties. We create two separate sections for the two beam members.
@@ -75,9 +76,9 @@ plots.show(m)
 # Next we add the loads and solve the model.|
 
 # The loads are  moments at the joints.
-model.add_load(m["joints"][1], model.UR3, -15e3)
-model.add_load(m["joints"][2], model.UR3, -25e3)
-model.add_load(m["joints"][3], model.UR3, +35e3)
+model.add_load(m["joints"][1], freedoms.UR3, -15e3)
+model.add_load(m["joints"][2], freedoms.UR3, -25e3)
+model.add_load(m["joints"][3], freedoms.UR3, +35e3)
 
 # The model is solved.
 model.number_dofs(m)

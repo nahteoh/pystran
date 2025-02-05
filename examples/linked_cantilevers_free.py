@@ -38,17 +38,17 @@ model.add_joint(m, 2, [L, 0, 0.0])
 model.add_joint(m, 3, [2 * L, 0, 0])
 model.add_joint(m, 4, [L, 0, 0.0])
 
-model.add_support(m["joints"][1], model.ALL_DOFS)
-model.add_support(m["joints"][3], model.ALL_DOFS)
+model.add_support(m["joints"][1], freedoms.ALL_DOFS)
+model.add_support(m["joints"][3], freedoms.ALL_DOFS)
 
 model.add_beam_member(m, 1, [1, 2], sect_1)
 model.add_beam_member(m, 2, [3, 4], sect_2)
 
-model.add_load(m["joints"][4], model.U3, -P)
+model.add_load(m["joints"][4], freedoms.U3, -P)
 
-model.add_links(m, [2, 4], model.U1)
-model.add_links(m, [2, 4], model.U2)
-model.add_links(m, [2, 4], model.U3)
+model.add_links(m, [2, 4], freedoms.U1)
+model.add_links(m, [2, 4], freedoms.U2)
+model.add_links(m, [2, 4], freedoms.U3)
 
 model.number_dofs(m)
 

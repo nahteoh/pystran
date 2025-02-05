@@ -16,6 +16,7 @@ from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 
 # US customary units, inches, pounds, seconds are assumed.
@@ -41,12 +42,12 @@ model.add_joint(m, 5, [0, L])
 
 # We supply the list of joints that need to be linked (2 and 5), and the degrees
 # of freedom that are to be the same.
-model.add_links(m, [2, 5], model.U1)
-model.add_links(m, [2, 5], model.U2)
+model.add_links(m, [2, 5], freedoms.U1)
+model.add_links(m, [2, 5], freedoms.U2)
 
 # Now we apply the supports -- both bottom joints are simply supported (pinned).
-model.add_support(m["joints"][1], model.TRANSLATION_DOFS)
-model.add_support(m["joints"][4], model.TRANSLATION_DOFS)
+model.add_support(m["joints"][1], freedoms.TRANSLATION_DOFS)
+model.add_support(m["joints"][4], freedoms.TRANSLATION_DOFS)
 
 
 # Define the beam members.
@@ -56,7 +57,7 @@ model.add_beam_member(m, 2, [5, 3], s1)
 model.add_beam_member(m, 3, [4, 3], s1)
 
 # Sideload is applied at joint 2.
-model.add_load(m["joints"][2], model.U1, 1000.0)
+model.add_load(m["joints"][2], freedoms.U1, 1000.0)
 
 # The discrete model can now be reviewed. Note the orientations of the local
 # coordinate systems.

@@ -24,8 +24,8 @@ model.add_joint(m, 3, [5.0, 8.0, 0.0])
 a = m["joints"][1]
 b = m["joints"][2]
 c = m["joints"][3]
-model.add_support(a, model.ALL_DOFS)
-model.add_support(c, model.ALL_DOFS)
+model.add_support(a, freedoms.ALL_DOFS)
+model.add_support(c, freedoms.ALL_DOFS)
 
 E = 2.0e11
 G = E / (2 * (1 + 0.3))
@@ -53,8 +53,8 @@ s2 = section.beam_3d_section(
 )
 model.add_beam_member(m, 2, [2, 3], s2)
 
-model.add_load(b, model.U3, -5e3 - 7.5e3)
-model.add_load(b, model.UR2, -6.25e3)
+model.add_load(b, freedoms.U3, -5e3 - 7.5e3)
+model.add_load(b, freedoms.UR2, -6.25e3)
 
 model.number_dofs(m)
 

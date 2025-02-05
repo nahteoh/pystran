@@ -36,12 +36,12 @@ model.add_joint(m, G, [-L / 4 - L, -L / 2, 0.0])
 model.add_joint(m, H, [-L / 4, -L / 2, 0.0])
 model.add_joint(m, I, [-L / 4 + L, -L / 2, 0.0])
 
-model.add_support(m["joints"][A], model.ALL_DOFS)
-model.add_support(m["joints"][C], model.ALL_DOFS)
-model.add_support(m["joints"][D], model.ALL_DOFS)
-model.add_support(m["joints"][F], model.ALL_DOFS)
-model.add_support(m["joints"][G], model.ALL_DOFS)
-model.add_support(m["joints"][I], model.ALL_DOFS)
+model.add_support(m["joints"][A], freedoms.ALL_DOFS)
+model.add_support(m["joints"][C], freedoms.ALL_DOFS)
+model.add_support(m["joints"][D], freedoms.ALL_DOFS)
+model.add_support(m["joints"][F], freedoms.ALL_DOFS)
+model.add_support(m["joints"][G], freedoms.ALL_DOFS)
+model.add_support(m["joints"][I], freedoms.ALL_DOFS)
 
 xz_vector = [0, 0, 1]
 s1 = section.beam_3d_section(
@@ -56,7 +56,7 @@ model.add_beam_member(m, 6, [H, I], s1)
 model.add_beam_member(m, 7, [H, O], s1)
 model.add_beam_member(m, 8, [O, B], s1)
 
-model.add_load(m["joints"][O], model.U3, -L * q)
+model.add_load(m["joints"][O], freedoms.U3, -L * q)
 
 model.number_dofs(m)
 

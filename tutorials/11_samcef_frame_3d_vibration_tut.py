@@ -18,6 +18,7 @@ Samtech SA Liège, Belgium.
 from context import pystran
 from pystran import model
 from pystran import section
+from pystran import freedoms
 from pystran import plots
 
 # The material is steel, SI units (m).
@@ -75,7 +76,7 @@ model.add_joint(m, 24, [0.0, a, 2 * b])
 
 # Fix the bottoms of the columns.
 for jid in range(1, 5):
-    model.add_support(m["joints"][jid], model.ALL_DOFS)
+    model.add_support(m["joints"][jid], freedoms.ALL_DOFS)
 
 # Add the members.
 model.add_beam_member(m, 1, [1, 11], sverti)

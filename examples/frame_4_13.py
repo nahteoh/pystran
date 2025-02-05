@@ -24,12 +24,12 @@ model.add_joint(m, 1, [0.0, 5.0])
 model.add_joint(m, 2, [8.0, 5.0])
 model.add_joint(m, 3, [8.0, 0.0])
 
-model.add_support(m["joints"][1], model.U1)
-model.add_support(m["joints"][1], model.U2)
-model.add_support(m["joints"][1], model.UR3)
-model.add_support(m["joints"][3], model.U1)
-model.add_support(m["joints"][3], model.U2)
-model.add_support(m["joints"][3], model.UR3)
+model.add_support(m["joints"][1], freedoms.U1)
+model.add_support(m["joints"][1], freedoms.U2)
+model.add_support(m["joints"][1], freedoms.UR3)
+model.add_support(m["joints"][3], freedoms.U1)
+model.add_support(m["joints"][3], freedoms.U2)
+model.add_support(m["joints"][3], freedoms.UR3)
 
 E = 2.0e11
 A = 6000 / 10**6
@@ -42,9 +42,9 @@ I = 50e6 / 10**12
 s2 = section.beam_2d_section("material_2", E, A, I)
 model.add_beam_member(m, 2, [3, 2], s2)
 
-model.add_load(m["joints"][2], model.U1, 100e3 / sqrt(2))
-model.add_load(m["joints"][2], model.U2, -100e3 / sqrt(2))
-model.add_load(m["joints"][2], model.UR3, 50e3)
+model.add_load(m["joints"][2], freedoms.U1, 100e3 / sqrt(2))
+model.add_load(m["joints"][2], freedoms.U2, -100e3 / sqrt(2))
+model.add_load(m["joints"][2], freedoms.UR3, 50e3)
 
 model.number_dofs(m)
 

@@ -16,29 +16,27 @@ h = 8.0
 model.add_joint(m, 1, [0.0, 0.0])
 model.add_joint(m, 2, [h, 0.0])
 
-model.add_support(m['joints'][1], model.ALL_DOFS)
-model.add_support(m['joints'][2], model.U1)
+model.add_support(m["joints"][1], freedoms.ALL_DOFS)
+model.add_support(m["joints"][2], freedoms.U1)
 
 
 E = 2.0e11
 A = 6000 / 10**6
 I = 200e6 / 10**12
-s1 = section.beam_2d_section(
-    "sect_1", E=E, A=A, I=I
-)
+s1 = section.beam_2d_section("sect_1", E=E, A=A, I=I)
 model.add_beam_member(m, 1, [1, 2], s1)
 
 F = 10e3
-model.add_load(m["joints"][2], model.U2, F)
+model.add_load(m["joints"][2], freedoms.U2, F)
 
 model.number_dofs(m)
 
 model.solve_statics(m)
 
 print(f"Stiffness = {m['K']}")
-nf = m['nfreedof']
-Kff = m['K'][0:nf, 0:nf]
-print(f'Kff = {Kff}')
-print(f'12*E*I/h**3 = {12*E*I/h**3}')
-print(f'6*E*I/h**2 = {6*E*I/h**2}')
-print(f'4*E*I/h = {4*E*I/h}')
+nf = m["nfreedof"]
+Kff = m["K"][0:nf, 0:nf]
+print(f"Kff = {Kff}")
+print(f"12*E*I/h**3 = {12*E*I/h**3}")
+print(f"6*E*I/h**2 = {6*E*I/h**2}")
+print(f"4*E*I/h = {4*E*I/h}")

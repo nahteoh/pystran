@@ -18,10 +18,10 @@ m = model.create(2)
 model.add_joint(m, 1, [0.0, 0.0])
 model.add_joint(m, 2, [2.0, 0.0])
 model.add_joint(m, 3, [6.0, 0.0])
-model.add_support(m["joints"][2], model.U1)
-model.add_support(m["joints"][2], model.U2)
-model.add_support(m["joints"][3], model.U1)
-model.add_support(m["joints"][3], model.U2)
+model.add_support(m["joints"][2], freedoms.U1)
+model.add_support(m["joints"][2], freedoms.U2)
+model.add_support(m["joints"][3], freedoms.U1)
+model.add_support(m["joints"][3], freedoms.U2)
 
 E = 3e10
 A = 0.001
@@ -31,11 +31,11 @@ model.add_beam_member(m, 1, [1, 2], s1)
 model.add_beam_member(m, 2, [2, 3], s1)
 
 
-model.add_load(m["joints"][1], model.U2, -6e3)
-model.add_load(m["joints"][2], model.U2, -3e3 * 4 / 2)
-model.add_load(m["joints"][3], model.U2, -3e3 * 4 / 2)
-model.add_load(m["joints"][2], model.UR3, -3e3 * 4**2 / 8)
-model.add_load(m["joints"][3], model.UR3, +3e3 * 4**2 / 8)
+model.add_load(m["joints"][1], freedoms.U2, -6e3)
+model.add_load(m["joints"][2], freedoms.U2, -3e3 * 4 / 2)
+model.add_load(m["joints"][3], freedoms.U2, -3e3 * 4 / 2)
+model.add_load(m["joints"][2], freedoms.UR3, -3e3 * 4**2 / 8)
+model.add_load(m["joints"][3], freedoms.UR3, +3e3 * 4**2 / 8)
 
 model.number_dofs(m)
 

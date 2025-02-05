@@ -21,15 +21,15 @@ m = model.create(2)
 model.add_joint(m, 1, [-0.5, 0.0])
 model.add_joint(m, 2, [0.0, 0.0])
 model.add_joint(m, 3, [0.5, 0.0])
-model.add_support(m["joints"][1], model.ALL_DOFS)
-model.add_support(m["joints"][3], model.ALL_DOFS)
+model.add_support(m["joints"][1], freedoms.ALL_DOFS)
+model.add_support(m["joints"][3], freedoms.ALL_DOFS)
 
 s1 = section.beam_2d_section("s1", E, A, Iy)
 model.add_beam_member(m, 1, [1, 2], s1)
 model.add_beam_member(m, 2, [2, 3], s1)
 
 
-model.add_load(m["joints"][2], model.U2, -100e3)
+model.add_load(m["joints"][2], freedoms.U2, -100e3)
 
 ax = plots.plot_setup(m)
 plots.plot_joint_numbers(m)
@@ -80,15 +80,15 @@ m = model.create(2)
 model.add_joint(m, 1, [-0.75, 0.0])
 model.add_joint(m, 2, [0.0, 0.0])
 model.add_joint(m, 3, [0.25, 0.0])
-model.add_support(m["joints"][1], model.ALL_DOFS)
-model.add_support(m["joints"][3], model.ALL_DOFS)
+model.add_support(m["joints"][1], freedoms.ALL_DOFS)
+model.add_support(m["joints"][3], freedoms.ALL_DOFS)
 
 s1 = section.beam_2d_section("s1", E, A, Iy)
 model.add_beam_member(m, 1, [1, 2], s1)
 model.add_beam_member(m, 2, [2, 3], s1)
 
 
-model.add_load(m["joints"][2], model.U2, -100e3)
+model.add_load(m["joints"][2], freedoms.U2, -100e3)
 
 # ax = plots.plot_setup(m)
 # plots.plot_joint_numbers(m)
@@ -141,8 +141,8 @@ m = model.create(3)
 model.add_joint(m, 1, [-0.75, 0.0, 0.0])
 model.add_joint(m, 2, [0.0, 0.0, 0.0])
 model.add_joint(m, 3, [0.25, 0.0, 0.0])
-model.add_support(m["joints"][1], model.ALL_DOFS)
-model.add_support(m["joints"][3], model.ALL_DOFS)
+model.add_support(m["joints"][1], freedoms.ALL_DOFS)
+model.add_support(m["joints"][3], freedoms.ALL_DOFS)
 
 xz_vector = [0, 0, 1]
 s1 = section.beam_3d_section(
@@ -152,7 +152,7 @@ model.add_beam_member(m, 1, [1, 2], s1)
 model.add_beam_member(m, 2, [2, 3], s1)
 
 
-model.add_load(m["joints"][2], model.U2, -100e3)
+model.add_load(m["joints"][2], freedoms.U2, -100e3)
 
 ax = plots.plot_setup(m)
 plots.plot_joint_numbers(m)
