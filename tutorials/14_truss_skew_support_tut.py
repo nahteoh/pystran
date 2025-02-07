@@ -16,7 +16,7 @@ joints, and one of those supports is inclined. This tutorial demonstrates how to
 use a combination of loads.
 """
 
-from math import sqrt, pi, cos, sin
+from math import pi, cos, sin
 from numpy.linalg import norm
 from context import pystran
 from pystran import model
@@ -48,15 +48,15 @@ sr = section.truss_section("sr", E=E, A=Ar, CTE=0.0)
 
 
 # A helper function to set up the thermal loads.
-def add_thermal_loads(m):
+def add_thermal_loads(_m):
     """Set up thermal loads."""
-    for member in m["truss_members"].values():
+    for member in _m["truss_members"].values():
         if member["mid"] != 20:
             sect = member["section"]
             EA = sect["E"] * sect["A"]
             _CTE = sect["CTE"]
             connectivity = member["connectivity"]
-            _i, _j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            _i, _j = _m["joints"][connectivity[0]], _m["joints"][connectivity[1]]
             d = geometry.delt(_i["coordinates"], _j["coordinates"])
             nd = d / norm(d)
             N_T = _CTE * DeltaT * EA

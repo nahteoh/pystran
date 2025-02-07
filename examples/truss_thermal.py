@@ -16,7 +16,6 @@ The answer in the book is: T = 0.533 sec., corresponding to the frequency =
 1.876 CPS.
 """
 
-from math import sqrt, pi, cos, sin
 from numpy.linalg import norm
 from context import pystran
 from pystran import model
@@ -24,7 +23,6 @@ from pystran import section
 from pystran import truss
 from pystran import geometry
 from pystran import freedoms
-from pystran import plots
 
 # US SI(m) units
 E = 2.0e5  # MPa
@@ -34,19 +32,20 @@ DeltaT = {1: 20.0, 2: 70.0, 3: 20.0}
 
 
 def add_thermal_loads(m):
+    """Set up thermal loads."""
     for member in m["truss_members"].values():
         sect = member["section"]
-        E, A = sect["E"], sect["A"]
+        EA = sect["E"] * sect["A"]
+        _CTE = sect["CTE"]
         connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        d = geometry.delt(i["coordinates"], j["coordinates"])
+        _i, _j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        d = geometry.delt(_i["coordinates"], _j["coordinates"])
         nd = d / norm(d)
-        N_T = E * A * CTE * DeltaT[member["mid"]]
-        print("Thermal force: ", N_T)
-        model.add_load(i, freedoms.U1, -nd[0] * N_T)
-        model.add_load(i, freedoms.U2, -nd[1] * N_T)
-        model.add_load(j, freedoms.U1, +nd[0] * N_T)
-        model.add_load(j, freedoms.U2, +nd[1] * N_T)
+        _N_T = _CTE * DeltaT[member["mid"]] * EA
+        model.add_load(_i, freedoms.U1, -nd[0] * _N_T)
+        model.add_load(_i, freedoms.U2, -nd[1] * _N_T)
+        model.add_load(_j, freedoms.U1, +nd[0] * _N_T)
+        model.add_load(_j, freedoms.U2, +nd[1] * _N_T)
 
 
 m = model.create(2)
@@ -61,7 +60,7 @@ model.add_support(m["joints"][2], freedoms.TRANSLATION_DOFS)
 model.add_support(m["joints"][3], freedoms.TRANSLATION_DOFS)
 
 
-s1 = section.truss_section("s1", E, A)
+s1 = section.truss_section("s1", E=E, A=A, CTE=CTE)
 
 model.add_truss_member(m, 1, [1, 4], s1)
 model.add_truss_member(m, 2, [2, 4], s1)

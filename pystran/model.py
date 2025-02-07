@@ -382,7 +382,7 @@ def solve_free_vibration(m):
 
     `number_dofs` must be called before this function.
     """
-    nt, nf = m["ntotaldof"], m["nfreedof"]
+    nf = m["nfreedof"]
     # Assemble global stiffness matrix and mass matrix
     K = _build_stiffness_matrix(m)
     M = _build_mass_matrix(m)
@@ -393,7 +393,7 @@ def solve_free_vibration(m):
     U = zeros(m["ntotaldof"])
     for joint in m["joints"].values():
         if "supports" in joint:
-            for dof, value in joint["supports"].items():
+            for dof, _ in joint["supports"].items():
                 gr = joint["dof"][dof]
                 U[gr] = 0.0
     m["U"] = U

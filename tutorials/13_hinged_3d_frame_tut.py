@@ -24,7 +24,6 @@ Displacements and internal forces are provided in the verification manual.
 # We begin with the standard imports:
 
 from numpy import array
-from numpy.linalg import norm
 from context import pystran
 from pystran import model
 from pystran import section
