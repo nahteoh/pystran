@@ -9,23 +9,25 @@ from math import pi
 import numpy
 
 
-def truss_section(name, E=0.0, A=0.0, rho=0.0):
+def truss_section(name, E=0.0, A=0.0, rho=0.0, CTE=0.0):
     """
     Define truss section.
 
     - `E`= Young's modulus,
     - `A`= cross-sectional area,
-    - `rho`= mass density.
+    - `rho`= mass density,
+    - `CTE`= coefficient of thermal expansion.
     """
     s = dict()
     s["name"] = name
     s["E"] = E
     s["rho"] = rho
+    s["CTE"] = CTE
     s["A"] = A
     return s
 
 
-def beam_2d_section(name, E=0.0, A=0.0, I=0.0, rho=0.0):
+def beam_2d_section(name, E=0.0, A=0.0, I=0.0, rho=0.0, CTE=0.0):
     """
     Define 2d beam section.
 
@@ -33,12 +35,14 @@ def beam_2d_section(name, E=0.0, A=0.0, I=0.0, rho=0.0):
     - `A`= cross-sectional area,
     - `I`= central moment of inertia of the cross-section about the `y`
     coordinate axis (i.e. the axis perpendicular to the plane of the bending, `x-z`).
-    - `rho`= mass density.
+    - `rho`= mass density,
+    - `CTE`= coefficient of thermal expansion.
     """
     s = dict()
     s["name"] = name
     s["E"] = E
     s["rho"] = rho
+    s["CTE"] = CTE
     s["A"] = A
     s["I"] = I
     return s
@@ -55,6 +59,7 @@ def beam_3d_section(
     J=0.0,
     rho=0.0,
     xz_vector=(0, 0, 1),
+    CTE=0.0,
 ):
     """
     Define 3d beam section.
@@ -66,13 +71,15 @@ def beam_3d_section(
     - `Iy`, `Iz`= central moment of inertia of the cross-section about the local `y` and local `z`
     coordinate axis,
     - `J`= St Venant torsion constant.
-    - `xz_vector`= vector that lies in the local `x` and `z` coordinate plane.
+    - `xz_vector`= vector that lies in the local `x` and `z` coordinate plane,
+    - `CTE`= coefficient of thermal expansion.
     """
     s = dict()
     s["name"] = name
     s["E"] = E
     s["G"] = G
     s["rho"] = rho
+    s["CTE"] = CTE
     s["A"] = A
     s["Ix"] = Ix
     s["Iy"] = Iy
