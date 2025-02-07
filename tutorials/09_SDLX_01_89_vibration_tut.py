@@ -5,6 +5,15 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Two story planar frame vibration
 
+## Problem description:
+
+Planar frame of two stories, vibrating only in the plane. 
+The frame members are automatically refined into multiple elements.
+
+Analytical solutions are available for the first few modes of vibration.
+
+## References
+
 SCIA Engineer 24.0.1020 test case SDLX 01/89 
 """
 

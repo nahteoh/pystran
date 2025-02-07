@@ -5,11 +5,18 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Example of a two-dimensional frame problem with thermal gradient loading
 
-This example is completely solved in the book Matrix Analysis of Structures by
-Robert E. Sennett, ISBN 978-1577661436 (Example 3.5). 
+## Problem description:
+
+Frame with two legs. The top is loaded with a thermal gradient through the depth
+of the beam.
 
 Displacements and internal forces are provided in the book, and we can check our
 solution against these reference values.
+
+## References
+
+This example is completely solved in the book Matrix Analysis of Structures by
+Robert E. Sennett, ISBN 978-1577661436 (Example 3.5). 
 """
 
 # We begin with the standard imports:
