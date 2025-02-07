@@ -70,6 +70,7 @@ def add_truss_member(m, mid: int, connectivity, sect):
     if mid in m["truss_members"]:
         raise RuntimeError("Truss member already exists")
     m["truss_members"][mid] = {
+        "mid": mid,
         "connectivity": array(connectivity, dtype=numpy.int32),
         "section": sect,
     }
@@ -118,7 +119,9 @@ def add_load(j, dof, value):
     """
     if "loads" not in j:
         j["loads"] = {}
-    j["loads"][dof] = value
+    if dof not in j["loads"]:
+        j["loads"][dof] = 0.0
+    j["loads"][dof] += value
 
 
 def add_mass(j, dof, value):
