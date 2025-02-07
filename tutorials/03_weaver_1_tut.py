@@ -5,13 +5,13 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Weaver 3D frame benchmark
 
+## Problem description:
+
 This example is a 3D frame for which multiple independent solutions are
 available in the open literature (hence, it is a benchmark).
 
-The original source is Weaver Jr., W., Computer Programs for Structural
-Analysis, page 146, problem 8.
-
-It is accessible online via the STAAD.Pro 2023.00.03 User Manual.
+Displacements, reactions, and internal forces are provided in the verification
+manual.
 
 A number of quantities can be checked against independent solutions. These
 reactions are consistent with STAAD.Pro 2023.00.03 User Manual, assuming Poisson
@@ -24,6 +24,13 @@ Joint 4:
 
 The internal forces can also be checked against the manual (but the number of
 available digits in the manual is limited).
+
+## References
+
+The original source is Weaver Jr., W., Computer Programs for Structural
+Analysis, page 146, problem 8.
+
+It is accessible online via the STAAD.Pro 2023.00.03 User Manual.
 """
 
 # We begin with the standard imports:

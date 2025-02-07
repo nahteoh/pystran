@@ -5,6 +5,14 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Three-bar truss example
 
+## Problem description:
+
+Structure consisting of three truss members. 
+
+Displacements and internal forces are provided in the verification manual.
+
+## References
+
 Three-bar example on page 32 from the book Analysis of Geometrically Nonlinear
 Structures Second Edition by Robert Levy and William R. Spillers.
 """

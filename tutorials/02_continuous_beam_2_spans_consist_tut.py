@@ -5,6 +5,15 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Continuous beam with two spans
 
+## Problem description:
+
+Continuous simply supported beam with two spans. The beam is loaded with moments
+at the joint.
+
+Displacements and internal forces are provided in the verification manual.
+
+## References
+
 Introductory example 7.1 from Structural Mechanics. Analytical and Numerical
 Approaches for Structural Analysis by Lingyi Lu, Junbo Jia, Zhuo Tang.
 """
