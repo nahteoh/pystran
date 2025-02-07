@@ -1910,12 +1910,12 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         # Next we add the springs to the ground. The translation and rotation spring
         # constants have the same numerical value. First at joint 1.
         model.add_extension_spring_to_ground(m["joints"][1], 1, [0, 1, 0], K)
-        model.add_moment_spring_to_ground(m["joints"][1], 1, [1, 0, 0], K)
-        model.add_moment_spring_to_ground(m["joints"][1], 2, [0, 0, 1], K)
+        model.add_torsion_spring_to_ground(m["joints"][1], 1, [1, 0, 0], K)
+        model.add_torsion_spring_to_ground(m["joints"][1], 2, [0, 0, 1], K)
         # Then at joint 3.
         model.add_extension_spring_to_ground(m["joints"][2], 1, [1, 0, 0], K)
-        model.add_moment_spring_to_ground(m["joints"][2], 1, [0, 1, 0], K)
-        model.add_moment_spring_to_ground(m["joints"][2], 2, [0, 0, 1], K)
+        model.add_torsion_spring_to_ground(m["joints"][2], 1, [0, 1, 0], K)
+        model.add_torsion_spring_to_ground(m["joints"][2], 2, [0, 0, 1], K)
 
         # Let us look at the translation and rotation supports:
         # ax = plots.plot_setup(m)

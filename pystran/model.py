@@ -588,14 +588,14 @@ def add_extension_spring_to_ground(j, sid, direction, coefficient=1.0):
     j["spring"]["extension"][sid] = {"direction": direction, "coefficient": coefficient}
 
 
-def add_moment_spring_to_ground(j, sid, direction, coefficient=1.0):
+def add_torsion_spring_to_ground(j, sid, direction, coefficient=1.0):
     """
-    Add a grounded moment spring to a joint.
+    Add a grounded torsional spring to a joint.
 
     - `j` = the joint.
     - `sid` = spring identifier; This allows a joint to have multiple springs
       attached.
-    - `direction` = the direction about which a moment spring acts.
+    - `direction` = the direction about which a torsion spring acts.
       For a rotation in 2D, the direction is [1.0].
     - `coefficient` = the amount of the spring stiffness.
     """
