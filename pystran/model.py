@@ -550,13 +550,22 @@ def refine_member(m, mid, n):
     del m["beam_members"][mid]
 
 
-def zero_loads(m):
+def remove_loads(m):
     """
-    Zero all the nodal loads in the model.
+    Remove all the nodal loads in the model.
     """
     for joint in m["joints"].values():
         if "loads" in joint:
             joint["loads"] = {}
+
+
+def remove_supports(m):
+    """
+    Remove all the nodal supports in the model.
+    """
+    for joint in m["joints"].values():
+        if "supports" in joint:
+            joint["supports"] = {}
 
 
 def add_extension_spring_to_ground(j, sid, direction, coefficient=1.0):
