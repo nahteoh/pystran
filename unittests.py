@@ -8,8 +8,10 @@ from numpy import array, dot, outer, concatenate
 from numpy.linalg import norm
 from pystran import model
 from pystran import section
+from pystran import geometry
 from pystran import freedoms
 from pystran import beam
+from pystran import truss
 from pystran import rotation
 
 
@@ -107,6 +109,102 @@ class UnitTestsPlaneTrusses(unittest.TestCase):
             raise ValueError("Displacement calculation error")
         # else:
         #     print("Displacement calculation OK")
+
+    def test_truss_thermal(self):
+        """
+        STAAD.Pro test example
+        """
+
+        # from math import sqrt, pi, cos, sin
+        # from numpy.linalg import norm
+        # from context import pystran
+        # from pystran import model
+        # from pystran import section
+        # from pystran import truss
+        # from pystran import geometry
+        # from pystran import freedoms
+        # from pystran import plots
+
+        # US SI(m) units
+        E = 2.0e5  # MPa
+        CTE = 1.4e-5  # 1/degC
+        A = 900  # mm^2
+        DeltaT = {1: 20.0, 2: 70.0, 3: 20.0}  # temperatures of the bars
+
+        def add_thermal_loads(m):
+            for member in m["truss_members"].values():
+                sect = member["section"]
+                E, A = sect["E"], sect["A"]
+                connectivity = member["connectivity"]
+                i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+                d = geometry.delt(i["coordinates"], j["coordinates"])
+                nd = d / norm(d)
+                N_T = E * A * CTE * DeltaT[member["mid"]]
+                # print("Thermal force: ", N_T)
+                model.add_load(i, freedoms.U1, -nd[0] * N_T)
+                model.add_load(i, freedoms.U2, -nd[1] * N_T)
+                model.add_load(j, freedoms.U1, +nd[0] * N_T)
+                model.add_load(j, freedoms.U2, +nd[1] * N_T)
+
+        m = model.create(2)
+
+        model.add_joint(m, 1, [-2121.32, 2121.32])
+        model.add_joint(m, 2, [0.0, 2121.32])
+        model.add_joint(m, 3, [2121.32, 2121.32])
+        model.add_joint(m, 4, [0.0, 0.0])
+
+        model.add_support(m["joints"][1], freedoms.TRANSLATION_DOFS)
+        model.add_support(m["joints"][2], freedoms.TRANSLATION_DOFS)
+        model.add_support(m["joints"][3], freedoms.TRANSLATION_DOFS)
+
+        s1 = section.truss_section("s1", E, A)
+
+        model.add_truss_member(m, 1, [1, 4], s1)
+        model.add_truss_member(m, 2, [2, 4], s1)
+        model.add_truss_member(m, 3, [3, 4], s1)
+
+        # ax = plots.plot_setup(m)
+        # plots.plot_joint_numbers(m)
+        # plots.plot_members(m)
+        # plots.show(m)
+
+        add_thermal_loads(m)
+
+        # plots.plot_setup(m)
+        # plots.plot_members(m)
+        # ax = plots.plot_applied_forces(m, 0.001)
+        # ax.set_title("Forces")
+        # plots.show(m)
+
+        model.number_dofs(m)
+        model.solve_statics(m)
+
+        # for j in m["joints"].values():
+        #     print(j["jid"], ": ", j["displacements"])
+
+        for member, res in zip(
+            m["truss_members"].values(), [22142.727, -31314.545, 22142.727]
+        ):
+            connectivity = member["connectivity"]
+            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            N = truss.truss_axial_force(member, i, j)
+            # print("N = ", N)
+            N_T = E * A * CTE * DeltaT[member["mid"]]
+            # print("N - N_T = ", N - N_T)
+            if abs(N - N_T - res) > 1.0e-3 * abs(res):
+                raise ValueError("Force calculation error")
+
+        # plots.plot_setup(m)
+        # plots.plot_members(m)
+        # ax = plots.plot_deformations(m, 50.0)
+        # ax.set_title("Deformed shape (magnification factor = 50)")
+        # plots.show(m)
+
+        # plots.plot_setup(m)
+        # plots.plot_members(m)
+        # ax = plots.plot_axial_forces(m, 0.001)
+        # ax.set_title("Deformed shape (magnification factor = 50)")
+        # plots.show(m)
 
 
 class UnitTestsPlanarFrames(unittest.TestCase):
