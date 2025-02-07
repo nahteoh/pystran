@@ -5,16 +5,21 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Example of a three dimensional frame problem
 
-This example is completely solved in the book Matrix Analysis of Structures by
-Robert E. Sennett, ISBN 978-1577661436 (Section 6.4). 
+## Problem description:
+
+Frame with three legs that are clamped, loaded by a torque.
 
 Displacements and internal forces are provided in the book, and we can check our
 solution against these reference values.
 
-
 Important note: Our orientation of the local coordinate system is such that web
 of the H-beams is parallel to beam z axis! This is different from the orientation in
 the book, where the web is parallel to the y axis.
+
+## References
+
+This example is completely solved in the book Matrix Analysis of Structures by
+Robert E. Sennett, ISBN 978-1577661436 (Section 6.4). 
 """
 
 # We begin with the standard imports:

@@ -5,11 +5,18 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Example of a support-settlement problem
 
-This example is completely solved in the book Matrix Analysis of Structures by
-Robert E. Sennett, ISBN 978-1577661436 (Section 3.8). 
+## Problem description:
+
+Statically indeterminate beam with two spans. The beam is supported at a pin
+that settles by a given amount. 
 
 Displacements and internal forces are provided in the book, and we can check our
 solution against these reference values.
+
+## References
+
+This example is completely solved in the book Matrix Analysis of Structures by
+Robert E. Sennett, ISBN 978-1577661436 (Section 3.8). 
 """
 
 from numpy import dot

@@ -5,11 +5,20 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Example of a frame with a hinge
 
-This example is completely solved in the book Matrix Analysis of Structures by
-Robert E. Sennett, ISBN 978-1577661436. Example 7.4.
+## Problem description:
+
+Portal frame with a hinge at the top of the left column. The frame is loaded
+with a sideways force.
 
 Displacements and internal forces are provided in the book, and we can check our
 solution against these reference values.
+
+## References
+
+This example is completely solved in the book Matrix Analysis of Structures by
+Robert E. Sennett, ISBN 978-1577661436. Example 7.4.
+
+
 """
 
 from numpy.linalg import norm
