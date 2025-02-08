@@ -5,20 +5,23 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Spatial frame with a hinge and spring supports
 
-Spatial frame with spring supports and a spherical ball hinge. This is AFNOR
-SSLL04/89 test case. 
+## Problem description:
+
+Structure consisting of two L-shaped members connected by a spherical ball joint
+(hinge), and supported partially by extension and torsion springs at the two
+extremities. A static solution is sought for loading at one of the corner joints.
+
+Displacements and internal forces are provided in the verification manual.
+
+## References
+
+This is an AFNOR SSLL04/89 test case. 
 
 Original source: "Guide de validation des progiciels de calcul de structures"
-publié par l'AFNOR 1990 (ISBN 2-12-486611-7). Ces tests ont été élaborés par la
-Société Française des Mécaniciens (SFM) avec pour objectif de "contribuer à
-l'amélioration de la qualité et de la fiabilité des progiciels de calcul de
-structures, outils indispensables à la conception et au dimensionnement des
-équipements mécaniques". 
+publié par l'AFNOR 1990 (ISBN 2-12-486611-7).  
 
 Data taken from: ICAB Force Exemples Exemples de calculs de statique pour ICAB
 Force. www.icab.fr
-
-Displacements and internal forces are provided in the verification manual.
 """
 
 # We begin with the standard imports:
@@ -110,12 +113,12 @@ model.add_support(m["joints"][2], freedoms.UR1)
 # Next we add the springs to the ground. The translation and rotation spring
 # constants have the same numerical value. First at joint 1.
 model.add_extension_spring_to_ground(m["joints"][1], 1, [0, 1, 0], K)
-model.add_moment_spring_to_ground(m["joints"][1], 1, [1, 0, 0], K)
-model.add_moment_spring_to_ground(m["joints"][1], 2, [0, 0, 1], K)
+model.add_torsion_spring_to_ground(m["joints"][1], 1, [1, 0, 0], K)
+model.add_torsion_spring_to_ground(m["joints"][1], 2, [0, 0, 1], K)
 # Then at joint 3.
 model.add_extension_spring_to_ground(m["joints"][2], 1, [1, 0, 0], K)
-model.add_moment_spring_to_ground(m["joints"][2], 1, [0, 1, 0], K)
-model.add_moment_spring_to_ground(m["joints"][2], 2, [0, 0, 1], K)
+model.add_torsion_spring_to_ground(m["joints"][2], 1, [0, 1, 0], K)
+model.add_torsion_spring_to_ground(m["joints"][2], 2, [0, 0, 1], K)
 
 
 # Let us look at the translation and rotation supports:

@@ -5,15 +5,19 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Natural Frequency of Mass supported by a Beam on Springs
 
-Reference: Timoshenko, S., Young, D., and Weaver, W., Vibration Problems in
-Engineering, John Wiley & Sons, 4th edition, 1974. page 11, problem 1.1-3.
+## Problem description:
 
-Problem: A simple beam is supported by two spring at the endpoints. Neglecting
+A simple beam is supported by two spring at the endpoints. Neglecting
 the distributed mass of the beam, calculate the period of free vibration of the
 beam given a concentrated mass of weight W.
 
 The answer in the book is: T = 0.533 sec., corresponding to the frequency =
 1.876 CPS.
+
+## References
+
+Reference: Timoshenko, S., Young, D., and Weaver, W., Vibration Problems in
+Engineering, John Wiley & Sons, 4th edition, 1974. page 11, problem 1.1-3.
 """
 
 from math import sqrt, pi

@@ -5,15 +5,19 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Truss with a combination of loads
 
+## Problem description:
+
+A truss with a combination of loads. The truss is supported at three joints, and
+one of those supports is inclined. This tutorial demonstrates how to use a
+combination of loads.
+
+## References
+
 Original source: "Guide de validation des progiciels de calcul de structures"
 publié par l'AFNOR 1990 (ISBN 2-12-486611-7).  
 
 Data taken from: ICAB Force Exemples Exemples de calculs de statique pour ICAB
 Force. www.icab.fr
-
-Problem: A truss with a combination of loads. The truss is supported at three
-joints, and one of those supports is inclined. This tutorial demonstrates how to
-use a combination of loads.
 """
 
 from math import pi, cos, sin
