@@ -5,11 +5,19 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Two story 3D Frame vibration
 
+## Problem description:
+
+Three-dimensional two story frame vibration. The frame members are automatically
+refined into multiple elements.
+
+The comparison is made four four modes of vibration. The mode shapes correlate
+reasonably well. The agreement of the frequencies is decent, but there are small
+discrepancies, the source of which is at this point unknown. 
+
+## References
+
 Example 5.3 from the book: MECHANICAL VIBRATIONS THEORY AND APPLICATION TO
 STRUCTURAL DYNAMICS, ThirdEdition, Michel Géradin, Daniel J. Rixen
-
-The agreement is not very close, but reasonable; the source of the discrepancy
-is at this point unknown.
     
 Original citation: Samcef. 1992 Samcef manual: Asef–Stabi–Dynam–Repdyn (M4)
 Samtech SA Liège, Belgium.

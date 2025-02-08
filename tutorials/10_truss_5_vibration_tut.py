@@ -5,7 +5,15 @@ pystran - Python package for structural analysis with trusses and beams
 
 # Statically-determinate truss vibration
 
-Reference textbook: MECHANICAL VIBRATIONS THEORY AND APPLICATION TO STRUCTURAL
+## Problem description:
+
+A simple truss is analyzed for free vibration. The truss is statically determinate.
+
+The frequencies are compared to the reference values.
+
+## References
+
+MECHANICAL VIBRATIONS THEORY AND APPLICATION TO STRUCTURAL
 DYNAMICS, ThirdEdition, by Michel Géradin and Daniel J. Rixen
 
 Example from Section 5.3.2: 2D Truss Analysis
