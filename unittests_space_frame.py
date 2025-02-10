@@ -5,7 +5,7 @@ pystran unit tests
 import unittest
 
 from math import sqrt, pi, cos, sin
-from numpy import array, dot, outer, concatenate
+from numpy import array, dot, outer, concatenate, zeros
 from numpy.linalg import norm
 from pystran import model
 from pystran import section
@@ -14,874 +14,6 @@ from pystran import freedoms
 from pystran import beam
 from pystran import truss
 from pystran import rotation
-
-
-class UnitTestsPlaneTrusses(unittest.TestCase):
-
-    def test_truss_dome(self):
-        """
-        Analysis of Geometrically
-        Nonlinear Structures
-        Second Edition
-
-        by
-        Robert Levy
-        Technion-Israel Institute of Technology,
-        Haifa, Israel
-
-        and
-        William R. Spillers
-        New Jersey Institute of Technology,
-
-
-        Space truss dome in section 2.4.2
-
-        Vertical deflection at the crown: -.20641184e+00 in (linear analysis)
-        """
-
-        m = model.create(3)
-
-        model.add_joint(m, 1, [0.0, 0.0, 0.32346000e1])
-        model.add_joint(m, 2, [0.49212500e1, 0.85239000e1, 0.24472000e1])
-        model.add_joint(m, 3, [-0.49212500e1, 0.85239000e1, 0.24472000e1])
-        model.add_joint(m, 4, [-0.98425000e1, 0.0, 0.24472000e1])
-        model.add_joint(m, 5, [-0.49212500e1, -0.85239000e1, 0.24472000e1])
-        model.add_joint(m, 6, [0.49212500e1, -0.85239000e1, 0.24472000e1])
-        model.add_joint(m, 7, [0.98425000e1, 0.0, 0.24472000e1])
-        model.add_joint(m, 8, [0.0, 0.19685000e02, 0.0])
-        model.add_joint(m, 9, [-0.17047200e02, 0.98425000e1, 0.0])
-        model.add_joint(m, 10, [-0.17047200e02, -0.98425000e1, 0.0])
-        model.add_joint(m, 11, [0.0, -0.19685000e02, 0.0])
-        model.add_joint(m, 12, [0.17047200e02, -0.98425000e1, 0.0])
-        model.add_joint(m, 13, [0.17047200e02, 0.98425000e1, 0.0])
-
-        E = 30000000.0
-        A = 0.0155
-        s1 = section.truss_section("steel", E, A)
-
-        for id, j in enumerate(
-            [
-                [1, 2],
-                [1, 3],
-                [1, 4],
-                [1, 5],
-                [1, 6],
-                [1, 7],
-                [6, 12],
-                [7, 12],
-                [7, 13],
-                [2, 13],
-                [2, 8],
-                [3, 8],
-                [3, 9],
-                [4, 9],
-                [4, 10],
-                [5, 10],
-                [5, 11],
-                [6, 11],
-                [2, 3],
-                [3, 4],
-                [4, 5],
-                [5, 6],
-                [6, 7],
-                [7, 2],
-            ]
-        ):
-            model.add_truss_member(m, id, j, s1)
-
-        for i in [8, 9, 10, 11, 12, 13]:
-            for d in range(m["dim"]):
-                model.add_support(m["joints"][i], d)
-
-        model.add_load(m["joints"][1], 2, -220.46)
-
-        model.number_dofs(m)
-        # print("Total Degrees of Freedom = ", m["ntotaldof"])
-        # print("Free Degrees of Freedom = ", m["nfreedof"])
-
-        model.solve_statics(m)
-
-        # for j in m["joints"].values():
-        #     print(j["displacements"])
-
-        if norm(m["joints"][1]["displacements"][2] - (-0.20641184e00)) > 1.0e-3 * abs(
-            -0.20641184e00
-        ):
-            raise ValueError("Displacement calculation error")
-        # else:
-        #     print("Displacement calculation OK")
-
-    def test_truss_thermal(self):
-        """
-        STAAD.Pro test example
-        """
-
-        # from math import sqrt, pi, cos, sin
-        # from numpy.linalg import norm
-        # from context import pystran
-        # from pystran import model
-        # from pystran import section
-        # from pystran import truss
-        # from pystran import geometry
-        # from pystran import freedoms
-        # from pystran import plots
-
-        # US SI(m) units
-        E = 2.0e5  # MPa
-        CTE = 1.4e-5  # 1/degC
-        A = 900  # mm^2
-        DeltaT = {1: 20.0, 2: 70.0, 3: 20.0}  # temperatures of the bars
-
-        def add_thermal_loads(m):
-            for member in m["truss_members"].values():
-                sect = member["section"]
-                E, A = sect["E"], sect["A"]
-                connectivity = member["connectivity"]
-                i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-                d = geometry.delt(i["coordinates"], j["coordinates"])
-                nd = d / norm(d)
-                N_T = E * A * CTE * DeltaT[member["mid"]]
-                # print("Thermal force: ", N_T)
-                model.add_load(i, freedoms.U1, -nd[0] * N_T)
-                model.add_load(i, freedoms.U2, -nd[1] * N_T)
-                model.add_load(j, freedoms.U1, +nd[0] * N_T)
-                model.add_load(j, freedoms.U2, +nd[1] * N_T)
-
-        m = model.create(2)
-
-        model.add_joint(m, 1, [-2121.32, 2121.32])
-        model.add_joint(m, 2, [0.0, 2121.32])
-        model.add_joint(m, 3, [2121.32, 2121.32])
-        model.add_joint(m, 4, [0.0, 0.0])
-
-        model.add_support(m["joints"][1], freedoms.TRANSLATION_DOFS)
-        model.add_support(m["joints"][2], freedoms.TRANSLATION_DOFS)
-        model.add_support(m["joints"][3], freedoms.TRANSLATION_DOFS)
-
-        s1 = section.truss_section("s1", E, A)
-
-        model.add_truss_member(m, 1, [1, 4], s1)
-        model.add_truss_member(m, 2, [2, 4], s1)
-        model.add_truss_member(m, 3, [3, 4], s1)
-
-        # ax = plots.plot_setup(m)
-        # plots.plot_joint_numbers(m)
-        # plots.plot_members(m)
-        # plots.show(m)
-
-        add_thermal_loads(m)
-
-        # plots.plot_setup(m)
-        # plots.plot_members(m)
-        # ax = plots.plot_applied_forces(m, 0.001)
-        # ax.set_title("Forces")
-        # plots.show(m)
-
-        model.number_dofs(m)
-        model.solve_statics(m)
-
-        # for j in m["joints"].values():
-        #     print(j["jid"], ": ", j["displacements"])
-
-        for member, res in zip(
-            m["truss_members"].values(), [22142.727, -31314.545, 22142.727]
-        ):
-            connectivity = member["connectivity"]
-            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-            N = truss.truss_axial_force(member, i, j)
-            # print("N = ", N)
-            N_T = E * A * CTE * DeltaT[member["mid"]]
-            # print("N - N_T = ", N - N_T)
-            if abs(N - N_T - res) > 1.0e-3 * abs(res):
-                raise ValueError("Force calculation error")
-
-        # plots.plot_setup(m)
-        # plots.plot_members(m)
-        # ax = plots.plot_deformations(m, 50.0)
-        # ax.set_title("Deformed shape (magnification factor = 50)")
-        # plots.show(m)
-
-        # plots.plot_setup(m)
-        # plots.plot_members(m)
-        # ax = plots.plot_axial_forces(m, 0.001)
-        # ax.set_title("Deformed shape (magnification factor = 50)")
-        # plots.show(m)
-
-    def test_14_truss_skew_support_tut(self):
-        """
-        pystran - Python package for structural analysis with trusses and beams
-
-        (C) 2025, Petr Krysl, pkrysl@ucsd.edu
-
-        # Truss with a combination of loads
-
-        Original source: "Guide de validation des progiciels de calcul de structures"
-        publié par l'AFNOR 1990 (ISBN 2-12-486611-7).
-
-        Data taken from: ICAB Force Exemples Exemples de calculs de statique pour ICAB
-        Force. www.icab.fr
-
-        Problem: A truss with a combination of loads. The truss is supported at three
-        joints, and one of those supports is inclined. This tutorial demonstrates how to
-        use a combination of loads.
-        """
-
-        # from math import sqrt, pi, cos, sin
-        # from numpy.linalg import norm
-        # from context import pystran
-        # from pystran import model
-        # from pystran import section
-        # from pystran import geometry
-        # from pystran import freedoms
-        # from pystran import plots
-
-        # US SI(m) units
-        E = 2.1e11  # Pa
-        CTE = 1.0e-5  # 1/degC
-        A1 = 1.41e-3  # m^2
-        A2 = 2 * 1.41e-3  # m^2
-        # The rigid support is a bar of unit length, and artificially increased the
-        # cross sectional area.
-        Ar = 1.0e5  # m^2
-        cth = cos(60 / 180 * pi)
-        sth = sin(60 / 180 * pi)
-        # Increase of temperature above reference. All bars are affected, except the one
-        # used as a rigid support.
-        DeltaT = 150.0
-
-        # Define the truss sections for two groups of bars.
-        s1 = section.truss_section("s1", E=E, A=A1, CTE=CTE)
-        s2 = section.truss_section("s2", E=E, A=A2, CTE=CTE)
-        # Define the section of the bar used as a rigid support. Note that it does not
-        # thermally expand since its coefficient of thermal expansion is set to zero.
-        sr = section.truss_section("sr", E=E, A=Ar, CTE=0.0)
-
-        # A helper function to set up the thermal loads.
-        def add_thermal_loads(m):
-            """Set up thermal loads."""
-            for member in m["truss_members"].values():
-                if member["mid"] != 20:
-                    sect = member["section"]
-                    EA = sect["E"] * sect["A"]
-                    _CTE = sect["CTE"]
-                    connectivity = member["connectivity"]
-                    _i, _j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-                    d = geometry.delt(_i["coordinates"], _j["coordinates"])
-                    nd = d / norm(d)
-                    N_T = _CTE * DeltaT * EA
-                    model.add_load(_i, freedoms.U1, -nd[0] * N_T)
-                    model.add_load(_i, freedoms.U2, -nd[1] * N_T)
-                    model.add_load(_j, freedoms.U1, +nd[0] * N_T)
-                    model.add_load(_j, freedoms.U2, +nd[1] * N_T)
-
-        # Create the model by defining joints and truss members.
-        m = model.create(2)
-
-        model.add_joint(m, 1, [0.0, 0.0])  # A
-        model.add_joint(m, 2, [0.0, 4.0])
-        model.add_joint(m, 3, [5.0, 0.0])
-        model.add_joint(m, 4, [2 * 5.0, 4.0])
-        model.add_joint(m, 5, [3 * 5.0, 0.0])
-        model.add_joint(m, 6, [4 * 5.0, 4.0])
-        model.add_joint(m, 7, [5 * 5.0, 0.0])  # D - monitored joint
-        model.add_joint(m, 8, [6 * 5.0, 4.0])
-        model.add_joint(m, 9, [7 * 5.0, 0.0])  # C
-        model.add_joint(m, 10, [4 * 5.0, -4.0])  # B
-        # The direction of the inclined support is defined by the angle 30 degrees of
-        # the plane on which the joint can slide. C' is the joint that is pinned, and C
-        # is the joint whose motion is controlled.
-        model.add_joint(m, 11, [7 * 5.0 + 1.0 * cth, 0.0 - 1.0 * sth])  # C'
-
-        # Group 1.
-        model.add_truss_member(m, 1, [1, 2], s1)
-        model.add_truss_member(m, 2, [2, 3], s1)
-        model.add_truss_member(m, 3, [3, 4], s1)
-        model.add_truss_member(m, 4, [4, 5], s1)
-        model.add_truss_member(m, 5, [5, 6], s1)
-        model.add_truss_member(m, 6, [6, 7], s1)
-        model.add_truss_member(m, 7, [7, 8], s1)
-        model.add_truss_member(m, 8, [8, 9], s1)
-
-        # Group 2.
-        model.add_truss_member(m, 11, [2, 4], s2)
-        model.add_truss_member(m, 12, [4, 6], s2)
-        model.add_truss_member(m, 13, [6, 8], s2)
-        model.add_truss_member(m, 14, [1, 3], s2)
-        model.add_truss_member(m, 15, [3, 5], s2)
-        model.add_truss_member(m, 16, [5, 10], s2)
-        model.add_truss_member(m, 17, [10, 7], s2)
-        model.add_truss_member(m, 18, [7, 9], s2)
-        model.add_truss_member(m, 19, [10, 6], s2)
-
-        model.add_truss_member(m, 20, [9, 11], sr)
-
-        # Inspect be base structure visually.
-        # ax = plots.plot_setup(m)
-        # plots.plot_joint_numbers(m)
-        # plots.plot_members(m)
-        # ax.set_title("Truss definition")
-        # plots.show(m)
-
-        # Add the supports and loads. We will do that in three load cases. The quantity
-        # we are interested in is displacement of the joint 7 (D) in the y-direction.
-
-        # Load case 1: concentrated forces, homogeneous (all components set to zero)
-        # supports.
-
-        # We begin by clearing all loads and supports.
-        model.remove_loads(m)
-        model.remove_supports(m)
-
-        # Then we add concentrated forces.
-        model.add_load(m["joints"][4], freedoms.U2, -150.0e3)
-        model.add_load(m["joints"][8], freedoms.U2, -100.0e3)
-
-        # And we add supports.
-        model.add_support(m["joints"][1], freedoms.U1)
-        model.add_support(m["joints"][1], freedoms.U2)
-        model.add_support(m["joints"][10], freedoms.U2)
-        model.add_support(m["joints"][11], freedoms.U1)
-        model.add_support(m["joints"][11], freedoms.U2)
-
-        # The solution for the load case is obtained.
-        model.number_dofs(m)
-        model.solve_statics(m)
-
-        # Store the displacement of the joint 7 (D) in the y-direction.
-        j = m["joints"][7]
-        UD1 = j["displacements"][freedoms.U2]
-        # print("Case 1: joint 7 (D) vertical displacement", ": ", j["displacements"])
-
-        # Load case 2: support settlement. In this case only the supports are changed to prescribed non zero displacements.
-
-        model.remove_loads(m)
-        model.remove_supports(m)
-
-        model.add_support(m["joints"][1], freedoms.U1)
-        model.add_support(m["joints"][1], freedoms.U2, -0.02)
-        model.add_support(m["joints"][10], freedoms.U2, -0.03)
-        model.add_support(m["joints"][11], freedoms.U1, +0.015 * cth)
-        model.add_support(m["joints"][11], freedoms.U2, -0.015 * sth)
-
-        model.number_dofs(m)
-        model.solve_statics(m)
-
-        j = m["joints"][7]
-        UD2 = j["displacements"][freedoms.U2]
-        # print("Case 2: joint 7 (D) vertical displacement", ": ", j["displacements"])
-
-        # Load case 3: thermal loads, homogeneous supports.
-
-        # All loads and supports are cleared.
-        model.remove_loads(m)
-        model.remove_supports(m)
-
-        # Homogeneous displacement supports are added.
-        model.add_support(m["joints"][1], freedoms.U1)
-        model.add_support(m["joints"][1], freedoms.U2)
-        model.add_support(m["joints"][10], freedoms.U2)
-        model.add_support(m["joints"][11], freedoms.U1)
-        model.add_support(m["joints"][11], freedoms.U2)
-
-        # Thermal loads are added.
-        add_thermal_loads(m)
-
-        model.number_dofs(m)
-        model.solve_statics(m)
-
-        j = m["joints"][7]
-        UD3 = j["displacements"][freedoms.U2]
-        # print("Case 3: joint 7 (D) vertical displacement", ": ", j["displacements"])
-
-        # print("Displacement of D for the load combination: ", UD1 + UD2 + UD3)
-        # print("Displacement of D reference: ", -0.01618)
-
-        if abs(UD1 + UD2 + UD3 + 0.01618) > 1.0e-4:
-            raise ValueError("Displacement of D incorrect.")
-
-        # Now we intend to check that the load combination will lead to the same result
-        # as all loadings applied at once.
-
-        # Load cases combined into one: all loadings are applied in a single load case.
-
-        model.remove_loads(m)
-        model.remove_supports(m)
-
-        # Non zero displacements.
-        model.add_support(m["joints"][1], freedoms.U1)
-        model.add_support(m["joints"][1], freedoms.U2, -0.02)
-        model.add_support(m["joints"][10], freedoms.U2, -0.03)
-        model.add_support(m["joints"][11], freedoms.U1, +0.015 * cth)
-        model.add_support(m["joints"][11], freedoms.U2, -0.015 * sth)
-
-        # Concentrated forces.
-        model.add_load(m["joints"][4], freedoms.U2, -150.0e3)
-        model.add_load(m["joints"][8], freedoms.U2, -100.0e3)
-
-        # Thermal loads.
-        add_thermal_loads(m)
-
-        model.number_dofs(m)
-        model.solve_statics(m)
-
-        j = m["joints"][7]
-        UD = j["displacements"][freedoms.U2]
-        # print("Combined loading: joint 7 (D) vertical displacement", ": ", j["displacements"])
-
-        # Check that the load combination will gave the same displacement as all the
-        # loadings combined.
-
-        if abs(UD - (UD1 + UD2 + UD3)) > 1.0e-9:
-            raise ValueError("Displacement of D incorrect.")
-
-        # Finally, display the deformed truss.
-        # ax = plots.plot_setup(m)
-        # plots.plot_members(m)
-        # plots.plot_joint_numbers(m)
-        # ax = plots.plot_deformations(m, 20.0)
-        # ax.set_title("Deformed shape (magnified 20 times)")
-        # plots.show(m)
-
-
-class UnitTestsPlanarFrames(unittest.TestCase):
-
-    def test_cant_w_masses(self):
-        """
-        Created on 01/19/2025
-
-        Structural Analysis: A Unified Classical and Matrix, Ghali, Amin; Neville, Adam
-        -- Edition 7, 2017, Taylor and Francis
-
-        Example 24.2 - Cantilever with added masses
-
-        The mass density of the beam itself is artificially reduced so that there are
-        only the added masses.
-        """
-
-        from math import sqrt, pi
-        from numpy import array
-        from numpy.linalg import norm
-        from pystran import model
-        from pystran import section
-        from pystran import plots
-
-        E = 2.0e11
-        G = E / (2 * (1 + 0.3))
-        rho = 7.85e3 / 10000  # artificially reduce the mass density of the beam
-
-        h = 0.12
-        b = 0.03
-        A = b * h
-        Iy = b * h**3 / 12
-        sbar = section.beam_2d_section("sbar", E=E, rho=rho, A=A, I=Iy)
-        L = 2.0
-        W = 3.0 * 9.81
-        g = 9.81
-
-        m = model.create(2)
-
-        model.add_joint(m, 1, [0.0, 3 * L])
-        model.add_joint(m, 2, [0.0, 2 * L])
-        model.add_joint(m, 3, [0.0, 1 * L])
-        model.add_joint(m, 4, [0.0, 0.0])
-
-        model.add_support(m["joints"][4], freedoms.ALL_DOFS)
-
-        model.add_beam_member(m, 1, [1, 2], sbar)
-        model.add_beam_member(m, 2, [2, 3], sbar)
-        model.add_beam_member(m, 3, [3, 4], sbar)
-
-        model.add_mass(m["joints"][1], freedoms.U1, 4 * W / g)
-        model.add_mass(m["joints"][1], freedoms.U2, 4 * W / g)
-        model.add_mass(m["joints"][2], freedoms.U1, W / g)
-        model.add_mass(m["joints"][2], freedoms.U2, W / g)
-        model.add_mass(m["joints"][3], freedoms.U1, W / g)
-        model.add_mass(m["joints"][3], freedoms.U2, W / g)
-
-        model.number_dofs(m)
-
-        model.solve_free_vibration(m)
-
-        expected = (
-            array([0.1609, 1.7604, 5.0886]) * sqrt(g * E * Iy / W / L**3) / 2 / pi
-        )
-        # print("Expected frequencies (zero mass of beam): ", expected)
-        # print("Computed frequencies: ", m["frequencies"][0:3])
-        self.assertAlmostEqual(m["frequencies"][0], expected[0], places=2)
-        self.assertAlmostEqual(m["frequencies"][1], expected[1], places=1)
-        self.assertAlmostEqual(m["frequencies"][2], expected[2], places=0)
-
-        # for mode in range(3):
-        #     plots.plot_setup(m)
-        #     plots.plot_members(m)
-        #     model.set_solution(m, mode)
-        #     ax = plots.plot_deformations(m, 50.0)
-        #     ax.set_title(f"Mode {mode}: f = {sqrt(m['eigvals'][mode])/2/pi:.3f} Hz")
-        #     plots.show(m)
-
-    def test_supp_settle(self):
-        """
-        # Example of a support-settlement problem (Section 3.8)
-
-        This example is completely solved in the book Matrix Analysis of Structures by
-        Robert E. Sennett, ISBN 978-1577661436.
-
-        Displacements and internal forces are provided in the book, and we can check our
-        solution against these reference values.
-
-
-        Important note: Our orientation of the local coordinate system is such that web
-        of the H-beams is parallel to z axis! This is different from the orientation in
-        the book, where the web is parallel to the y axis.
-        """
-
-        # US customary units, inches, pounds, seconds are assumed.
-
-        # The book gives the product of the modulus of elasticity and the moment of inertia as 2.9e6.
-        E = 2.9e6
-        I = 1.0
-        A = 1.0  # cross-sectional area does not influence the results
-        L = 10 * 12  # span in inchesc
-
-        m = model.create(2)
-
-        model.add_joint(m, 1, [0.0, 0.0])
-        model.add_joint(m, 2, [L, 0.0])
-        model.add_joint(m, 3, [2 * L, 0.0])
-
-        # The left hand side is clamped, the other joints are simply supported.
-        model.add_support(m["joints"][1], freedoms.ALL_DOFS)
-        # The middle support moves down by 0.25 inches.
-        model.add_support(m["joints"][2], freedoms.U2, -0.25)
-        model.add_support(m["joints"][3], freedoms.U2)
-
-        # Define the beam members.
-        s1 = section.beam_2d_section("s1", E, A, I)
-        model.add_beam_member(m, 1, [1, 2], s1)
-        model.add_beam_member(m, 2, [2, 3], s1)
-
-        model.number_dofs(m)
-
-        model.solve_statics(m)
-
-        member = m["beam_members"][1]
-        connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        f = beam.beam_2d_end_forces(member, i, j)
-        # print("Member 1 end forces: ", f)
-        if abs(f["Ni"]) > 1e-3:
-            raise ValueError("Incorrect force")
-        if abs(f["Qzi"] / 3.9558 - 1) > 1e-3:
-            raise ValueError("Incorrect force")
-        if abs(f["Myi"] / -258.92857 - 1) > 1e-3:
-            raise ValueError("Incorrect force")
-
-        member = m["beam_members"][2]
-        connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        f = beam.beam_2d_end_forces(member, i, j)
-        # print("Member 2 end forces: ", f)
-        if abs(f["Ni"]) > 1e-3:
-            raise ValueError("Incorrect force")
-        if abs(f["Qzi"] / -1.7981 - 1) > 1e-3:
-            raise ValueError("Incorrect force")
-        if abs(f["Myi"] / 215.7738 - 1) > 1e-3:
-            raise ValueError("Incorrect force")
-
-        # plots.plot_setup(m, set_limits=True)
-        # plots.plot_members(m)
-        # plots.plot_member_numbers(m)
-        # plots.plot_joint_numbers(m)
-        # plots.plot_beam_orientation(m, 10.0)
-        # plots.show(m)
-
-        # plots.plot_setup(m)
-        # plots.plot_members(m)
-        # plots.plot_deformations(m, 100.0)
-        # plots.show(m)
-
-        # plots.plot_setup(m)
-        # plots.plot_members(m)
-        # ax = plots.plot_bending_moments(m, 0.5)
-        # ax.set_title("Moments")
-        # plots.show(m)
-
-        # plots.plot_setup(m)
-        # plots.plot_members(m)
-        # ax = plots.plot_shear_forces(m, 5.5)
-        # ax.set_title("Shear forces")
-        # plots.show(m)
-
-    def test_hinge_frame(self):
-        """
-        # Example of a support-settlement problem (Section 7.4)
-
-        This example is completely solved in the book Matrix Analysis of Structures by
-        Robert E. Sennett, ISBN 978-1577661436.
-
-        Displacements and internal forces are provided in the book, and we can check our
-        solution against these reference values.
-        """
-
-        # US customary units, inches, pounds, seconds are assumed.
-
-        # The book gives the product of the modulus of elasticity and the moment of inertia as 2.9e6.
-        E = 29e6
-        I = 100.0
-        A = 10.0  # cross-sectional area does not influence the results
-        L = 10 * 12  # span in inches
-
-        m = model.create(2)
-
-        model.add_joint(m, 1, [0.0, 0.0])
-        model.add_joint(m, 2, [0, L])
-        model.add_joint(m, 5, [0, L])
-        model.add_joint(m, 3, [L, L])
-        model.add_joint(m, 4, [L, 0.0])
-
-        # The left hand side is clamped, the other joints are simply supported.
-        model.add_support(m["joints"][1], freedoms.TRANSLATION_DOFS)
-        model.add_support(m["joints"][4], freedoms.TRANSLATION_DOFS)
-
-        # Define the beam members.
-        s1 = section.beam_2d_section("s1", E, A, I)
-        model.add_beam_member(m, 1, [1, 2], s1)
-        model.add_beam_member(m, 2, [5, 3], s1)
-        model.add_beam_member(m, 3, [4, 3], s1)
-
-        model.add_links(m, [2, 5], freedoms.U1)
-        model.add_links(m, [2, 5], freedoms.U2)
-
-        model.add_load(m["joints"][2], freedoms.U1, 1000.0)
-
-        model.number_dofs(m)
-
-        model.solve_statics(m)
-
-        # for jid in [2, 3]:
-        #     j = m["joints"][jid]
-        #     print(jid, j["displacements"])
-
-        d2 = m["joints"][2]["displacements"]
-        d5 = m["joints"][5]["displacements"]
-        if norm(d2[0:2] - d5[0:2]) > 1e-3:
-            raise ValueError("Incorrect displacement")
-
-        if abs(d2[0] - 0.3985) / 0.3985 > 1e-3:
-            raise ValueError("Incorrect displacement")
-        if abs(d2[1] - 0.00041) / 0.00041 > 1e-2:
-            raise ValueError("Incorrect displacement")
-
-        # member = m["beam_members"][1]
-        # connectivity = member["connectivity"]
-        # i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        # f = beam.beam_2d_end_forces(member, i, j)
-        # print("Member 1 end forces: ", f)
-        # if abs(f["Ni"]) > 1e-3:
-        #     raise ValueError("Incorrect force")
-        # if abs(f["Qzi"] / 3.9558 - 1) > 1e-3:
-        #     raise ValueError("Incorrect force")
-        # if abs(f["Myi"] / -258.92857 - 1) > 1e-3:
-        #     raise ValueError("Incorrect force")
-
-        # member = m["beam_members"][2]
-        # connectivity = member["connectivity"]
-        # i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        # f = beam.beam_2d_end_forces(member, i, j)
-        # print("Member 2 end forces: ", f)
-        # if abs(f["Ni"]) > 1e-3:
-        #     raise ValueError("Incorrect force")
-        # if abs(f["Qzi"] / -1.7981 - 1) > 1e-3:
-        #     raise ValueError("Incorrect force")
-        # if abs(f["Myi"] / 215.7738 - 1) > 1e-3:
-        #     raise ValueError("Incorrect force")
-
-        # plots.plot_setup(m, set_limits=True)
-        # plots.plot_members(m)
-        # plots.plot_member_numbers(m)
-        # plots.plot_joint_numbers(m)
-        # plots.plot_beam_orientation(m, 10.0)
-        # plots.show(m)
-
-        # plots.plot_setup(m)
-        # plots.plot_members(m)
-        # plots.plot_deformations(m, 100.0)
-        # plots.show(m)
-
-        # plots.plot_setup(m)
-        # plots.plot_members(m)
-        # ax = plots.plot_bending_moments(m, 0.0005)
-        # ax.set_title("Moments")
-        # plots.show(m)
-
-        # plots.plot_setup(m)
-        # plots.plot_members(m)
-        # ax = plots.plot_shear_forces(m, 0.01)
-        # ax.set_title("Shear forces")
-        # plots.show(m)
-
-    def test_SDLX_01_89_vibration_tut(self):
-        """
-        pystran - Python package for structural analysis with trusses and beams
-
-        (C) 2025, Petr Krysl, pkrysl@ucsd.edu
-
-        # Two story planar frame vibration
-
-        SCIA Engineer 24.0.1020 test case SDLX 01/89
-        """
-
-        # from context import pystran
-        # from pystran import model
-        # from pystran import section
-        # from pystran import plots
-
-        # The material is steel, SI units (m).
-        E = 2.1e11
-        rho = 7.85e3
-
-        H = 29.0e-3  # millimeters to meters
-        B = 4.8e-3
-        A = H * B
-        I = H * B**3 / 12
-
-        m = model.create(2)
-
-        model.add_joint(m, 1, [-0.3, 0.0])
-        model.add_joint(m, 2, [-0.3, 0.810])
-        model.add_joint(m, 3, [0.3, 0.0])
-        model.add_joint(m, 4, [0.3, 0.810])
-        model.add_joint(m, 5, [-0.3, 0.360])
-        model.add_joint(m, 6, [0.3, 0.360])
-
-        for jid in [1, 3]:
-            model.add_support(m["joints"][jid], freedoms.ALL_DOFS)
-
-        s1 = section.beam_2d_section("section_1", E, A, I, rho)
-
-        model.add_beam_member(m, 1, [5, 1], s1)
-        model.add_beam_member(m, 2, [2, 5], s1)
-        model.add_beam_member(m, 3, [2, 4], s1)
-        model.add_beam_member(m, 4, [6, 4], s1)
-        model.add_beam_member(m, 5, [6, 3], s1)
-        model.add_beam_member(m, 6, [6, 5], s1)
-
-        # plots.plot_setup(m, set_limits=True)
-        # plots.plot_members(m)
-        # plots.plot_member_numbers(m)
-        # plots.plot_beam_orientation(m, 0.05)
-        # ax = plots.plot_joint_numbers(m)
-        # ax.set_title("Structure before refinement")
-        # plots.show(m)
-
-        # All members will now be refined into eight finite elements. Without the
-        # refinement, the reference solutions cannot be reproduced: there simply
-        # wouldn't be enough degrees of freedom. Unfortunately the reference publication
-        # does not mention the numbers of finite elements used per member.
-        nref = 8
-        for i in range(6):
-            model.refine_member(m, i + 1, nref)
-
-        # plots.plot_setup(m, set_limits=True)
-        # plots.plot_members(m)
-        # ax = plots.plot_joint_numbers(m)
-        # ax.set_title("Structure after refinement")
-        # plots.show(m)
-
-        # Solve a free vibration analysis problem.
-        model.number_dofs(m)
-        model.solve_free_vibration(m)
-
-        # Compare with the reference frequencies.
-        reffs = [8.75, 29.34, 43.71, 56.12, 95.86, 102.37, 146.64, 174.39, 178.36]
-        for mode, reff in enumerate(reffs):
-            # print(f'Mode {mode}: {m["frequencies"][mode]} vs {reff} Hz')
-            if abs((m["frequencies"][mode] - reff) / reff) > 1e-2:
-                raise ValueError("Incorrect frequency")
-
-        # Show the first four modes.
-        # for mode in range(0, 4):
-        #     print(f"Mode {mode}: ", m["frequencies"][mode])
-        #     ax = plots.plot_setup(m)
-        #     plots.plot_members(m)
-        #     model.set_solution(m, mode)
-        #     plots.plot_deformations(m, 0.2)
-        #     ax.set_title(f"Mode {mode}, frequency = {m['frequencies'][mode]:.2f} Hz")
-        #     plots.show(m)
-
-    def test_12_timo_beam_on_springs_tut(self):
-        """
-        pystran - Python package for structural analysis with trusses and beams
-
-        (C) 2025, Petr Krysl, pkrysl@ucsd.edu
-
-        # Natural Frequency of Mass supported by a Beam on Springs
-
-        Reference: Timoshenko, S., Young, D., and Weaver, W., Vibration Problems in
-        Engineering, John Wiley & Sons, 4th edition, 1974. page 11, problem 1.1-3.
-
-        Problem: A simple beam is supported by two spring at the endpoints. Neglecting
-        the distributed mass of the beam, calculate the period of free vibration of the
-        beam given a concentrated mass of weight W.
-
-        The answer in the book is: T = 0.533 sec., corresponding to the frequency =
-        1.876 CPS.
-        """
-
-        # from math import sqrt, pi
-        # from context import pystran
-        # from pystran import model
-        # from pystran import section
-        # from pystran import plots
-
-        # US customary units, converted to inches, lbf, and lbm
-        da = 12 * 7  # 7 ft converted to inches
-        db = 12 * 3  # 3 ft converted to inches
-        K = 300.0  # 300 lbf/in
-        W = 1000.0  # lbf
-        M = W / (12 * 32.174)  # mass in lbm
-        E = 3e7  # 30e6 psi
-        A = 1.0
-        I = 1.0
-        rho = 1e-12  # artificially reduce the mass density of the beam
-
-        m = model.create(2)
-
-        model.add_joint(m, 1, [0.0, 0.0])
-        model.add_joint(m, 2, [da, 0.0])
-        model.add_joint(m, 3, [da + db, 0.0])
-        model.add_support(m["joints"][1], freedoms.U1)
-        model.add_support(m["joints"][3], freedoms.U1)
-
-        s2 = section.beam_2d_section("s2", E, A, I, rho)
-        model.add_beam_member(m, 1, [1, 2], s2)
-        model.add_beam_member(m, 2, [2, 3], s2)
-
-        model.add_mass(m["joints"][2], freedoms.U1, M)
-        model.add_mass(m["joints"][2], freedoms.U2, M)
-
-        # In the vertical direction, the spring stiffness is K. A spring is added at
-        # either end of the beam.
-        model.add_extension_spring_to_ground(m["joints"][1], 1, [0, 1, 0], K)
-        model.add_extension_spring_to_ground(m["joints"][3], 2, [0, 1, 0], K)
-
-        model.number_dofs(m)
-        model.solve_free_vibration(m)
-
-        # The expected frequency is 1.876 CPS, hence the vibration period is 0.533 sec.
-        self.assertAlmostEqual(m["frequencies"][0], 1.876, places=3)
-        # for mode in range(1):
-        #     plots.plot_setup(m)
-        #     plots.plot_members(m)
-        #     model.set_solution(m, m["eigvecs"][:, mode])
-        #     ax = plots.plot_deformations(m, 50.0)
-        #     print(
-        #         f"Mode {mode}: f = {sqrt(m['eigvals'][mode])/2/pi:.6f} Hz, T = {2*pi/sqrt(m['eigvals'][mode]):.6f} sec"
-        #     )
-        #     ax.set_title(
-        #         f"Mode {mode}: f = {sqrt(m['eigvals'][mode])/2/pi:.3f} Hz, T = {2*pi/sqrt(m['eigvals'][mode]):.3f} sec"
-        #     )
-        #     plots.show(m)
 
 
 class UnitTestsSpaceFrames(unittest.TestCase):
@@ -2015,6 +1147,134 @@ class UnitTestsSpaceFrames(unittest.TestCase):
             raise ValueError("Member 1, joint i, internal moment error")
         if abs(f["Mzi"] - -3124.6) > 1e-1:
             raise ValueError("Member 1, joint i, internal moment error")
+
+    def test_alt_stiffness_3d(self):
+        """
+        In this example it is demonstrated that the stiffness matrix computed by the
+        package results in the same matrix that is assembled from a textbook formula
+        that produces the stiffness matrix of in the local beam coordinate system, and
+        then transforms it using a 12x12 transformation matrix into the global
+        coordinates.
+        """
+
+        # from numpy import zeros, dot
+        # from numpy.linalg import norm
+        # from context import pystran
+        # from pystran import model
+        # from pystran import section
+
+        m = model.create(3)
+
+        # General orientation
+        model.add_joint(m, 1, [-1.0, 2.0, 3.0])
+        # model.add_joint(m, 2, [10.0, 7.0, 8.0])
+        model.add_joint(m, 2, [-10.0, 7.0, -8.0])
+        # Default orientation
+        # model.add_joint(m, 1, [0.0, 0.0, 0.0])
+        # model.add_joint(m, 2, [10.0, 0.0, 0.0])
+        h = norm(m["joints"][1]["coordinates"] - m["joints"][2]["coordinates"])
+
+        E = 2.0e6
+        G = E / (2 * (1 + 0.3))
+        H = 0.13
+        B = 0.5
+        A = H * B
+        Iy = H * B**3 / 12
+        Iz = H**3 * B / 12
+        Ix = Iy + Iz
+        J = Ix
+        xz_vector = [0, 0, 1]
+        s1 = section.beam_3d_section(
+            "sect_1", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
+        )
+        model.add_beam_member(m, 1, [1, 2], s1)
+
+        model.number_dofs(m)
+
+        nt, nf = m["ntotaldof"], m["nfreedof"]
+        # Assemble global stiffness matrix
+        K = zeros((nt, nt))
+        for member in m["beam_members"].values():
+            connectivity = member["connectivity"]
+            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            beam.assemble_stiffness(K, member, i, j)
+
+        K1 = K.copy()
+
+        K = zeros((nt, nt))
+        # Axial force
+        K[0, 0] = E * A / h
+        K[6, 6] = E * A / h
+        K[0, 6] = -E * A / h
+        K[6, 0] = -E * A / h
+        # Torsion
+        K[3, 3] = G * J / h
+        K[9, 9] = G * J / h
+        K[3, 9] = -G * J / h
+        K[9, 3] = -G * J / h
+        # Bending in xy plane
+        K[1, 1] = 12 * E * Iz / h**3
+        K[7, 7] = 12 * E * Iz / h**3
+        K[1, 7] = -12 * E * Iz / h**3
+        K[7, 1] = -12 * E * Iz / h**3
+        K[1, 5] = 6 * E * Iz / h**2
+        K[5, 1] = 6 * E * Iz / h**2
+        K[1, 11] = 6 * E * Iz / h**2
+        K[11, 1] = 6 * E * Iz / h**2
+        K[5, 5] = 4 * E * Iz / h
+        K[11, 11] = 4 * E * Iz / h
+        K[5, 11] = 2 * E * Iz / h
+        K[11, 5] = 2 * E * Iz / h
+        K[5, 7] = -6 * E * Iz / h**2
+        K[7, 5] = -6 * E * Iz / h**2
+        K[11, 7] = -6 * E * Iz / h**2
+        K[7, 11] = -6 * E * Iz / h**2
+        # Bending in xz plane
+        K[2, 2] = 12 * E * Iy / h**3
+        K[8, 8] = 12 * E * Iy / h**3
+        K[2, 8] = -12 * E * Iy / h**3
+        K[8, 2] = -12 * E * Iy / h**3
+        K[2, 4] = -6 * E * Iy / h**2
+        K[4, 2] = -6 * E * Iy / h**2
+        K[2, 10] = -6 * E * Iy / h**2
+        K[10, 2] = -6 * E * Iy / h**2
+        K[4, 4] = 4 * E * Iy / h
+        K[10, 10] = 4 * E * Iy / h
+        K[4, 10] = 2 * E * Iy / h
+        K[10, 4] = 2 * E * Iy / h
+        K[4, 8] = 6 * E * Iy / h**2
+        K[8, 4] = 6 * E * Iy / h**2
+        K[10, 8] = 6 * E * Iy / h**2
+        K[8, 10] = 6 * E * Iy / h**2
+
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, xz_vector)
+
+        # Transformation matrix
+        T = zeros(K.shape)
+        T[0:3, 0] = e_x
+        T[0:3, 1] = e_y
+        T[0:3, 2] = e_z
+        T[3:6, 3:6] = T[0:3, 0:3]
+        T[6:9, 6:9] = T[0:3, 0:3]
+        T[9:12, 9:12] = T[0:3, 0:3]
+
+        # Transform stiffness matrix from default orientation to current orientation
+        K = dot(T, dot(K, T.T))
+
+        for r in range(12):
+            for c in range(12):
+                if abs(K[r, c] - K1[r, c]) > 1e-12 * (abs(K1[r, c]) + abs(K[r, c])):
+                    print(r, c, K[r, c], K1[r, c])
+                    raise ValueError("Stiffness matrix is not correct")
+        # print("Stiffness matrix is correct")
+
+        # plots.plot_setup(m)
+        # plots.plot_members(m)
+        # # plots.plot_deformations(m, 10.0)
+        # # ax = plots.plot_shear_forces(m, scale=0.50e-3)
+        # # ax.set_title('Shear forces')
+        # plots.show(m)
 
 
 def main():
