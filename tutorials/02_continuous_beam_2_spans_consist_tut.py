@@ -102,7 +102,7 @@ print("Reactions = ", R)
 # geometry with the orientation of the local coordinate system on each beam.
 plots.plot_setup(m)
 plots.plot_members(m)
-ax = plots.plot_beam_orientation(m, 1.0)
+ax = plots.plot_member_orientation(m, 1.0)
 ax.set_title("Local coordinate systems (red -- local x, blue -- local z)")
 plots.show(m)
 

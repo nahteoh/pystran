@@ -23,6 +23,7 @@ Structures Second Edition by Robert Levy and William R. Spillers.
 from context import pystran
 
 # The following imports are necessary for the example to work.
+import numpy
 from numpy.linalg import norm
 from numpy import concatenate, dot
 from pystran import model
@@ -62,6 +63,16 @@ for i in [2, 3, 4]:
     for d in range(2):
         model.add_support(m["joints"][i], d)
 
+# At this point we can visualize the structure. We show all members, member
+# orientations, and the joint numbers.
+ax = plots.plot_setup(m)
+plots.plot_members(m)
+plots.plot_member_orientation(m)
+plots.plot_joint_numbers(m)
+plots.plot_translation_supports(m)
+ax.set_title("Structure")
+plots.show(m)
+
 # At this point we can visualize the supports. The translation supports are
 # shown with arrow heads.
 ax = plots.plot_setup(m)
@@ -91,6 +102,7 @@ print("Free Degrees of Freedom = ", m["nfreedof"])
 # The model is solved.  This means that the displacements are calculated  from
 # the balance of the joints.
 model.solve_statics(m)
+
 
 # The displacements at all the joints are printed.
 for j in m["joints"].values():

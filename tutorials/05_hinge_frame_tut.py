@@ -74,7 +74,7 @@ plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_member_numbers(m)
 plots.plot_joint_numbers(m)
-plots.plot_beam_orientation(m, 10.0)
+plots.plot_member_orientation(m, 10.0)
 plots.show(m)
 
 # Solve the discrete model.

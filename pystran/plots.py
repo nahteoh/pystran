@@ -594,65 +594,74 @@ def plot_torsion_moments(m, scale=1.0):
     return ax
 
 
-def plot_beam_orientation(m, scale=1.0):
+def plot_member_orientation(m, scale=1.0):
     """
-    Plot the beam orientations as cartesian triplets.
+    Plot the member orientations as cartesian triplets.
+
+    - `m` = model dictionary,
+    - `scale` = scale factor for the member orientation vectors.
+
+    The vectors are shown as red (x), green (y), and blue (z) lines that
+    represent the basis vectors of a local cartesian cordon system or each
+    member.
     """
     ax = plt.gca()
-    for member in m["beam_members"].values():
-        sect = member["section"]
-        connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        ci, cj = i["coordinates"], j["coordinates"]
-        xm = (ci + cj) / 2.0
-        if m["dim"] == 3:
-            e_x, e_y, e_z, _ = member_3d_geometry(i, j, sect["xz_vector"])
-            xs = zeros(2)
-            ys = zeros(2)
-            zs = zeros(2)
-            xs[0] = xm[0]
-            ys[0] = xm[1]
-            zs[0] = xm[2]
-            xs[1] = xs[0] + scale * e_x[0]
-            ys[1] = ys[0] + scale * e_x[1]
-            zs[1] = zs[0] + scale * e_x[2]
-            ax.plot(xs, ys, zs, "r-", lw=3)
-            xs = zeros(2)
-            ys = zeros(2)
-            zs = zeros(2)
-            xs[0] = xm[0]
-            ys[0] = xm[1]
-            zs[0] = xm[2]
-            xs[1] = xs[0] + scale * e_y[0]
-            ys[1] = ys[0] + scale * e_y[1]
-            zs[1] = zs[0] + scale * e_y[2]
-            ax.plot(xs, ys, zs, "g-", lw=3)
-            xs = zeros(2)
-            ys = zeros(2)
-            zs = zeros(2)
-            xs[0] = xm[0]
-            ys[0] = xm[1]
-            zs[0] = xm[2]
-            xs[1] = xs[0] + scale * e_z[0]
-            ys[1] = ys[0] + scale * e_z[1]
-            zs[1] = zs[0] + scale * e_z[2]
-            ax.plot(xs, ys, zs, "b-", lw=3)
-        else:
-            e_x, e_z, _ = member_2d_geometry(i, j)
-            xs = zeros(2)
-            ys = zeros(2)
-            xs[0] = xm[0]
-            ys[0] = xm[1]
-            xs[1] = xs[0] + scale * e_x[0]
-            ys[1] = ys[0] + scale * e_x[1]
-            ax.plot(xs, ys, "r-", lw=3)
-            xs = zeros(2)
-            ys = zeros(2)
-            xs[0] = xm[0]
-            ys[0] = xm[1]
-            xs[1] = xs[0] + scale * e_z[0]
-            ys[1] = ys[0] + scale * e_z[1]
-            ax.plot(xs, ys, "b-", lw=3)
+    member_values = (m["truss_members"].values(), m["beam_members"].values())
+    for v in member_values:
+        for member in v:
+            sect = member["section"]
+            connectivity = member["connectivity"]
+            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            ci, cj = i["coordinates"], j["coordinates"]
+            xm = (ci + cj) / 2.0
+            if m["dim"] == 3:
+                e_x, e_y, e_z, _ = member_3d_geometry(i, j, sect["xz_vector"])
+                xs = zeros(2)
+                ys = zeros(2)
+                zs = zeros(2)
+                xs[0] = xm[0]
+                ys[0] = xm[1]
+                zs[0] = xm[2]
+                xs[1] = xs[0] + scale * e_x[0]
+                ys[1] = ys[0] + scale * e_x[1]
+                zs[1] = zs[0] + scale * e_x[2]
+                ax.plot(xs, ys, zs, "r-", lw=3)
+                xs = zeros(2)
+                ys = zeros(2)
+                zs = zeros(2)
+                xs[0] = xm[0]
+                ys[0] = xm[1]
+                zs[0] = xm[2]
+                xs[1] = xs[0] + scale * e_y[0]
+                ys[1] = ys[0] + scale * e_y[1]
+                zs[1] = zs[0] + scale * e_y[2]
+                ax.plot(xs, ys, zs, "g-", lw=3)
+                xs = zeros(2)
+                ys = zeros(2)
+                zs = zeros(2)
+                xs[0] = xm[0]
+                ys[0] = xm[1]
+                zs[0] = xm[2]
+                xs[1] = xs[0] + scale * e_z[0]
+                ys[1] = ys[0] + scale * e_z[1]
+                zs[1] = zs[0] + scale * e_z[2]
+                ax.plot(xs, ys, zs, "b-", lw=3)
+            else:
+                e_x, e_z, _ = member_2d_geometry(i, j)
+                xs = zeros(2)
+                ys = zeros(2)
+                xs[0] = xm[0]
+                ys[0] = xm[1]
+                xs[1] = xs[0] + scale * e_x[0]
+                ys[1] = ys[0] + scale * e_x[1]
+                ax.plot(xs, ys, "r-", lw=3)
+                xs = zeros(2)
+                ys = zeros(2)
+                xs[0] = xm[0]
+                ys[0] = xm[1]
+                xs[1] = xs[0] + scale * e_z[0]
+                ys[1] = ys[0] + scale * e_z[1]
+                ax.plot(xs, ys, "b-", lw=3)
     return ax
 
 

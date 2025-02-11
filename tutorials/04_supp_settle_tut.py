@@ -104,7 +104,7 @@ plots.plot_setup(m, set_limits=True)
 plots.plot_members(m)
 plots.plot_member_numbers(m)
 plots.plot_joint_numbers(m)
-ax = plots.plot_beam_orientation(m, 10.0)
+ax = plots.plot_member_orientation(m, 10.0)
 ax.set_title("Continuous beam geometry")
 plots.show(m)
 
