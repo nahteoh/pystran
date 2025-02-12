@@ -271,7 +271,7 @@ def plot_deformations(m, scale=1.0):
     return ax
 
 
-def _plot_member_numbers_2d(m):
+def _plot_member_ids_2d(m):
     ax = plt.gca()
     for jid in m["truss_members"].keys():
         member = m["truss_members"][jid]
@@ -290,7 +290,7 @@ def _plot_member_numbers_2d(m):
     return ax
 
 
-def _plot_member_numbers_3d(m):
+def _plot_member_ids_3d(m):
     ax = plt.gca()
     for jid in m["truss_members"].keys():
         member = m["truss_members"][jid]
@@ -309,18 +309,18 @@ def _plot_member_numbers_3d(m):
     return ax
 
 
-def plot_member_numbers(m):
+def plot_member_ids(m):
     """
     Plot the member numbers.
     """
     if m["dim"] == 3:
-        ax = _plot_member_numbers_3d(m)
+        ax = _plot_member_ids_3d(m)
     else:
-        ax = _plot_member_numbers_2d(m)
+        ax = _plot_member_ids_2d(m)
     return ax
 
 
-def plot_joint_numbers(m):
+def plot_joint_ids(m):
     """
     Plot the joint numbers.
     """

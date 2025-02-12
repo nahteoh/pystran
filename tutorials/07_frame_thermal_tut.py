@@ -54,14 +54,14 @@ model.add_support(m["joints"][3], freedoms.ALL_DOFS)
 # At this point we can visualize the supports. The translation supports are
 # shown with arrow heads.
 ax = plots.plot_setup(m)
-plots.plot_joint_numbers(m)
+plots.plot_joint_ids(m)
 plots.plot_translation_supports(m)
 ax.set_title("Translation supports")
 plots.show(m)
 
 # The rotation supports are shown next.
 ax = plots.plot_setup(m)
-plots.plot_joint_numbers(m)
+plots.plot_joint_ids(m)
 plots.plot_rotation_supports(m, radius=17)
 ax.set_title("Rotation supports")
 plots.show(m)
@@ -75,9 +75,9 @@ model.add_beam_member(m, 2, [3, 1], sect_12)
 
 # This plot shows the orientations of the local coordinate systems of the beams.
 ax = plots.plot_setup(m)
-plots.plot_joint_numbers(m)
+plots.plot_joint_ids(m)
 plots.plot_members(m)
-plots.plot_member_numbers(m)
+plots.plot_member_ids(m)
 plots.plot_member_orientation(m, 20)
 ax.set_title("Frame geometry (local coordinate systems)")
 plots.show(m)

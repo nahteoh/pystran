@@ -102,8 +102,8 @@ if abs(f["Myi"] / 215.7738 - 1) > 1e-3:
 # are displayed in the next two graphs.
 plots.plot_setup(m, set_limits=True)
 plots.plot_members(m)
-plots.plot_member_numbers(m)
-plots.plot_joint_numbers(m)
+plots.plot_member_ids(m)
+plots.plot_joint_ids(m)
 ax = plots.plot_member_orientation(m, 10.0)
 ax.set_title("Continuous beam geometry")
 plots.show(m)

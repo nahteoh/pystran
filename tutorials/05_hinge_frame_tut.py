@@ -72,8 +72,8 @@ model.add_load(m["joints"][2], freedoms.U1, 1000.0)
 # coordinate systems.
 plots.plot_setup(m)
 plots.plot_members(m)
-plots.plot_member_numbers(m)
-plots.plot_joint_numbers(m)
+plots.plot_member_ids(m)
+plots.plot_joint_ids(m)
 plots.plot_member_orientation(m, 10.0)
 plots.show(m)
 

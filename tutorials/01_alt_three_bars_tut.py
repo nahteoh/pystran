@@ -7,7 +7,8 @@ pystran - Python package for structural analysis with trusses and beams
 
 ## Problem description:
 
-Structure consisting of three truss members. 
+Structure consisting of three truss members. This tutorial mirrors 01_three_bars_tut.py
+but uses the alternative (mixed) identifiers for creating the model. 
 
 Displacements and internal forces are provided in the verification manual.
 
@@ -38,11 +39,14 @@ from pystran import plots
 m = model.create(2)
 
 # There are four joints. Note that the coordinates are supplied without physical
-# units. Everything needs to be provided in consistent units.
-model.add_joint(m, 1, [10.0, 20.0])
-model.add_joint(m, 2, [0.0, 20.0])
-model.add_joint(m, 3, [0.0, 10.0])
-model.add_joint(m, 4, [+10.0, 0.0])
+# units. Everything needs to be provided in consistent units. Note that the
+# joints are identified by names instead of by numbers, and the coordinates are
+# supplied either as lists of coordinates (i.e. in square brackets) or as tuples
+# (i.e. in round brackets). Also, joint "A" is assigned to a variable.
+jA = model.add_joint(m, "A", [10.0, 20.0])
+model.add_joint(m, "B", [0.0, 20.0])
+model.add_joint(m, "C", [0.0, 10.0])
+model.add_joint(m, "D", (+10.0, 0.0))
 
 # For instance, the material parameters and the cross sectional area of the bars.
 E = 30000000.0
@@ -52,14 +56,16 @@ A = 0.65700000
 s1 = section.truss_section("steel", E, A)
 
 # The truss members are added to the model. The connectivity is provided as
-# lists of [start, end] joints. The section is also provided.
-model.add_truss_member(m, 1, [1, 2], s1)
-model.add_truss_member(m, 2, [1, 3], s1)
-model.add_truss_member(m, 3, [1, 4], s1)
+# lists of [start, end] joints. The section is also provided. Note that one
+# member is called "m1" and the other two are numbered. Also, the connectivity
+# is supplied in one case as tuple, in the other two cases as lists.
+model.add_truss_member(m, "m1", ["A", "B"], s1)
+model.add_truss_member(m, 2, ("A", "C"), s1)
+model.add_truss_member(m, 3, ["A", "D"], s1)
 
 # The supports are added to the model. The pinned supports are added to the
 # joints 2, 3, and 4, by constraining both x and z displacements to zero.
-for i in [2, 3, 4]:
+for i in ["B", "C", "D"]:
     for d in range(2):
         model.add_support(m["joints"][i], d)
 
@@ -82,8 +88,8 @@ ax.set_title("Translation supports")
 plots.show(m)
 
 # Loads are added to the joint 1. The loads are provided as [x, z] components.
-model.add_load(m["joints"][1], 0, -10000.0)
-model.add_load(m["joints"][1], 1, -10000.0 / 2.0)
+model.add_load(jA, 0, -10000.0)
+model.add_load(jA, 1, -10000.0 / 2.0)
 
 # The model is shown graphically, members are displayed with the member numbers attached.
 # The applied forces are also shown.
@@ -109,7 +115,7 @@ for j in m["joints"].values():
     print(j["displacements"])
 
 # The displacements are compared to the reference values from the book.
-if norm(m["joints"][1]["displacements"] - [-0.0033325938, -0.001591621]) > 1.0e-3:
+if norm(jA["displacements"] - [-0.0033325938, -0.001591621]) > 1.0e-3:
     raise ValueError("Displacement calculation error")
 print("Displacement calculation OK")
 
@@ -148,6 +154,7 @@ plots.show(m)
 # internal (axial) forces.
 plots.plot_setup(m)
 plots.plot_members(m)
+plots.plot_member_ids(m)
 ax = plots.plot_axial_forces(m, 1 / 3000.0)
 ax.set_title("Axial Forces")
 plots.show(m)

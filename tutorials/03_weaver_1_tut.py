@@ -76,7 +76,7 @@ model.add_support(m["joints"][4], freedoms.ALL_DOFS)
 # At this point we can visualize the supports. The translation supports are
 # shown with arrow heads.
 ax = plots.plot_setup(m)
-plots.plot_joint_numbers(m)
+plots.plot_joint_ids(m)
 plots.plot_translation_supports(m)
 ax.view_init(elev=137, azim=-67, roll=30)
 ax.set_title("Translation supports")
@@ -84,7 +84,7 @@ plots.show(m)
 
 # The rotation supports are shown next.
 ax = plots.plot_setup(m)
-plots.plot_joint_numbers(m)
+plots.plot_joint_ids(m)
 plots.plot_rotation_supports(m)
 ax.view_init(elev=137, azim=-67, roll=30)
 ax.set_title("Rotation supports")
@@ -124,8 +124,8 @@ model.add_beam_member(m, 3, [2, 4], sect_2)
 
 ax = plots.plot_setup(m)
 plots.plot_members(m)
-plots.plot_member_numbers(m)
-plots.plot_joint_numbers(m)
+plots.plot_member_ids(m)
+plots.plot_joint_ids(m)
 plots.plot_member_orientation(m, 20)
 ax.view_init(elev=137, azim=-67, roll=30)
 ax.set_title("Frame geometry")

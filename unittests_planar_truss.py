@@ -165,7 +165,7 @@ class UnitTestsPlanarTrusses(unittest.TestCase):
         model.add_truss_member(m, 3, [3, 4], s1)
 
         # ax = plots.plot_setup(m)
-        # plots.plot_joint_numbers(m)
+        # plots.plot_joint_ids(m)
         # plots.plot_members(m)
         # plots.show(m)
 
@@ -317,7 +317,7 @@ class UnitTestsPlanarTrusses(unittest.TestCase):
 
         # Inspect be base structure visually.
         # ax = plots.plot_setup(m)
-        # plots.plot_joint_numbers(m)
+        # plots.plot_joint_ids(m)
         # plots.plot_members(m)
         # ax.set_title("Truss definition")
         # plots.show(m)
@@ -437,7 +437,7 @@ class UnitTestsPlanarTrusses(unittest.TestCase):
         # Finally, display the deformed truss.
         # ax = plots.plot_setup(m)
         # plots.plot_members(m)
-        # plots.plot_joint_numbers(m)
+        # plots.plot_joint_ids(m)
         # ax = plots.plot_deformations(m, 20.0)
         # ax.set_title("Deformed shape (magnified 20 times)")
         # plots.show(m)
