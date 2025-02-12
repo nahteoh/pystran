@@ -52,12 +52,12 @@ m = model.create(3)
 # Joints are added at their locations. The original source refers to the nodes
 # (joints) as N_A, N_B, etc. N_A and N_B are supported, N_H1 and N_H2 form the
 # two joints that are linked in a hinge.
-model.add_joint(m, 1, [0.0, 2.0, 1.0])  # N_A
-model.add_joint(m, 2, [2.0, 0.0, -1.0])  # N_B
-model.add_joint(m, 3, [0.0, 0.0, -1.0])  # N_C
-model.add_joint(m, 4, [0.0, 0.0, +1.0])  # N_D
-model.add_joint(m, 5, [0.0, 0.0, 0.0])  # N_H1
-model.add_joint(m, 6, [0.0, 0.0, 0.0])  # N_H2
+jA = model.add_joint(m, "N_A", [0.0, 2.0, 1.0])
+jB = model.add_joint(m, "N_B", [2.0, 0.0, -1.0])
+model.add_joint(m, "N_C", [0.0, 0.0, -1.0])
+model.add_joint(m, "N_D", [0.0, 0.0, +1.0])
+model.add_joint(m, "N_H1", [0.0, 0.0, 0.0])
+model.add_joint(m, "N_H2", [0.0, 0.0, 0.0])
 
 # There are four beams. The cross sectional properties are the same, but the
 # beam orientations need to be different.
@@ -77,10 +77,10 @@ sect_2 = section.beam_3d_section(
 # With the above definitions of the sections at hand, we define the four beam
 # members.
 
-model.add_beam_member(m, 1, [1, 4], sect_2)
-model.add_beam_member(m, 2, [3, 2], sect_2)
-model.add_beam_member(m, 3, [4, 5], sect_1)
-model.add_beam_member(m, 4, [6, 3], sect_1)
+model.add_beam_member(m, 1, ["N_A", "N_D"], sect_2)
+model.add_beam_member(m, 2, ["N_C", "N_B"], sect_2)
+model.add_beam_member(m, 3, ["N_D", "N_H1"], sect_1)
+model.add_beam_member(m, 4, ["N_H2", "N_C"], sect_1)
 
 # Now we can plot the geometry of the structure. We show the members, the member
 # numbers, and the orientations of the local coordinate systems.
@@ -96,29 +96,29 @@ plots.show(m)
 # Next we add the link between the two joints that form the hinge. The hinge is
 # ball joint, meaning all three translations are the same for joints at the
 # hinge.
-model.add_links(m, [6, 5], freedoms.U1)
-model.add_links(m, [6, 5], freedoms.U2)
-model.add_links(m, [6, 5], freedoms.U3)
+model.add_links(m, ["N_H1", "N_H2"], freedoms.U1)
+model.add_links(m, ["N_H1", "N_H2"], freedoms.U2)
+model.add_links(m, ["N_H1", "N_H2"], freedoms.U3)
 
 # The supports are next. The original source refers to the supports at N_A and
 # N_B.
-model.add_support(m["joints"][1], freedoms.U1)
-model.add_support(m["joints"][1], freedoms.U3)
-model.add_support(m["joints"][1], freedoms.UR2)
+model.add_support(jA, freedoms.U1)
+model.add_support(jA, freedoms.U3)
+model.add_support(jA, freedoms.UR2)
 
-model.add_support(m["joints"][2], freedoms.U2)
-model.add_support(m["joints"][2], freedoms.U3)
-model.add_support(m["joints"][2], freedoms.UR1)
+model.add_support(jB, freedoms.U2)
+model.add_support(jB, freedoms.U3)
+model.add_support(jB, freedoms.UR1)
 
 # Next we add the springs to the ground. The translation and rotation spring
 # constants have the same numerical value. First at joint 1.
-model.add_extension_spring_to_ground(m["joints"][1], 1, [0, 1, 0], K)
-model.add_torsion_spring_to_ground(m["joints"][1], 1, [1, 0, 0], K)
-model.add_torsion_spring_to_ground(m["joints"][1], 2, [0, 0, 1], K)
+model.add_extension_spring_to_ground(jA, 1, [0, 1, 0], K)
+model.add_torsion_spring_to_ground(jA, 1, [1, 0, 0], K)
+model.add_torsion_spring_to_ground(jA, 2, [0, 0, 1], K)
 # Then at joint 3.
-model.add_extension_spring_to_ground(m["joints"][2], 1, [1, 0, 0], K)
-model.add_torsion_spring_to_ground(m["joints"][2], 1, [0, 1, 0], K)
-model.add_torsion_spring_to_ground(m["joints"][2], 2, [0, 0, 1], K)
+model.add_extension_spring_to_ground(jB, 1, [1, 0, 0], K)
+model.add_torsion_spring_to_ground(jB, 1, [0, 1, 0], K)
+model.add_torsion_spring_to_ground(jB, 2, [0, 0, 1], K)
 
 
 # Let us look at the translation and rotation supports:
@@ -137,7 +137,7 @@ ax.set_title("Rotation supports")
 plots.show(m)
 
 # Next we add the forces and moments applied at the joint N_D.
-model.add_load(m["joints"][4], freedoms.U3, -F)
+model.add_load(m["joints"]["N_D"], freedoms.U3, -F)
 
 
 # Now we can solve the static equilibrium of the frame.
@@ -161,13 +161,13 @@ for j in m["joints"].values():
 # These are the displacements of joint 1:
 ref1 = array([0.0, -0.02976196, 0.0, 0.16072649, 0.0, -0.05951626])
 for i in range(6):
-    if abs(m["joints"][1]["displacements"][i] - ref1[i]) > 0.001 * abs(ref1[i]):
+    if abs(jA["displacements"][i] - ref1[i]) > 0.001 * abs(ref1[i]):
         raise ValueError("Displacement calculation error")
 
 # These are the displacements of joint 3:
 ref3 = array([0.02977301, 0.13888914, -0.37002052])
 for i in range(3):
-    if abs(m["joints"][3]["displacements"][i] - ref3[i]) > 0.001 * abs(ref3[i]):
+    if abs(m["joints"]["N_C"]["displacements"][i] - ref3[i]) > 0.001 * abs(ref3[i]):
         raise ValueError("Displacement calculation error")
 
 print("Displacement calculation OK")
