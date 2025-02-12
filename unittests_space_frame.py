@@ -128,7 +128,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # plots.plot_setup(m)
         # plots.plot_members(m)
-        # # plots.plot_member_numbers(m)
+        # # plots.plot_member_ids(m)
         # plots.plot_deformations(m, 100.0)
         # # ax = plots.plot_shear_forces(m, scale=0.50e-3)
         # # ax.set_title('Shear forces')
@@ -213,7 +213,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # plots.plot_setup(m)
         # plots.plot_members(m)
-        # # plots.plot_member_numbers(m)
+        # # plots.plot_member_ids(m)
         # plots.plot_deformations(m, 30.0)
         # # ax = plots.plot_shear_forces(m, scale=0.50e-3)
         # # ax.set_title('Shear forces')
@@ -463,7 +463,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # plots.plot_setup(m)
         # plots.plot_members(m)
-        # plots.plot_member_numbers(m)
+        # plots.plot_member_ids(m)
         # plots.plot_deformations(m, 100.0)
         # plots.plot_member_orientation(m, 0.5)
         # # plots.plot_bending_moments(m, 0.00001, "y")
@@ -559,7 +559,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # plots.plot_setup(m)
         # plots.plot_members(m)
-        # plots.plot_member_numbers(m)
+        # plots.plot_member_ids(m)
         # plots.plot_deformations(m, 100.0)
         # plots.plot_member_orientation(m, 0.5)
         # # plots.plot_bending_moments(m, 0.00001, "y")
@@ -660,7 +660,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # plots.plot_setup(m)
         # plots.plot_members(m)
-        # plots.plot_member_numbers(m)
+        # plots.plot_member_ids(m)
         # plots.plot_deformations(m, 200.0)
         # plots.plot_member_orientation(m, 0.5)
         # # plots.plot_bending_moments(m, 0.00001, "y")
@@ -744,7 +744,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         # plots.plot_setup(m)
         # plots.plot_members(m)
         # plots.plot_member_orientation(m, 1.0)
-        # plots.plot_member_numbers(m)
+        # plots.plot_member_ids(m)
         # plots.show(m)
 
         model.number_dofs(m)
@@ -1016,8 +1016,8 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # ax = plots.plot_setup(m)
         # plots.plot_members(m)
-        # plots.plot_member_numbers(m)
-        # plots.plot_joint_numbers(m)
+        # plots.plot_member_ids(m)
+        # plots.plot_joint_ids(m)
         # plots.plot_member_orientation(m, 0.20)
         # ax.set_title("Frame geometry")
         # plots.show(m)
@@ -1052,14 +1052,14 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         # Let us look at the translation and rotation supports:
         # ax = plots.plot_setup(m)
         # plots.plot_members(m)
-        # plots.plot_joint_numbers(m)
+        # plots.plot_joint_ids(m)
         # plots.plot_translation_supports(m)
         # ax.set_title("Translation supports")
         # plots.show(m)
 
         # ax = plots.plot_setup(m)
         # plots.plot_members(m)
-        # plots.plot_joint_numbers(m)
+        # plots.plot_joint_ids(m)
         # plots.plot_rotation_supports(m)
         # ax.set_title("Rotation supports")
         # plots.show(m)
@@ -1075,7 +1075,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         # with the deformed shape of the frame.
         # ax = plots.plot_setup(m)
         # plots.plot_members(m)
-        # plots.plot_joint_numbers(m)
+        # plots.plot_joint_ids(m)
         # ax = plots.plot_deformations(m, 2.0)
         # ax.set_title("Deformed shape (magnified 2 times)")
         # plots.show(m)
@@ -1099,7 +1099,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         # members.
         # ax = plots.plot_setup(m)
         # plots.plot_members(m)
-        # plots.plot_joint_numbers(m)
+        # plots.plot_joint_ids(m)
         # plots.plot_member_orientation(m, 0.2)
         # ax = plots.plot_torsion_moments(m, scale=0.0001)
         # ax.set_title("Torsion moments")
@@ -1107,7 +1107,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # ax = plots.plot_setup(m)
         # plots.plot_members(m)
-        # plots.plot_joint_numbers(m)
+        # plots.plot_joint_ids(m)
         # plots.plot_member_orientation(m, 0.2)
         # ax = plots.plot_bending_moments(m, scale=0.0001, axis="y")
         # ax.set_title("Moments M_y")
@@ -1115,7 +1115,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # ax = plots.plot_setup(m)
         # plots.plot_members(m)
-        # plots.plot_joint_numbers(m)
+        # plots.plot_joint_ids(m)
         # plots.plot_member_orientation(m, 0.2)
         # ax = plots.plot_bending_moments(m, scale=0.0001, axis="z")
         # ax.set_title("Moments M_z")

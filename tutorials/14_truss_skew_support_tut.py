@@ -113,7 +113,7 @@ model.add_truss_member(m, 20, [9, 11], sr)
 
 # Inspect be base structure visually.
 ax = plots.plot_setup(m)
-plots.plot_joint_numbers(m)
+plots.plot_joint_ids(m)
 plots.plot_members(m)
 ax.set_title("Truss definition")
 plots.show(m)
@@ -234,7 +234,7 @@ if abs(UD - (UD1 + UD2 + UD3)) > 1.0e-9:
 # Finally, display the deformed truss.
 ax = plots.plot_setup(m)
 plots.plot_members(m)
-plots.plot_joint_numbers(m)
+plots.plot_joint_ids(m)
 ax = plots.plot_deformations(m, 20.0)
 ax.set_title("Deformed shape (magnified 20 times)")
 plots.show(m)

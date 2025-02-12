@@ -60,8 +60,8 @@ model.add_beam_member(m, 2, [2, 3], s2)
 # Let's have a look at the model before it is refined.
 plots.plot_setup(m, set_limits=True)
 plots.plot_members(m)
-plots.plot_member_numbers(m)
-ax = plots.plot_joint_numbers(m)
+plots.plot_member_ids(m)
+ax = plots.plot_joint_ids(m)
 ax.set_title("Structure before refinement of member 2")
 plots.show(m)
 
@@ -72,8 +72,8 @@ model.refine_member(m, 2, 3)
 # The model is shown after the refinement.
 plots.plot_setup(m, set_limits=True)
 plots.plot_members(m)
-plots.plot_member_numbers(m)
-ax = plots.plot_joint_numbers(m)
+plots.plot_member_ids(m)
+ax = plots.plot_joint_ids(m)
 ax.set_title("Structure after refinement of member 2")
 plots.show(m)
 

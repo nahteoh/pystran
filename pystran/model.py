@@ -42,63 +42,75 @@ def create(dim=2):
     return m
 
 
-def add_joint(m, jid: int, coordinates):
+def add_joint(m, jid, coordinates):
     """
     Add a joint to the model.
 
     - `m` = the model,
-    - `jid` = the joint identifier,
-    - `coordinates` = the list of coordinates of the joint.
+    - `jid` = the joint identifier, which must be unique, but can be anything
+      that is a legal dictionary key (integer, string, ...),
+    - `coordinates` = the list (or a tuple) of coordinates of the joint; the
+      input is converted to an array.
+
+    Returns: the newly created joint.
     """
     if jid in m["joints"]:
         raise RuntimeError("Joint already exists")
     coordinates = array(coordinates, dtype=numpy.float64)
     if coordinates.shape != (m["dim"],):
         raise RuntimeError("Coordinate dimension mismatch")
-    m["joints"][jid] = {"jid": jid, "coordinates": array(coordinates)}
+    m["joints"][jid] = {"jid": jid, "coordinates": coordinates}
+    return m["joints"][jid]
 
 
-def add_truss_member(m, mid: int, connectivity, sect):
+def add_truss_member(m, mid, connectivity, sect):
     """
     Add a truss member to the model.
 
     - `m` = the model,
-    - `mid` = the member identifier (must be unique),
-    - `connectivity` = the list of the joint identifiers,
+    - `mid` = the member identifier, must be unique, but can be anything that is
+      a legal dictionary key (integer, string, ...),
+    - `connectivity` = the list (or a tuple) of the joint identifiers,
     - `sect` = the section of the member.
+
+    Returns: the newly created member.
     """
     if mid in m["truss_members"]:
         raise RuntimeError("Truss member already exists")
     m["truss_members"][mid] = {
         "mid": mid,
-        "connectivity": array(connectivity, dtype=numpy.int32),
+        "connectivity": connectivity,
         "section": sect,
     }
+    return m["truss_members"][mid]
 
 
-def add_beam_member(m, mid: int, connectivity, sect):
+def add_beam_member(m, mid, connectivity, sect):
     """
     Add a beam member to the model.
 
     - `m` = the model,
-    - `mid` = the member identifier (must be unique),
-    - `connectivity` = the list of the joint identifiers,
+    - `mid` = the member identifier, must be unique, but can be anything that is
+      a legal dictionary key (integer, string, ...),
+    - `connectivity` = the list (or a tuple) of the joint identifiers,
     - `sect` = the section of the member.
+
+    Returns: the newly created member.
     """
     if mid in m["beam_members"]:
         raise RuntimeError("Beam member already exists")
-    else:
-        m["beam_members"][mid] = {
-            "connectivity": array(connectivity, dtype=numpy.int32),
-            "section": sect,
-        }
+    m["beam_members"][mid] = {
+        "connectivity": connectivity,
+        "section": sect,
+    }
+    return m["beam_members"][mid]
 
 
 def add_support(j, dof, value=0.0):
     """
     Add a support to a joint.
 
-    - `j` = the joint,
+    - `j` = the joint (obtained from the model as `m["joints"][jid]`),
     - `dof` = the degree of freedom,
     - `value` = the amount of the support motion (default is zero).
     """
@@ -113,7 +125,7 @@ def add_load(j, dof, value):
     """
     Add a load to a joint.
 
-    - `j` = the joint,
+    - `j` = the joint (obtained from the model as `m["joints"][jid]`),
     - `dof` = the degree of freedom,
     - `value` = signed magnitude of the load.
     """
@@ -128,13 +140,13 @@ def add_mass(j, dof, value):
     """
     Add a mass to a joint.
 
-    - `j` = the joint,
+    - `j` = the joint (obtained from the model as `m["joints"][jid]`),
     - `dof` = the degree of freedom,
     - `value` = magnitude of the mass.
     """
-    if "mass" not in j:
-        j["mass"] = {}
-    j["mass"][dof] = value
+    if "masses" not in j:
+        j["masses"] = {}
+    j["masses"][dof] = value
 
 
 def add_links(m, jids, dof):
@@ -296,8 +308,8 @@ def _build_mass_matrix(m):
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         pystran.beam.assemble_mass(M, member, i, j)
     for j in m["joints"].values():
-        if "mass" in j:
-            for dof, value in j["mass"].items():
+        if "masses" in j:
+            for dof, value in j["masses"].items():
                 gr = j["dof"][dof]
                 M[gr, gr] += value
     return M

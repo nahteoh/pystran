@@ -163,8 +163,8 @@ class UnitTestsPlanarFrames(unittest.TestCase):
 
         # plots.plot_setup(m, set_limits=True)
         # plots.plot_members(m)
-        # plots.plot_member_numbers(m)
-        # plots.plot_joint_numbers(m)
+        # plots.plot_member_ids(m)
+        # plots.plot_joint_ids(m)
         # plots.plot_member_orientation(m, 10.0)
         # plots.show(m)
 
@@ -271,8 +271,8 @@ class UnitTestsPlanarFrames(unittest.TestCase):
 
         # plots.plot_setup(m, set_limits=True)
         # plots.plot_members(m)
-        # plots.plot_member_numbers(m)
-        # plots.plot_joint_numbers(m)
+        # plots.plot_member_ids(m)
+        # plots.plot_joint_ids(m)
         # plots.plot_member_orientation(m, 10.0)
         # plots.show(m)
 
@@ -341,9 +341,9 @@ class UnitTestsPlanarFrames(unittest.TestCase):
 
         # plots.plot_setup(m, set_limits=True)
         # plots.plot_members(m)
-        # plots.plot_member_numbers(m)
+        # plots.plot_member_ids(m)
         # plots.plot_member_orientation(m, 0.05)
-        # ax = plots.plot_joint_numbers(m)
+        # ax = plots.plot_joint_ids(m)
         # ax.set_title("Structure before refinement")
         # plots.show(m)
 
@@ -357,7 +357,7 @@ class UnitTestsPlanarFrames(unittest.TestCase):
 
         # plots.plot_setup(m, set_limits=True)
         # plots.plot_members(m)
-        # ax = plots.plot_joint_numbers(m)
+        # ax = plots.plot_joint_ids(m)
         # ax.set_title("Structure after refinement")
         # plots.show(m)
 
