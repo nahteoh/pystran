@@ -51,7 +51,7 @@ m = model.create(3)
 
 # Joints are added at their locations. The original source refers to the nodes
 # (joints) as N_A, N_B, etc. N_A and N_B are supported, N_H1 and N_H2 form the
-# two joints that are linked in a hinge.
+# two joints at the same location that are linked in a hinge.
 jA = model.add_joint(m, "N_A", [0.0, 2.0, 1.0])
 jB = model.add_joint(m, "N_B", [2.0, 0.0, -1.0])
 model.add_joint(m, "N_C", [0.0, 0.0, -1.0])
@@ -111,14 +111,14 @@ model.add_support(jB, freedoms.U3)
 model.add_support(jB, freedoms.UR1)
 
 # Next we add the springs to the ground. The translation and rotation spring
-# constants have the same numerical value. First at joint 1.
-model.add_extension_spring_to_ground(jA, 1, [0, 1, 0], K)
-model.add_torsion_spring_to_ground(jA, 1, [1, 0, 0], K)
-model.add_torsion_spring_to_ground(jA, 2, [0, 0, 1], K)
-# Then at joint 3.
-model.add_extension_spring_to_ground(jB, 1, [1, 0, 0], K)
-model.add_torsion_spring_to_ground(jB, 1, [0, 1, 0], K)
-model.add_torsion_spring_to_ground(jB, 2, [0, 0, 1], K)
+# constants have the same numerical value. First at joint N_A.
+model.add_extension_spring_to_ground(jA, "EXT_A", [0, 1, 0], K)
+model.add_torsion_spring_to_ground(jA, "TOR_A_X", [1, 0, 0], K)
+model.add_torsion_spring_to_ground(jA, "TOR_A_Z", [0, 0, 1], K)
+# Then at joint N_B.
+model.add_extension_spring_to_ground(jB, "EXT_B", [1, 0, 0], K)
+model.add_torsion_spring_to_ground(jB, "TOR_B_Y", [0, 1, 0], K)
+model.add_torsion_spring_to_ground(jB, "TOR_B_Z", [0, 0, 1], K)
 
 
 # Let us look at the translation and rotation supports:
@@ -214,7 +214,7 @@ for k in m["beam_members"].keys():
         f"   Joint {connectivity[1]}: N={f['Nj']:.5}, Qy={f['Qyj']:.5}, Qz={f['Qzj']:.5}, T={f['Tj']:.5}, My={f['Myj']:.5}, Mz={f['Mzj']:.5}: "
     )
 
-# The reference provides values of moments at joint 1 (N_A) in member 1:
+# The reference provides values of moments at joint N_A in member 1:
 member = m["beam_members"][1]
 connectivity = member["connectivity"]
 i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
