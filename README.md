@@ -7,6 +7,7 @@ A simple structural analysis tool in Python, for structures consisting of truss 
 
 ## News
 
+- 02/12/2025: Make it possible to use general identifiers.
 - 02/05/2025: Add general springs to ground.
 - 01/30/2025: Add tutorials.
 - 01/22/2025: Implement initial functionality. 
