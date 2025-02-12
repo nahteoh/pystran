@@ -112,7 +112,7 @@ def add_support(j, dof, value=0.0):
 
     - `j` = the joint (obtained from the model as `m["joints"][jid]`),
     - `dof` = the degree of freedom,
-    - `value` = the amount of the support motion (default is zero).
+    - `value` = the signed magnitude of the support motion (default is zero).
     """
     if "supports" not in j:
         j["supports"] = {}
@@ -588,7 +588,7 @@ def add_extension_spring_to_ground(j, sid, direction, coefficient=1.0):
     - `sid` = spring identifier; This allows a joint to have multiple springs
       attached.
     - `direction` = the direction along the spring,
-    - `coefficient` = the amount of the spring stiffness.
+    - `coefficient` = the magnitude (>0) of the spring stiffness.
     """
     # Make the direction of unit length
     direction = array(direction, dtype=numpy.float64)
@@ -609,7 +609,7 @@ def add_torsion_spring_to_ground(j, sid, direction, coefficient=1.0):
       attached.
     - `direction` = the direction about which a torsion spring acts.
       For a rotation in 2D, the direction is [1.0].
-    - `coefficient` = the amount of the spring stiffness.
+    - `coefficient` = the magnitude (>0) of the spring stiffness.
     """
     # Make the direction of unit length
     direction = array(direction, dtype=numpy.float64)
