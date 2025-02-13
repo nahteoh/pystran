@@ -42,7 +42,7 @@ def create(dim=2):
     return m
 
 
-def add_joint(m, jid, coordinates):
+def add_joint(m, jid, coordinates, dof=None):
     """
     Add a joint to the model.
 
@@ -51,6 +51,8 @@ def add_joint(m, jid, coordinates):
       that is a legal dictionary key (integer, string, ...),
     - `coordinates` = the list (or a tuple) of coordinates of the joint; the
       input is converted to an array.
+    - `dof` = optional: the degrees of freedom of the joint as a list (or a
+      tuple). If not provided, the degrees of freedom are determined later.
 
     Returns: the newly created joint.
     """
@@ -60,6 +62,8 @@ def add_joint(m, jid, coordinates):
     if coordinates.shape != (m["dim"],):
         raise RuntimeError("Coordinate dimension mismatch")
     m["joints"][jid] = {"jid": jid, "coordinates": coordinates}
+    if dof is not None:
+        m["joints"][jid]["dof"] = array(dof, dtype=numpy.int32)
     return m["joints"][jid]
 
 
@@ -245,7 +249,10 @@ def number_dofs(m):
     ndpn = ndof_per_joint(m)
     # Generate arrays for storing the degrees of freedom
     for j in m["joints"].values():
-        j["dof"] = zeros((ndpn,), dtype=numpy.int32) - 1
+        if "dof" not in j:
+            j["dof"] = (
+                zeros((ndpn,), dtype=numpy.int32) - 1
+            )  # -1 means not yet numbered
     # For each linked pair of joints, make sure they share the same supports
     for j in m["joints"].values():
         if "links" in j and "supports" in j:
