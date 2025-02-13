@@ -526,8 +526,8 @@ def refine_member(m, mid, n):
     """
     Refine a beam member by replacing it with `n` new members.
 
-    The new joints are numbered starting from the maximum joint identifier in
-    the model.
+    The new joints are numbered starting from zero, and the joint identifier is
+    composed of the member identifier plus the serial number of the new joint.
 
     - `m` = the model,
     - `mid` = the member identifier,
@@ -584,9 +584,9 @@ def add_extension_spring_to_ground(j, sid, direction, coefficient=1.0):
     """
     Add a grounded extension spring to a joint.
 
-    - `j` = the joint.
-    - `sid` = spring identifier; This allows a joint to have multiple springs
-      attached.
+    - `j` = the joint (obtained from the model as `m["joints"][jid]`),
+    - `sid` = spring identifier, must be unique, but can be anything that is a
+      legal dictionary key (integer, string, ...),
     - `direction` = the direction along the spring,
     - `coefficient` = the magnitude (>0) of the spring stiffness.
     """
@@ -607,9 +607,9 @@ def add_torsion_spring_to_ground(j, sid, direction, coefficient=1.0):
     """
     Add a grounded torsional spring to a joint.
 
-    - `j` = the joint.
-    - `sid` = spring identifier; This allows a joint to have multiple springs
-      attached.
+    - `j` = the joint (obtained from the model as `m["joints"][jid]`),
+    - `sid` = spring identifier, must be unique, but can be anything that is a
+      legal dictionary key (integer, string, ...),
     - `direction` = the direction about which a torsion spring acts.
       For a rotation in 2D, the direction is [1.0].
     - `coefficient` = the magnitude (>0) of the spring stiffness.
