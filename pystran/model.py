@@ -52,7 +52,7 @@ def add_joint(m, jid, coordinates, dof=None):
     - `coordinates` = the list (or a tuple) of coordinates of the joint; the
       input is converted to an array.
     - `dof` = optional: the degrees of freedom of the joint as a list (or a
-      tuple). If not provided, the degrees of freedom are determined later.
+      tuple). If provided, do not use `number_dofs` later on.
 
     Returns: the newly created joint.
     """
@@ -244,15 +244,24 @@ def ndof_per_joint(m):
 def number_dofs(m):
     """
     Number degrees of freedom.
+
+    All current information about degrees of freedom will be lost when this
+    function is done.
+
+    After this function returns, `m["nfreedof"]` will be the number of free
+    degrees of freedom, and `m["ntotaldof"]` will be the total number of degrees
+    of freedom.
+
+    The degrees of freedom are numbered in the order of free and then
+    prescribed.
     """
     # Determine the number of degrees of freedom per joint
     ndpn = ndof_per_joint(m)
     # Generate arrays for storing the degrees of freedom
     for j in m["joints"].values():
         if "dof" not in j:
-            j["dof"] = (
-                zeros((ndpn,), dtype=numpy.int32) - 1
-            )  # -1 means not yet numbered
+            j["dof"] = zeros((ndpn,), dtype=numpy.int32)
+        j["dof"][:] = -1  # -1 means not yet numbered
     # For each linked pair of joints, make sure they share the same supports
     for j in m["joints"].values():
         if "links" in j and "supports" in j:
