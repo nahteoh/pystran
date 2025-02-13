@@ -290,7 +290,7 @@ def _build_stiffness_matrix(m):
         i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
         pystran.beam.assemble_stiffness(K, member, i, j)
     for j in m["joints"].values():
-        if "spring" in j:
+        if "springs" in j:
             pystran.spring.assemble_stiffness(K, j)
 
     return K
@@ -542,21 +542,21 @@ def refine_member(m, mid, n):
     # First replacement member
     start = -1.0 + 2.0 / n
     c = (-1 + start) / (-2) * ci + (1 + start) / 2 * cj
-    newjid = max(m["joints"].keys()) + 1
+    newjid = str(mid) + "j" + "0"
     add_joint(m, newjid, c)
-    newmid = max(m["beam_members"].keys()) + 1
+    newmid = str(mid) + "m" + "0"
     add_beam_member(m, newmid, [i["jid"], newjid], member["section"])
     prevjid = newjid
-    for _ in range(n - 2):
+    for k in range(n - 2):
         start += 2.0 / n
         c = (-1 + start) / (-2) * ci + (1 + start) / 2 * cj
-        newjid = max(m["joints"].keys()) + 1
+        newjid = str(mid) + "j" + str(k + 1)
         add_joint(m, newjid, c)
-        newmid = max(m["beam_members"].keys()) + 1
+        newmid = str(mid) + "m" + str(k + 1)
         add_beam_member(m, newmid, [prevjid, newjid], member["section"])
         prevjid = newjid
     # Last replacement member
-    newmid = max(m["beam_members"].keys()) + 1
+    newmid = str(mid) + "m" + str(n - 1)
     add_beam_member(m, newmid, [newjid, j["jid"]], member["section"])
     # Remove the old member
     del m["beam_members"][mid]
@@ -593,11 +593,14 @@ def add_extension_spring_to_ground(j, sid, direction, coefficient=1.0):
     # Make the direction of unit length
     direction = array(direction, dtype=numpy.float64)
     direction /= norm(direction)
-    if "spring" not in j:
-        j["spring"] = {}
-    if "extension" not in j["spring"]:
-        j["spring"]["extension"] = {}
-    j["spring"]["extension"][sid] = {"direction": direction, "coefficient": coefficient}
+    if "springs" not in j:
+        j["springs"] = {}
+    if "extension" not in j["springs"]:
+        j["springs"]["extension"] = {}
+    j["springs"]["extension"][sid] = {
+        "direction": direction,
+        "coefficient": coefficient,
+    }
 
 
 def add_torsion_spring_to_ground(j, sid, direction, coefficient=1.0):
@@ -614,8 +617,8 @@ def add_torsion_spring_to_ground(j, sid, direction, coefficient=1.0):
     # Make the direction of unit length
     direction = array(direction, dtype=numpy.float64)
     direction = direction / norm(direction)
-    if "spring" not in j:
-        j["spring"] = {}
-    if "moment" not in j["spring"]:
-        j["spring"]["moment"] = {}
-    j["spring"]["moment"][sid] = {"direction": direction, "coefficient": coefficient}
+    if "springs" not in j:
+        j["springs"] = {}
+    if "moment" not in j["springs"]:
+        j["springs"]["moment"] = {}
+    j["springs"]["moment"][sid] = {"direction": direction, "coefficient": coefficient}
