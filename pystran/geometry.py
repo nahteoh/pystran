@@ -6,18 +6,24 @@ from numpy import array, dot
 from numpy.linalg import norm, cross
 
 
-def delt(xi, xj):
+def delt(ci, cj):
     """
-    Compute oriented vector from the first to the second joint
+    Compute oriented vector from the first to the second location.
+
+    - `ci` = coordinates of the first point.
+    - `cj` = coordinates of the second point.
     """
-    return xj - xi
+    return cj - ci
 
 
-def vlen(xi, xj):
+def vlen(ci, cj):
     """
-    Compute distance from the first to the second joint
+    Compute distance from the first to the second point.
+
+    - `ci` = coordinates of the first point.
+    - `cj` = coordinates of the second point.
     """
-    return norm(delt(xi, xj))
+    return norm(delt(ci, cj))
 
 
 def lin_basis(xi):
@@ -27,12 +33,16 @@ def lin_basis(xi):
     return array([(xi - 1) / (-1 - 1), (xi - -1) / (1 - -1)])
 
 
-def interpolate(xi, x1, x2):
+def interpolate(xi, q1, q2):
     """
     Interpolate linearly between two quantities.
+
+    - `xi` = the interpolation parameter.
+    - `q1` = the quantity at $\\xi=-1$.
+    - `q2` = the quantity at $\\xi=+1`.
     """
     N = lin_basis(xi)
-    return N[0] * x1 + N[1] * x2
+    return N[0] * q1 + N[1] * q2
 
 
 def herm_basis(xi):

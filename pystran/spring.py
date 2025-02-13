@@ -2,12 +2,18 @@
 Define spring mechanical quantities.
 """
 
-from numpy import dot, outer, concatenate, zeros
+from numpy import outer
 from pystran import assemble
 from pystran import freedoms
 
 
 def assemble_stiffness(Kg, j):
+    """
+    Assemble the stiffness matrix of all the springs at joint `j`.
+
+    - `Kg` is the global stiffness matrix,
+    - `j` = the joint (obtained from the model as `m["joints"][jid]`).
+    """
     dim = len(j["coordinates"])
     if "extension" in j["springs"]:
         for sd in j["springs"]["extension"].values():

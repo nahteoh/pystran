@@ -2,13 +2,6 @@
 Define the functions for defining and manipulating degrees of freedom.
 """
 
-from math import sqrt
-import numpy
-from numpy import array, zeros, dot, mean, concatenate
-from numpy.linalg import norm
-import scipy
-import pystran.section
-
 U1 = 0
 """
 This is a designation of the degree of freedom as translation along `X`.

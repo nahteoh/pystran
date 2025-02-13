@@ -39,6 +39,7 @@ from pystran.geometry import (
 # fig = plt.figure(figsize=(9,9))
 # ax = plt.gca()
 def _drawCirc(ax, radius, centX, centY, angle_, theta2_, sense, color_="black"):
+    "A little circle helper"
     # ========Line
     arc = Arc(
         [centX, centY],
@@ -602,7 +603,7 @@ def plot_member_orientation(m, scale=1.0):
     - `scale` = scale factor for the member orientation vectors.
 
     The vectors are shown as red (x), green (y), and blue (z) lines that
-    represent the basis vectors of a local cartesian cordon system or each
+    represent the basis vectors of a local cartesian coordinate system for each
     member.
     """
     ax = plt.gca()
