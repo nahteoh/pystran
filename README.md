@@ -70,4 +70,12 @@ py tutorials/three_bars_tut.py
 There are many examples in the [`examples`](./examples) folder. They may not be heavily documented,
 but they do show many recipes for solving truss and beam structures.
 
+## Documentation
+
+The functions in the package are documented. The documentation in nicely formatted form can be obtained by running `pdoc`. In the `pystran` folder, run
+```
+pdoc pystran/ --math -o html
+```
+which will create an `./html` folder. double click the `index.html` file in that folder.
+
 ## <a name="past-news"></a>Past news
