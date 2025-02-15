@@ -38,7 +38,7 @@ A simple structural analysis tool in Python, for structures consisting of truss 
 - SciPy
 - Matplotlib
 
-These requirements can be easily satisfied by running the examples in [Spyder 6](https://www.spyder-ide.org/download/) (IDE).
+These requirements can be easily satisfied by running the examples in the [Spyder](docs/spyder/spyder.md) IDE.
 
 ## Running
 
