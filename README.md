@@ -38,7 +38,7 @@ A simple structural analysis tool in Python, for structures consisting of truss 
 - SciPy
 - Matplotlib
 
-These requirements can be easily satisfied by running the examples in the [Spyder](docs/spyder/spyder.md) IDE.
+These requirements can be easily satisfied by running the examples in the [Spyder](docs/spyder/spyder/spyder.md) IDE.
 
 ## Running
 
@@ -48,7 +48,7 @@ It needs to be downloaded from GitHub as a zip file, and expanded in some conven
 The __pystran folder__ can be located by looking for this README.md file.
 
 The easiest way to run a pystran example is to download and install Spyder 6.
-[Detailed instructions](docs/spyder.md) are provided. 
+[Detailed instructions](docs/spyder/spyder.md) are provided. 
 
 It is also possible to run simulations using a plain Python.
 The user then needs to install the requirements, and in the
@@ -65,7 +65,7 @@ Run tutorials for example as
 ```
 PYTHONPATH=. py tutorials/01_three_bars_tut.py
 ```
-or [use Spyder](docs/spyder.md).
+or [use Spyder](docs/spyder/spyder.md).
 
 ## Documentation
 
