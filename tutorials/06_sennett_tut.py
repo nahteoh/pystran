@@ -26,7 +26,6 @@ Robert E. Sennett, ISBN 978-1577661436 (Section 6.4).
 
 from numpy import array
 from numpy.linalg import norm
-from context import pystran
 from pystran import model
 from pystran import section
 from pystran import freedoms

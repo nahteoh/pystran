@@ -21,7 +21,6 @@ Engineering, John Wiley & Sons, 4th edition, 1974. page 11, problem 1.1-3.
 """
 
 from math import sqrt, pi
-from context import pystran
 from pystran import model
 from pystran import section
 from pystran import freedoms

@@ -21,7 +21,6 @@ Approaches for Structural Analysis by Lingyi Lu, Junbo Jia, Zhuo Tang.
 
 from numpy import dot
 from numpy.linalg import norm
-from context import pystran
 from pystran import model
 from pystran import section
 from pystran import freedoms

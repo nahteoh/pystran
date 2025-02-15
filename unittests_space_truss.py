@@ -40,8 +40,7 @@ class UnitTestsSpaceTruss(unittest.TestCase):
 
         # from numpy import array, dot, outer, concatenate
         # from numpy.linalg import norm
-        # from context import pystran
-        # from pystran import model
+        #         # from pystran import model
         # from pystran import section
         # from pystran import plots
 

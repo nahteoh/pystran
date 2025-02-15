@@ -304,8 +304,7 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         SCIA Engineer 24.0.1020 test case SDLX 01/89
         """
 
-        # from context import pystran
-        # from pystran import model
+        #         # from pystran import model
         # from pystran import section
         # from pystran import plots
 
@@ -402,8 +401,7 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         """
 
         # from math import sqrt, pi
-        # from context import pystran
-        # from pystran import model
+        #         # from pystran import model
         # from pystran import section
         # from pystran import plots
 

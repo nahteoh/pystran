@@ -118,8 +118,7 @@ class UnitTestsPlanarTrusses(unittest.TestCase):
 
         # from math import sqrt, pi, cos, sin
         # from numpy.linalg import norm
-        # from context import pystran
-        # from pystran import model
+        #         # from pystran import model
         # from pystran import section
         # from pystran import truss
         # from pystran import geometry
@@ -228,8 +227,7 @@ class UnitTestsPlanarTrusses(unittest.TestCase):
 
         # from math import sqrt, pi, cos, sin
         # from numpy.linalg import norm
-        # from context import pystran
-        # from pystran import model
+        #         # from pystran import model
         # from pystran import section
         # from pystran import geometry
         # from pystran import freedoms

@@ -957,8 +957,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # from numpy import array
         # from numpy.linalg import norm
-        # from context import pystran
-        # from pystran import model
+        #         # from pystran import model
         # from pystran import section
         # from pystran import plots
         # from pystran import beam
@@ -1159,8 +1158,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # from numpy import zeros, dot
         # from numpy.linalg import norm
-        # from context import pystran
-        # from pystran import model
+        #         # from pystran import model
         # from pystran import section
 
         m = model.create(3)

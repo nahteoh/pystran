@@ -17,7 +17,6 @@ Analytical solutions are available for the first few modes of vibration.
 SCIA Engineer 24.0.1020 test case SDLX 01/89 
 """
 
-from context import pystran
 from pystran import model
 from pystran import section
 from pystran import freedoms

@@ -17,11 +17,6 @@ Three-bar example on page 32 from the book Analysis of Geometrically Nonlinear
 Structures Second Edition by Robert Levy and William R. Spillers.
 """
 
-# Due to the Python source code loading conventions, pystran is not immediately
-# visible to the Python interpreter. Loading it through the context is a
-# workaround.
-from context import pystran
-
 # The following imports are necessary for the example to work.
 import numpy
 from numpy.linalg import norm
