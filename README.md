@@ -47,28 +47,25 @@ It needs to be downloaded from GitHub as a zip file, and expanded in some conven
 
 The __pystran folder__ can be located by looking for this README.md file.
 
-The easiest way to run a pystran example is to download and install [Spyder 6](https://www.spyder-ide.org/download/). It is a complete IDE for Python, 
-including a very capable debugger. Just open an example and click the run button.
+The easiest way to run a pystran example is to download and install Spyder 6.
+[Detailed instructions](docs/spyder.md) are provided. 
 
 It is also possible to run simulations using a plain Python.
 The user then needs to install the requirements, and in the
-pystran folder run an example for instance as
+`pystran` folder run an example for instance as
 ```
-py examples/linked_cantilevers_prescribed.py
+PYTHONPATH=. py examples/linked_cantilevers_prescribed.py
 ```
+in a bash.
 
 ## Tutorials
 
 Step-by-step tutorials are available in the [`tutorials`](./tutorials) folder. 
 Run tutorials for example as
 ```
-py tutorials/three_bars_tut.py
+PYTHONPATH=. py tutorials/01_three_bars_tut.py
 ```
-
-## Examples
-
-There are many examples in the [`examples`](./examples) folder. They may not be heavily documented,
-but they do show many recipes for solving truss and beam structures.
+or [use Spyder](docs/spyder.md).
 
 ## Documentation
 
