@@ -17,8 +17,6 @@ solution against these reference values.
 
 This example is completely solved in the book Matrix Analysis of Structures by
 Robert E. Sennett, ISBN 978-1577661436. Example 7.4.
-
-
 """
 
 from numpy.linalg import norm
@@ -29,7 +27,8 @@ from pystran import plots
 
 # US customary units, inches, pounds, seconds are assumed.
 
-# The book gives the product of the modulus of elasticity and the moment of inertia as 2.9e6.
+# The book gives the product of the modulus of elasticity and the moment of
+# inertia as 2.9e6.
 E = 29e6
 I = 100.0
 A = 10.0  # cross-sectional area does not influence the results
@@ -44,16 +43,17 @@ model.add_joint(m, 3, [L, L])
 model.add_joint(m, 4, [L, 0.0])
 
 # There needs to be a hinge (not transferring bending moments, but ensuring
-# continuity of displacements) at the joint 2. We add another joint, 5, at the same
-# location, and we link the degrees of freedom that needs to be the same.
+# continuity of displacements) at the joint 2. We add another joint, 5, at the
+# same location, and we link the degrees of freedom that needs to be the same.
 model.add_joint(m, 5, [0, L])
 
-# We supply the list of joints that need to be linked (2 and 5), and the degrees
-# of freedom that are to be the same.
+# We supply the list of joints that need to be linked (2 and 5), and the
+# degrees of freedom that are to be the same.
 model.add_links(m, [2, 5], freedoms.U1)
 model.add_links(m, [2, 5], freedoms.U2)
 
-# Now we apply the supports -- both bottom joints are simply supported (pinned).
+# Now we apply the supports -- both bottom joints are simply supported
+# (pinned).
 model.add_support(m["joints"][1], freedoms.TRANSLATION_DOFS)
 model.add_support(m["joints"][4], freedoms.TRANSLATION_DOFS)
 

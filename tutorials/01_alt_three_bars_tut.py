@@ -18,6 +18,7 @@ Displacements and internal forces are provided in the verification manual.
 Three-bar example on page 32 from the book Analysis of Geometrically Nonlinear
 Structures Second Edition by Robert Levy and William R. Spillers.
 """
+
 # The following imports are necessary for the example to work.
 from numpy.linalg import norm
 from numpy import concatenate, dot
@@ -32,17 +33,19 @@ from pystran import plots
 # (2). The deformation is assumed to occur in the plane `x-z`.
 m = model.create(2)
 
-# There are four joints. Note that the coordinates are supplied without physical
-# units. Everything needs to be provided in consistent units. Note that the
-# joints are identified by names instead of by numbers, and the coordinates are
-# supplied either as lists of coordinates (i.e. in square brackets) or as tuples
-# (i.e. in round brackets). Also, joint "A" is assigned to a variable.
+# There are four joints. Note that the coordinates are supplied without
+# physical units. Everything needs to be provided in consistent units. Note
+# that the joints are identified by names instead of by numbers, and the
+# coordinates are supplied either as lists of coordinates (i.e. in square
+# brackets) or as tuples (i.e. in round brackets). Also, joint "A" is assigned
+# to a variable.
 jA = model.add_joint(m, "A", [10.0, 20.0])
 model.add_joint(m, "B", [0.0, 20.0])
 model.add_joint(m, "C", [0.0, 10.0])
 model.add_joint(m, "D", (+10.0, 0.0))
 
-# For instance, the material parameters and the cross sectional area of the bars.
+# For instance, the material parameters and the cross sectional area of the
+# bars.
 E = 30000000.0
 A = 0.65700000
 

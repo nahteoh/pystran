@@ -128,7 +128,7 @@ reffs = [3.08, 4.65, 7.87, 8.23]
 # Plot the modes and compare the frequencies. The mode shapes correlate with
 # those published in the reference.
 for mode in range(0, 4):
-    print(f"Mode {mode}: {m["frequencies"][mode]:.3f} Hz")
+    print(f"Mode {mode}: {m['frequencies'][mode]:.3f} Hz")
     print("  Reference: ", reffs[mode])
     ax = plots.plot_setup(m)
     plots.plot_members(m)

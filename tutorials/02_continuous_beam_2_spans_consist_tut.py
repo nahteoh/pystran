@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -7,8 +7,8 @@ pystran - Python package for structural analysis with trusses and beams
 
 ## Problem description:
 
-Continuous simply supported beam with two spans. The beam is loaded with moments
-at the joint.
+Continuous simply supported beam with two spans. The beam is loaded with 
+moments at the joint.
 
 Displacements and internal forces are provided in the verification manual.
 
@@ -35,9 +35,9 @@ model.add_joint(m, 3, [12.0, 0.0])
 
 # The supports are added to the model. The pinned supports are added to the
 # joint by listing the degree of freedom designations, `freedoms.U1` and
-# `freedoms.U2`. These degrees of freedom are suppressed (set to zero). Note that
-# each of the joints also has a rotation degree of freedom, `freedoms.UR3`, which
-# are free at all joints.
+# `freedoms.U2`. These degrees of freedom are suppressed (set to zero).
+# Note that each of the joints also has a rotation degree of freedom,
+# `freedoms.UR3`, which are free at all joints.
 model.add_support(m["joints"][1], freedoms.U1)
 model.add_support(m["joints"][1], freedoms.U2)
 model.add_support(m["joints"][2], freedoms.U1)
@@ -78,15 +78,15 @@ print(m["K"][0:3, 0:3])
 # Here are the calculated free degrees of freedom:
 print(m["U"][0:3])
 
-# These displacements can be compared with the reference values from literature.
+# These displacements can be compared with the reference values from
+# literature.
 if norm(m["U"][0:3] - [-0.02969075, -0.02742406, 0.03952194]) > 1.0e-3:
     raise ValueError("Displacement calculation error")
-else:
-    print("Displacement calculation OK")
+print("Displacement calculation OK")
 
 
-# We can calculate the reactions at the supports. This is the manual approach to
-# that using the partitioning of the stiffness matrix and the displacement
+# We can calculate the reactions at the supports. This is the manual approach
+# to that using the partitioning of the stiffness matrix and the displacement
 # vector.
 Kdf = m["K"][nf:nt, 0:nf]
 Kdd = m["K"][nf:nt, nf:nt]

@@ -14,8 +14,8 @@ Displacements, reactions, and internal forces are provided in the verification
 manual.
 
 A number of quantities can be checked against independent solutions. These
-reactions are consistent with STAAD.Pro 2023.00.03 User Manual, assuming Poisson
-ratio 0.25:
+reactions are consistent with STAAD.Pro 2023.00.03 User Manual, assuming
+Poisson ratio 0.25:
 
 Joint 3:
    Rx=-1.1041, Ry=-0.43222, Rz=0.21731, Mx=48.785, My=-17.973, Mz=96.122:
@@ -102,8 +102,8 @@ sect_1 = section.beam_3d_section(
 
 # The second section is for the inclined beam, whose local coordinate system
 # needs to be oriented so that one of the axes is parallel to the global plane
-# X-Z. We accomplish that here by rotating the vector [0, 1, 0] by ninety degrees
-# about the axis of the beam.
+# X-Z. We accomplish that here by rotating the vector [0, 1, 0] by ninety
+# degrees about the axis of the beam.
 
 xz_vector = rotation.rotate(m["joints"][2], m["joints"][4], [0, 1, 0], 90)
 sect_2 = section.beam_3d_section(
@@ -111,15 +111,16 @@ sect_2 = section.beam_3d_section(
 )
 
 
-# With the above definitions of the sections at hand, we define the three members.
+# With the above definitions of the sections at hand, we define the three
+# members.
 
 model.add_beam_member(m, 1, [1, 2], sect_1)
 model.add_beam_member(m, 2, [3, 1], sect_1)
 model.add_beam_member(m, 3, [2, 4], sect_2)
 
 
-# Now we can plot the geometry of the structure. We show the members, the member
-# numbers, and the orientations of the local coordinate systems.
+# Now we can plot the geometry of the structure. We show the members, the
+# member numbers, and the orientations of the local coordinate systems.
 
 ax = plots.plot_setup(m)
 plots.plot_members(m)
@@ -165,8 +166,8 @@ plots.show(m)
 model.number_dofs(m)
 model.solve_statics(m)
 
-# The displacements of the joints can be printed out. Recall that joints 3 and 4
-# are clamped, and their displacements are therefore zero.
+# The displacements of the joints can be printed out. Recall that joints 3 and
+# 4 are clamped, and their displacements are therefore zero.
 for jid in [1, 2]:
     j = m["joints"][jid]
     print(jid, j["displacements"])
@@ -183,32 +184,35 @@ if norm(m["joints"][2]["displacements"] - ref2) > 1.0e-1 * norm(ref2):
     raise ValueError("Displacement calculation error")
 print("Displacement calculation OK")
 
-# The internal forces in the members can be calculated. Here we report the "end
-# forces", i.e., the forces and moments at the ends of the members that act on
-# the joints.
+# The internal forces in the members can be calculated. Here we report the
+# "end forces", i.e., the forces and moments at the ends of the members that
+# act on the joints.
 for k in m["beam_members"].keys():
     member = m["beam_members"][k]
     connectivity = member["connectivity"]
     i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
     f = beam.beam_3d_end_forces(member, i, j)
     print(f"Member {k}: ")
-    print(
-        f"   Joint {connectivity[0]}: N={f['Ni']:.5}, Qy={f['Qyi']:.5}, Qz={f['Qzi']:.5}, T={f['Ti']:.5}, My={f['Myi']:.5}, Mz={f['Mzi']:.5}: "
-    )
-    print(
-        f"   Joint {connectivity[1]}: N={f['Nj']:.5}, Qy={f['Qyj']:.5}, Qz={f['Qzj']:.5}, T={f['Tj']:.5}, My={f['Myj']:.5}, Mz={f['Mzj']:.5}: "
-    )
+    print(f"   Joint {connectivity[0]}: ")
+    print(f"   N={f['Ni']:.5}, Qy={f['Qyi']:.5}, Qz={f['Qzi']:.5}")
+    print(f"   T={f['Ti']:.5}, My={f['Myi']:.5}, Mz={f['Mzi']:.5}")
+    print(f"   Joint {connectivity[1]}: ")
+    print(f"   N={f['Nj']:.5}, Qy={f['Qyj']:.5}, Qz={f['Qzj']:.5}")
+    print(f"   T={f['Tj']:.5}, My={f['Myj']:.5}, Mz={f['Mzj']:.5}")
 
-# The reactions at the supports can be calculated. The reactions at joints 3 and 4
-# are compared to the reference values.
+# The reactions at the supports can be calculated. The reactions at joints 3
+# and 4 are compared to the reference values.
 model.statics_reactions(m)
 
 for jid in [3, 4]:
     j = m["joints"][jid]
     print(f"Joint {jid}:")
-    print(
-        f"   Rx={j['reactions'][0]:.5}, Ry={j['reactions'][1]:.5}, Rz={j['reactions'][2]:.5}, Mx={j['reactions'][3]:.5}, My={j['reactions'][4]:.5}, Mz={j['reactions'][5]:.5}: "
-    )
+    print(f"   Rx={j['reactions'][0]:.5}")
+    print(f"   Ry={j['reactions'][1]:.5}")
+    print(f"   Rz={j['reactions'][2]:.5}")
+    print(f"   Mx={j['reactions'][3]:.5}")
+    print(f"   My={j['reactions'][4]:.5}")
+    print(f"   Mz={j['reactions'][5]:.5}")
 
 # For joint 3:
 j = m["joints"][3]
@@ -239,8 +243,8 @@ if norm(allforces) > 1.0e-10:
 
 # We can see that the overall balance as a free body is satisfied.
 
-# The solution to the problem can be visualized with a number of plots. We start
-# with the deformed shape of the frame.
+# The solution to the problem can be visualized with a number of plots. We
+# start with the deformed shape of the frame.
 ax = plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m, 20)

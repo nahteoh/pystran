@@ -19,8 +19,6 @@ This example is completely solved in the book Matrix Analysis of Structures by
 Robert E. Sennett, ISBN 978-1577661436 (Section 3.8). 
 """
 
-from numpy import dot
-from numpy.linalg import norm
 from pystran import model
 from pystran import section
 from pystran import freedoms
@@ -29,7 +27,8 @@ from pystran import plots
 
 # US customary units, inches, pounds, seconds are assumed.
 
-# The book gives the product of the modulus of elasticity and the moment of inertia as 2.9e6.
+# The book gives the product of the modulus of elasticity and the moment 
+# of inertia as 2.9e6.
 E = 2.9e6
 I = 1.0
 A = 1.0  # cross-sectional area does not influence the results

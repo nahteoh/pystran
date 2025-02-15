@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -15,10 +15,10 @@ Displacements and internal forces are provided in the verification manual.
 
 ## References
 
-This is an AFNOR SSLL04/89 test case. 
+This is an AFNOR SSLL04/89 test case.
 
 Original source: "Guide de validation des progiciels de calcul de structures"
-publié par l'AFNOR 1990 (ISBN 2-12-486611-7).  
+publié par l'AFNOR 1990 (ISBN 2-12-486611-7).
 
 Data taken from: ICAB Force Exemples Exemples de calculs de statique pour ICAB
 Force. www.icab.fr
@@ -81,8 +81,8 @@ model.add_beam_member(m, 2, ["N_C", "N_B"], sect_2)
 model.add_beam_member(m, 3, ["N_D", "N_H1"], sect_1)
 model.add_beam_member(m, 4, ["N_H2", "N_C"], sect_1)
 
-# Now we can plot the geometry of the structure. We show the members, the member
-# numbers, and the orientations of the local coordinate systems.
+# Now we can plot the geometry of the structure. We show the members,
+# the member numbers, and the orientations of the local coordinate systems.
 
 ax = plots.plot_setup(m)
 plots.plot_members(m)
@@ -166,7 +166,9 @@ for i in range(6):
 # These are the displacements of joint 3:
 ref3 = array([0.02977301, 0.13888914, -0.37002052])
 for i in range(3):
-    if abs(m["joints"]["N_C"]["displacements"][i] - ref3[i]) > 0.001 * abs(ref3[i]):
+    if abs(m["joints"]["N_C"]["displacements"][i] - ref3[i]) > 0.001 * abs(
+        ref3[i]
+    ):
         raise ValueError("Displacement calculation error")
 
 print("Displacement calculation OK")
@@ -206,12 +208,12 @@ for k in m["beam_members"].keys():
     i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
     f = beam.beam_3d_end_forces(member, i, j)
     print(f"Member {k}: ")
-    print(
-        f"   Joint {connectivity[0]}: N={f['Ni']:.5}, Qy={f['Qyi']:.5}, Qz={f['Qzi']:.5}, T={f['Ti']:.5}, My={f['Myi']:.5}, Mz={f['Mzi']:.5}: "
-    )
-    print(
-        f"   Joint {connectivity[1]}: N={f['Nj']:.5}, Qy={f['Qyj']:.5}, Qz={f['Qzj']:.5}, T={f['Tj']:.5}, My={f['Myj']:.5}, Mz={f['Mzj']:.5}: "
-    )
+    print(f"   Joint {connectivity[0]}: ")
+    print(f"   N={f['Ni']:.5}, Qy={f['Qyi']:.5}, Qz={f['Qzi']:.5}")
+    print(f"   T={f['Ti']:.5}, My={f['Myi']:.5}, Mz={f['Mzi']:.5}")
+    print(f"   Joint {connectivity[1]}: ")
+    print(f"   N={f['Nj']:.5}, Qy={f['Qyj']:.5}, Qz={f['Qzj']:.5}")
+    print(f"   T={f['Tj']:.5}, My={f['Myj']:.5}, Mz={f['Mzj']:.5}")
 
 # The reference provides values of moments at joint N_A in member 1:
 member = m["beam_members"][1]

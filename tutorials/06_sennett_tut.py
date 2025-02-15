@@ -9,12 +9,12 @@ pystran - Python package for structural analysis with trusses and beams
 
 Frame with three legs that are clamped, loaded by a torque.
 
-Displacements and internal forces are provided in the book, and we can check our
-solution against these reference values.
+Displacements and internal forces are provided in the book, and we can check
+our solution against these reference values.
 
 Important note: Our orientation of the local coordinate system is such that web
-of the H-beams is parallel to beam z axis! This is different from the orientation in
-the book, where the web is parallel to the y axis.
+of the H-beams is parallel to beam z axis! This is different from the
+orientation in the book, where the web is parallel to the y axis.
 
 ## References
 
@@ -52,7 +52,8 @@ M = 41000 * 12  # Applied moment at joint 2 in lb-in
 # The model is created as three dimensional (3 as argument!).
 m = model.create(3)
 
-# Joints are added at their locations, and the supports of the clamped joints are specified.
+# Joints are added at their locations, and the supports of the clamped 
+# joints are specified.
 model.add_joint(m, 1, [L, 0.0, L])
 model.add_joint(m, 2, [0.0, 0.0, L])
 model.add_joint(m, 3, [L, L, L])
@@ -82,8 +83,8 @@ plots.show(m)
 # There are three beams. The cross sectional properties are the same, but the
 # beams have different orientation of their local coordinate systems in space.
 # Therefore, we create two sections. The first section (for beams 1 and 2)
-# orients the beam local coordinate system such that the x-z planes contains the
-# vector [0, 0, 1].
+# orients the beam local coordinate system such that the x-z planes contains
+# the vector [0, 0, 1].
 
 xz_vector = [0, 0, 1]
 sect_12 = section.beam_3d_section(
@@ -98,13 +99,15 @@ sect_3 = section.beam_3d_section(
     "sect_3", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J, xz_vector=xz_vector
 )
 
-# With the above definitions of the sections at hand, we define the three members.
+# With the above definitions of the sections at hand, we define the three
+# members.
 
 model.add_beam_member(m, 1, [1, 2], sect_12)
 model.add_beam_member(m, 2, [3, 1], sect_12)
 model.add_beam_member(m, 3, [1, 4], sect_3)
 
-# This plot shows the orientations of the local coordinate systems of the beams.
+# This plot shows the orientations of the local coordinate systems of the
+# beams.
 ax = plots.plot_setup(m)
 plots.plot_joint_ids(m)
 plots.plot_members(m)
@@ -130,8 +133,8 @@ plots.show(m)
 model.number_dofs(m)
 model.solve_statics(m)
 
-# The displacements of the joints can be printed out. Recall that joints 3 and 4
-# are clamped, and their displacements are therefore zero.
+# The displacements of the joints can be printed out. Recall that joints 3 and
+# 4 are clamped, and their displacements are therefore zero.
 for jid in [1]:
     j = m["joints"][jid]
     print(jid, j["displacements"])
@@ -158,12 +161,12 @@ for k in m["beam_members"].keys():
     i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
     f = beam.beam_3d_end_forces(member, i, j)
     print(f"Member {k}: ")
-    print(
-        f"   Joint {connectivity[0]}: N={f['Ni']:.5}, Qy={f['Qyi']:.5}, Qz={f['Qzi']:.5}, T={f['Ti']:.5}, My={f['Myi']:.5}, Mz={f['Mzi']:.5}: "
-    )
-    print(
-        f"   Joint {connectivity[1]}: N={f['Nj']:.5}, Qy={f['Qyj']:.5}, Qz={f['Qzj']:.5}, T={f['Tj']:.5}, My={f['Myj']:.5}, Mz={f['Mzj']:.5}: "
-    )
+    print(f"   Joint {connectivity[0]}: ")
+    print(f"   N={f['Ni']:.5}, Qy={f['Qyi']:.5}, Qz={f['Qzi']:.5}")
+    print(f"   T={f['Ti']:.5}, My={f['Myi']:.5}, Mz={f['Mzi']:.5}")
+    print(f"   Joint {connectivity[1]}: ")
+    print(f"   N={f['Nj']:.5}, Qy={f['Qyj']:.5}, Qz={f['Qzj']:.5}")
+    print(f"   T={f['Tj']:.5}, My={f['Myj']:.5}, Mz={f['Mzj']:.5}")
 
 # Let us compare to the reference values: Member 1, joint at the start of the member.
 member = m["beam_members"][1]

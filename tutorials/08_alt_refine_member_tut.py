@@ -36,9 +36,9 @@ model.add_joint(m, "j3", [12.0, 0.0])
 
 # The supports are added to the model. The pinned supports are added to the
 # joint by listing the degree of freedom designations, `freedoms.U1` and
-# `freedoms.U2`. These degrees of freedom are suppressed (set to zero). Note that
-# each of the joints also has a rotation degree of freedom, `freedoms.UR3`, which
-# are free at all joints.
+# `freedoms.U2`. These degrees of freedom are suppressed (set to zero). Note
+# that each of the joints also has a rotation degree of freedom,
+# `freedoms.UR3`, which are free at all joints.
 model.add_support(m["joints"]["j1"], freedoms.U1)
 model.add_support(m["joints"]["j1"], freedoms.U2)
 model.add_support(m["joints"]["j2"], freedoms.U1)
@@ -96,8 +96,9 @@ if norm(m["U"][0:3] - [-0.02969075, -0.02742406, 0.03952194]) > 1.0e-3:
 else:
     print("Displacement calculation OK")
 
-# The displacements can be seen to be the same as in  02_continuous_beam_2_spans_consist_tut.py.
-# The deformed shape shows the curvatures of the beam.
+# The displacements can be seen to be the same as in
+# 02_continuous_beam_2_spans_consist_tut.py. The deformed shape shows the
+# curvatures of the beam.
 plots.plot_setup(m)
 plots.plot_members(m)
 ax = plots.plot_deformations(m, 10.0)
