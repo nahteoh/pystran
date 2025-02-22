@@ -22,6 +22,7 @@ Robert E. Sennett, ISBN 978-1577661436 (Example 3.5).
 # We begin with the standard imports:
 
 from numpy.linalg import norm
+import context
 from pystran import model
 from pystran import section
 from pystran import plots

@@ -27,6 +27,7 @@ Force. www.icab.fr
 # We begin with the standard imports:
 
 from numpy import array
+import context
 from pystran import model
 from pystran import section
 from pystran import freedoms

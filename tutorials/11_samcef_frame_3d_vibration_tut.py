@@ -23,6 +23,7 @@ Original citation: Samcef. 1992 Samcef manual: Asef–Stabi–Dynam–Repdyn (M4
 Samtech SA Liège, Belgium.
 """
 
+import context
 from pystran import model
 from pystran import section
 from pystran import freedoms

@@ -22,6 +22,7 @@ Structures Second Edition by Robert Levy and William R. Spillers.
 # The following imports are necessary for the example to work.
 from numpy.linalg import norm
 from numpy import concatenate, dot
+import context
 from pystran import model
 from pystran import section
 from pystran import geometry

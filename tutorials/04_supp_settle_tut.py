@@ -19,6 +19,7 @@ This example is completely solved in the book Matrix Analysis of Structures by
 Robert E. Sennett, ISBN 978-1577661436 (Section 3.8). 
 """
 
+import context
 from pystran import model
 from pystran import section
 from pystran import freedoms

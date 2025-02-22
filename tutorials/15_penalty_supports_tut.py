@@ -22,6 +22,7 @@ Robert E. Sennett, ISBN 978-1577661436 (Example 7.3 on page 134).
 
 from math import cos, sin, pi
 from numpy.linalg import norm
+import context
 from pystran import model
 from pystran import section
 from pystran import geometry

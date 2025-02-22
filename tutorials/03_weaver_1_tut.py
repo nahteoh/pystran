@@ -37,6 +37,7 @@ It is accessible online via the STAAD.Pro 2023.00.03 User Manual.
 
 from numpy import array
 from numpy.linalg import norm
+import context
 from pystran import model
 from pystran import section
 from pystran import freedoms
