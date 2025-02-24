@@ -44,9 +44,9 @@ rss = section.beam_2d_section("right_span_section", E, A2, I2)
 # Distributed loading on the left span.
 q = 2.0e3 # kN/m
 
-# First we solved the problem with the minimum number of members. A single
+# First we solve the problem with the minimum number of members. A single
 # member is used for the left span. Two members are used for the right span,
-# because there is concentrated force at an intermediate point. 
+# because there is a concentrated force at an intermediate point. 
 m = model.create(2)
 # The minimum number of joints is four (three members).
 model.add_joint(m, "a", [0.0, 0.0]) # Roller.
@@ -92,7 +92,7 @@ ax.set_title("Moments")
 plots.show(m)
 
 # We can calculate the reactions at the supports. This is the manual approach
-# to that using the partitioning of the stiffness matrix and the displacement
+# using the partitioning of the stiffness matrix and the displacement
 # vector.
 nt = m["ntotaldof"]
 nf = m["nfreedof"]
@@ -107,10 +107,16 @@ Fd = m["F"][nf:nt]
 Rd = dot(Kdf, Uf) + dot(Kdd, Ud) - Fd
 print("Reactions = ", Rd)
 
+# Confirm with the builtin function which produces the reactions at the joints.
+model.statics_reactions(m)
+for j in m["joints"].values():
+    if 'reactions' in j:
+        print(f"{j['jid']}: {j['reactions']}")
+
 # Even without employing the superposition of the fixed end conditions with the
 # solution with the equivalent node loads, accuracy of the solution can be
-# improved by employing multiple elements per member with the distributed load.
-# First we setup the joints in the elements for the right hand side span.
+# improved by employing multiple elements within the span with the distributed
+# load. First we setup the joints and the elements for the right hand side span.
 m = model.create(2)
 model.add_joint(m, "a", [0.0, 0.0])
 model.add_joint(m, "b", [8.0, 0.0])
@@ -127,14 +133,14 @@ model.add_joint(m, 1, [1.6, 0.0])
 model.add_joint(m, 2, [3.2, 0.0])
 model.add_joint(m, 3, [4.8, 0.0])
 model.add_joint(m, 4, [6.4, 0.0])
-# And the left and side span is divided into five elements.
+# And the left hand side span is divided into five elements.
 model.add_beam_member(m, "ls-1", ["a", 1], lss)
 model.add_beam_member(m, "ls-2", [1, 2], lss)
 model.add_beam_member(m, "ls-3", [2, 3], lss)
 model.add_beam_member(m, "ls-4", [3, 4], lss)
 model.add_beam_member(m, "ls-5", [4, "b"], lss)
 # For each of the elements, equivalent node loads are calculated based on its
-# length.
+# length. 
 for sub in [1, 2, 3, 4, 5]:
     member = m["beam_members"][f"ls-{sub}"]
     i, j = m["joints"][member["connectivity"][0]], m["joints"][member["connectivity"][1]]
@@ -152,7 +158,7 @@ ax = plots.plot_bending_moments(m, 0.0005)
 ax.set_title("Moments")
 plots.show(m)
 # Clearly, the bending moments are more accurate with the multiple elements per
-# member. The bending moment at the left hand side is close to zero, as it
+# member. The bending moment at the left hand side is much closer to zero, as it
 # should be.
 
 # Next we again calculate the reactions at the supports. 
@@ -161,7 +167,8 @@ for j in m["joints"].values():
     if 'reactions' in j:
         print(f"{j['jid']}: {j['reactions']}")
 
-
+# Finally, we make it possible to employ an arbitrary number of elements within
+# the left hand side span.
 m = model.create(2)
 model.add_joint(m, "a", [0.0, 0.0])
 model.add_joint(m, "b", [8.0, 0.0])
@@ -174,14 +181,22 @@ model.add_beam_member(m, "rs-1", ["b", "d"], rss)
 model.add_beam_member(m, "rs-2", ["d", "c"], rss)
 model.add_load(m["joints"]["d"], freedoms.U2, -20e3)
 
+# Here we will use 10 elements within the left hand side span.
 nsub = 10
+# We start with the element from the left support to the first intermediate
+# joint.
+model.add_beam_member(m, "ls-1", ["a", 1], lss)
+# Then we generate the intermediate joins and elements.
 for ajid in range(nsub-2):
     model.add_joint(m, ajid+1, [(ajid+1) / (nsub) * 8.0, 0.0])
     model.add_beam_member(m, f"ls-{ajid+2}", [ajid+1, ajid+2], lss)
+# Finally, we add the last element from the last intermediate joint to the right
+# support.
 model.add_joint(m, nsub-1, [(nsub-1) / (nsub) * 8.0, 0.0])
-model.add_beam_member(m, "ls-1", ["a", 1], lss)
 model.add_beam_member(m, f"ls-{nsub}", [nsub-1, "b"], lss)
 
+# For each of the elements, equivalent node loads are calculated based on its
+# length, as before.
 for sub in range(1, nsub+1):
     member = m["beam_members"][f"ls-{sub}"]
     i, j = m["joints"][member["connectivity"][0]], m["joints"][member["connectivity"][1]]
@@ -191,14 +206,16 @@ for sub in range(1, nsub+1):
     model.add_load(i, freedoms.UR3, -q*h**2/12)
     model.add_load(j, freedoms.UR3, +q*h**2/12)
 
+# Solve the problem, report the bending moments.
 model.number_dofs(m)
 model.solve_statics(m)
-
 plots.plot_setup(m)
 plots.plot_members(m)
 ax = plots.plot_bending_moments(m, 0.0005)
 ax.set_title("Moments")
 plots.show(m)
+# The bending moment representation can be made arbitrarily accurate by
+# employing more and more elements on the span with the distributed load.
 
 # Next we again calculate the reactions at the supports. Note that the
 # reactions did not change relative to the other, coarser, models.
