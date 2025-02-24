@@ -384,11 +384,15 @@ def statics_reactions(m):
     """
     K = m["K"]
     U = m["U"]
+    F = m["F"]
 
     # Compute reactions from the partitioned stiffness matrix and the
-    # partitioned displacement vector
-    # R = dot(K[nf:nt, 0:nf], U[0:nf]) + dot(K[nf:nt, nf:nt], U[nf:nt])
-    R = dot(K, U)
+    # partitioned displacement vector 
+    # R = dot(K[nf:nt, 0:nf], U[0:nf]) + dot(K[nf:nt, nf:nt], U[nf:nt]) - F[nf:nt] 
+    # For convenience when working
+    # with degrees of freedom, we compute this product and only use the rows
+    # corresponding to fixed the degrees of freedom.
+    R = dot(K, U) - F
 
     for joint in m["joints"].values():
         if "supports" in joint:
