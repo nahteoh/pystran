@@ -678,8 +678,8 @@ def plot_applied_forces(m, scale=1.0):
     cd = characteristic_dimension(m)
     for j in m["joints"].values():
         if "loads" in j and j["loads"]:
-            F = zeros((dim,))
             for d in j["loads"].keys():
+                F = zeros((dim,))
                 if d < dim:
                     F[d] = j["loads"][d]
                 if norm(F) > 0:
@@ -730,8 +730,8 @@ def plot_applied_moments(m, scale=1.0, radius=0.0):
         radius = cd / 10
     for j in m["joints"].values():
         if "loads" in j and j["loads"]:
-            M = zeros((ndpn - dim,))
             for d in j["loads"].keys():
+                M = zeros((ndpn - dim,))
                 if d >= dim:
                     M[d - dim] = j["loads"][d]
                 if norm(M) > 0:
