@@ -95,11 +95,11 @@ def circular_tube(innerradius, outerradius):
     """
     Rext = outerradius
     Rint = innerradius
-    A = pi * (Rext ^ 2 - Rint ^ 2)
-    Iy = pi / 4 * (Rext ^ 4 - Rint ^ 4)
-    Iz = pi / 4 * (Rext ^ 4 - Rint ^ 4)
+    A = pi * (Rext ** 2 - Rint ** 2)
+    Iy = pi / 4 * (Rext ** 4 - Rint ** 4)
+    Iz = pi / 4 * (Rext ** 4 - Rint ** 4)
     Ix = Iy + Iz
-    J = pi / 2 * (Rext ^ 4 - Rint ^ 4)
+    J = pi / 2 * (Rext ** 4 - Rint ** 4)
     return A, Ix, Iy, Iz, J
 
 
