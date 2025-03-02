@@ -15,7 +15,7 @@ Displacements and internal forces are provided in the verification manual.
 
 ## References
 
-This is an AFNOR SSLL04/89 test case.
+This is the AFNOR SSLL04/89 test case.
 
 Original source: "Guide de validation des progiciels de calcul de structures"
 publié par l'AFNOR 1990 (ISBN 2-12-486611-7).
@@ -167,9 +167,7 @@ for i in range(6):
 # These are the displacements of joint 3:
 ref3 = array([0.02977301, 0.13888914, -0.37002052])
 for i in range(3):
-    if abs(m["joints"]["N_C"]["displacements"][i] - ref3[i]) > 0.001 * abs(
-        ref3[i]
-    ):
+    if abs(m["joints"]["N_C"]["displacements"][i] - ref3[i]) > 0.001 * abs(ref3[i]):
         raise ValueError("Displacement calculation error")
 
 print("Displacement calculation OK")
