@@ -31,5 +31,7 @@ By default the IDE will display the plots in the graphics pane.
 The plots are then static -- they cannot be interacted with.
 
 If that is not what we want, we should change the graphics settings as
+
 ![set graphics settings](graphics_settings.png)
+
 That will open interactive windows for all the plots outside of the editor.
