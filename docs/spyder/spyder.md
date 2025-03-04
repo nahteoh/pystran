@@ -23,3 +23,13 @@ Open a tutorial.
 ![open a tutorial](open_tutorial.png)
 
 Run the tutorial by clicking the green arrow button.
+Or, debug the tutorial by clicking the button with the blue arrow and two vertical bars (run-and-pause).
+
+## Plotting
+
+By default the IDE will display the plots in the graphics pane.
+The plots are then static -- they cannot be interacted with.
+
+If that is not what we want, we should change the graphics settings as
+![set graphics settings](graphics_settings.png)
+That will open interactive windows for all the plots outside of the editor.
