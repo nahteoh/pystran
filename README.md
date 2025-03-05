@@ -76,4 +76,12 @@ pdoc pystran/ --math -o html
 ```
 which will create an `./html` folder. double click the `index.html` file in that folder.
 
+## Testing
+
+In the `pystran` folder, run 
+```
+py unittests_planar_truss.py 
+```
+or analogously for the other unit test files.
+
 ## <a name="past-news"></a>Past news
