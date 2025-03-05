@@ -18,6 +18,11 @@ Make sure the project pane is showing.
 
 ![dialogue to create new project](project_pane.png)
 
+Then start a console in the folder where your script is located.
+
+
+![start a console](console.png)
+
 Open a tutorial.
 
 ![open a tutorial](open_tutorial.png)
