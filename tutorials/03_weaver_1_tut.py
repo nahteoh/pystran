@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -127,7 +127,7 @@ ax = plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_member_ids(m)
 plots.plot_joint_ids(m)
-plots.plot_member_orientation(m, 20)
+plots.plot_member_orientation(m)
 ax.view_init(elev=137, azim=-67, roll=30)
 ax.set_title("Frame geometry")
 plots.show(m)
@@ -248,9 +248,9 @@ if norm(allforces) > 1.0e-10:
 # start with the deformed shape of the frame.
 ax = plots.plot_setup(m)
 plots.plot_members(m)
-plots.plot_member_orientation(m, 20)
-ax = plots.plot_deformations(m, 80.0)
-ax.set_title("Deformed shape (magnified 80 times)")
+plots.plot_member_orientation(m)
+ax = plots.plot_deformations(m)
+ax.set_title("Deformed shape (magnified)")
 ax.view_init(elev=137, azim=-67, roll=30)
 plots.show(m)
 
@@ -258,8 +258,8 @@ plots.show(m)
 # For instance, the shear forces along the z-axis are shown.
 ax = plots.plot_setup(m)
 plots.plot_members(m)
-plots.plot_member_orientation(m, 20)
-ax = plots.plot_shear_forces(m, scale=50)
+plots.plot_member_orientation(m)
+ax = plots.plot_shear_forces(m)
 ax.set_title("Shear forces along z-axis")
 ax.view_init(elev=137, azim=-67, roll=30)
 plots.show(m)
@@ -267,8 +267,8 @@ plots.show(m)
 # Analogous diagrams can be produced for the torsional moments in the members.
 ax = plots.plot_setup(m)
 plots.plot_members(m)
-plots.plot_member_orientation(m, 20)
-ax = plots.plot_torsion_moments(m, scale=2)
+plots.plot_member_orientation(m)
+ax = plots.plot_torsion_moments(m)
 ax.set_title("Torsional moments")
 ax.view_init(elev=137, azim=-67, roll=30)
 plots.show(m)
@@ -276,8 +276,8 @@ plots.show(m)
 # Finally, the axial forces in the members can be visualized.
 ax = plots.plot_setup(m)
 plots.plot_members(m)
-plots.plot_member_orientation(m, 20)
-ax = plots.plot_axial_forces(m, scale=10)
+plots.plot_member_orientation(m)
+ax = plots.plot_axial_forces(m)
 ax.set_title("Axial forces")
 ax.view_init(elev=137, azim=-67, roll=30)
 plots.show(m)

@@ -262,7 +262,8 @@ def plot_deformations(m, scale=0.0):
     - `scale` = scale factor for the arrows. Default is 0.0, which
         means compute this internally.
 
-    Both truss and beam members will be included.
+    Both truss and beam members will be included. Truss members will remain
+    straight, beam members will be displayed using the cubic shape functions.
     """
     cd = characteristic_dimension(m)
 
@@ -272,8 +273,8 @@ def plot_deformations(m, scale=0.0):
         else:
             return [0]
 
-    maxmag = _largest_mag(m, fun)
     if scale == 0.0:
+        maxmag = _largest_mag_at_joints(m, fun)
         scale = cd / 5 / maxmag
     ax = plt.gca()
     for member in m["truss_members"].values():
@@ -347,7 +348,6 @@ def plot_member_ids(m):
     Plot the member numbers.
 
     - `m` = model dictionary.
-
     """
     if m["dim"] == 3:
         ax = _plot_member_ids_3d(m)
@@ -361,7 +361,6 @@ def plot_joint_ids(m):
     Plot the joint numbers.
 
     - `m` = model dictionary.
-
     """
     ax = plt.gca()
     for j in m["joints"].values():
@@ -377,6 +376,27 @@ def plot_joint_ids(m):
             ax.plot(j["coordinates"][0], j["coordinates"][1], "ro")
             ax.text(j["coordinates"][0], j["coordinates"][1], str(j["jid"]))
     return ax
+
+
+def _largest_mag_on_beam_members(m, fun):
+    maxmag = 0.0
+    for member in m["beam_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        for xi in linspace(-1, +1, 2):
+            mmag = abs(fun(member, i, j, xi))
+            maxmag = max(maxmag, mmag)
+    return maxmag
+
+
+def _largest_mag_on_truss_members(m, fun):
+    maxmag = 0.0
+    for member in m["truss_members"].values():
+        connectivity = member["connectivity"]
+        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+        mmag = abs(fun(member, i, j))
+        maxmag = max(maxmag, mmag)
+    return maxmag
 
 
 def _plot_2d_beam_moments(ax, member, i, j, scale):
@@ -429,7 +449,7 @@ def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
     return ax
 
 
-def plot_bending_moments(m, scale=1.0, axis="y"):
+def plot_bending_moments(m, scale=0.0, axis="y"):
     """
     Plot the bending moments in the beam members.
 
@@ -437,9 +457,22 @@ def plot_bending_moments(m, scale=1.0, axis="y"):
 
     Optional:
 
-    - `scale` = scale factor for the arrows. Default is 1.0.
+    - `scale` = scale factor for the ordinate. Default is
+        0.0, which means the scale will be computed internally.
     - `axis` = "y" or "z" (default is "z", which is suitable for 2d beams).
     """
+
+    def fun(member, i, j, xi):
+        if m["dim"] == 3:
+            return beam_3d_moment(member, i, j, axis, xi)
+        else:
+            return beam_2d_moment(member, i, j, xi)
+
+    if scale == 0.0:
+        cd = characteristic_dimension(m)
+        maxmag = _largest_mag_on_beam_members(m, fun)
+        scale = cd / 5 / maxmag
+
     ax = plt.gca()
     for member in m["beam_members"].values():
         connectivity = member["connectivity"]
@@ -498,7 +531,7 @@ def _plot_3d_beam_shear_forces(ax, member, i, j, axis, scale):
     return ax
 
 
-def plot_shear_forces(m, scale=1.0, axis="z"):
+def plot_shear_forces(m, scale=0.0, axis="z"):
     """
     Plot the shear forces in the beam members.
 
@@ -506,9 +539,22 @@ def plot_shear_forces(m, scale=1.0, axis="z"):
 
     Optional:
 
-    - `scale` = scale factor for the arrows. Default is 1.0.
+    - `scale` = scale factor for the ordinate. Default is 0.0, which means the
+      scale will be computed internally.
     - `axis` = "y" or "z" (default is "z", which is suitable for 2d beams).
     """
+
+    def fun(member, i, j, xi):
+        if m["dim"] == 3:
+            return beam_3d_shear_force(member, i, j, axis)
+        else:
+            return beam_2d_shear_force(member, i, j)
+
+    if scale == 0.0:
+        cd = characteristic_dimension(m)
+        maxmag = _largest_mag_on_beam_members(m, fun)
+        scale = cd / 5 / maxmag
+
     ax = plt.gca()
     for member in m["beam_members"].values():
         connectivity = member["connectivity"]
@@ -582,7 +628,7 @@ def _plot_3d_truss_beam_axial_forces(ax, member, i, j, scale):
     return ax
 
 
-def plot_axial_forces(m, scale=1.0):
+def plot_axial_forces(m, scale=0.0):
     """
     Plot the axial forces in the members.
 
@@ -590,8 +636,27 @@ def plot_axial_forces(m, scale=1.0):
 
     Optional:
 
-    - `scale` = scale factor for the arrows. Default is 1.0.
+    - `scale` = scale factor for the ordinate. Default is 0.0, which means the
+      scale will be computed internally.
     """
+
+    def funb(member, i, j, _):
+        if m["dim"] == 3:
+            return beam_3d_axial_force(member, i, j)
+        else:
+            return beam_2d_axial_force(member, i, j)
+
+    def funt(member, i, j):
+        return truss_axial_force(member, i, j)
+
+    if scale == 0.0:
+        cd = characteristic_dimension(m)
+        maxmag = max(
+            _largest_mag_on_beam_members(m, funb),
+            _largest_mag_on_truss_members(m, funt),
+        )
+        scale = cd / 5 / maxmag
+
     ax = plt.gca()
     for member in m["truss_members"].values():
         connectivity = member["connectivity"]
@@ -634,7 +699,7 @@ def _plot_3d_beam_torsion_moments(ax, member, i, j, scale):
     return ax
 
 
-def plot_torsion_moments(m, scale=1.0):
+def plot_torsion_moments(m, scale=0.0):
     """
     Plot the torsion moments in the 3D beam members.
 
@@ -642,8 +707,21 @@ def plot_torsion_moments(m, scale=1.0):
 
     Optional:
 
-    - `scale` = scale factor for the arrows. Default is 1.0.
+    - `scale` = scale factor for the ordinate. Default is 0.0, which means the
+      scale will be computed internally.
     """
+
+    def fun(member, i, j, _):
+        if m["dim"] == 3:
+            return beam_3d_torsion_moment(member, i, j)
+        else:
+            return 0.0
+
+    if scale == 0.0:
+        cd = characteristic_dimension(m)
+        maxmag = _largest_mag_on_beam_members(m, fun)
+        scale = cd / 5 / maxmag
+
     ax = plt.gca()
     for member in m["beam_members"].values():
         connectivity = member["connectivity"]
@@ -653,7 +731,7 @@ def plot_torsion_moments(m, scale=1.0):
     return ax
 
 
-def plot_member_orientation(m, scale=1.0):
+def plot_member_orientation(m, scale=0.0):
     """
     Plot the member orientations as cartesian triplets.
 
@@ -661,12 +739,17 @@ def plot_member_orientation(m, scale=1.0):
 
     Optional:
 
-    - `scale` = scale factor for the member orientation vectors. Default is 1.0.
+    - `scale` = scale factor for the member orientation vectors. Default is
+      0.0, which means the scale will be computed internally.
 
     The vectors are shown as red (x), green (y), and blue (z) lines that
     represent the basis vectors of a local cartesian coordinate system for each
     member.
     """
+    if scale == 0.0:
+        cd = characteristic_dimension(m)
+        scale = cd / 15
+
     ax = plt.gca()
     member_values = (m["truss_members"].values(), m["beam_members"].values())
     for v in member_values:
@@ -727,7 +810,7 @@ def plot_member_orientation(m, scale=1.0):
     return ax
 
 
-def _largest_mag(m, fun):
+def _largest_mag_at_joints(m, fun):
     """
     Find the maximum magnitude of a joint quantity.
 
@@ -735,7 +818,10 @@ def _largest_mag(m, fun):
     """
     maxmag = 0.0
     for j in m["joints"].values():
-        jmag = max([abs(v) for v in fun(j)])
+        jmag = 0.0
+        for v in fun(j):
+            if v:
+                jmag = max(jmag, abs(v))
         maxmag = max(maxmag, jmag)
     return maxmag
 
@@ -761,7 +847,7 @@ def plot_applied_forces(m, scale=0.0):
         else:
             return [0]
 
-    maxmag = _largest_mag(m, fun)
+    maxmag = _largest_mag_at_joints(m, fun)
     if scale == 0.0:
         scale = cd / 2 / maxmag
     for j in m["joints"].values():
@@ -824,7 +910,7 @@ def plot_applied_moments(m, scale=0.0, radius=1.0):
         else:
             return [0]
 
-    maxmag = _largest_mag(m, fun)
+    maxmag = _largest_mag_at_joints(m, fun)
     if scale == 0.0:
         scale = cd / 2 / maxmag
     if radius <= 0.0:

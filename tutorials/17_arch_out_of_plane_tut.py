@@ -99,8 +99,16 @@ print(m["joints"][NUM_JOINTS - 1]["displacements"])
 if abs(m["joints"][NUM_JOINTS - 1]["displacements"][2] - 134.33) > 0.01:
     raise ValueError("Displacement calculation error")
 
+# Plot the deformation.
 ax = plots.plot_setup(m)
 plots.plot_members(m)
 plots.plot_deformations(m, scale=2.0)
-ax.set_title("Deformation (x2))")
+ax.set_title("Deformation (x2)")
+plots.show(m)
+
+# Also plot the torsion moment.
+ax = plots.plot_setup(m)
+plots.plot_members(m)
+plots.plot_torsion_moments(m)
+ax.set_title("Torsion moment")
 plots.show(m)

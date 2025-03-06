@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -110,12 +110,12 @@ if abs(d2[1] - 0.00041) / 0.00041 > 1e-2:
 # The obligatory diagrams of bending moments and shear forces follow.
 plots.plot_setup(m)
 plots.plot_members(m)
-ax = plots.plot_bending_moments(m, 0.0005)
+ax = plots.plot_bending_moments(m)
 ax.set_title("Moments")
 plots.show(m)
 
 plots.plot_setup(m)
 plots.plot_members(m)
-ax = plots.plot_shear_forces(m, 0.01)
+ax = plots.plot_shear_forces(m)
 ax.set_title("Shear forces")
 plots.show(m)
