@@ -60,11 +60,10 @@ It is also possible to run simulations using a [plain Python in a terminal](docs
 ## Tutorials
 
 Step-by-step tutorials are available in the [`tutorials`](./tutorials) folder. 
-Run tutorials for example in the terminal as 
+Run tutorials in the `pystran/tutorials` for example in the terminal as 
 ```
 01_three_bars_tut.py
 ```
-For which you need to be in the `tutorials` folder.
 
 Or, [use Spyder](docs/spyder/spyder.md).
 
@@ -78,7 +77,7 @@ which will create an `./html` folder. double click the `index.html` file in that
 
 ## Testing
 
-In the `pystran` folder, run 
+In the `pystran/tests` folder, run 
 ```
 py unittests_planar_truss.py 
 ```

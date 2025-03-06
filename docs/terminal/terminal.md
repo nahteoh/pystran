@@ -10,6 +10,7 @@ Then run `py` (or `python`)
 
 ![run a tutorial](folder_and_run.png)
 
+There is a `scripts` folder for storage of your own scripts, if convenient.
 
 
 ## Plotting
