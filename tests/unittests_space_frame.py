@@ -4,6 +4,7 @@ pystran unit tests
 
 import unittest
 
+import context
 from math import sqrt, pi, cos, sin
 from numpy import array, dot, outer, concatenate, zeros
 from numpy.linalg import norm
