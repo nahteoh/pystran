@@ -1,8 +1,9 @@
 # Using `pystran` with Spyder
 
-The easiest way to run a `pystran` example is to download and install [Spyder 6](https://www.spyder-ide.org/download/). It is a complete IDE for Python, 
-including a very capable debugger. Just open an example and click the run button.
-[Spyder 6](https://www.spyder-ide.org/download/) (IDE).
+The easiest way to run a `pystran` example is to download and install [Spyder
+6](https://www.spyder-ide.org/download/). It is a complete IDE for Python,
+including a very capable debugger. Just open an example and click the run
+button.
 
 The detailed instructions are as follows:
 
