@@ -34,11 +34,12 @@ from pystran.geometry import (
     herm_basis,
     interpolate,
 )
+from pystran import freedoms
 
 
 # fig = plt.figure(figsize=(9,9))
 # ax = plt.gca()
-def _drawCirc(ax, radius, centX, centY, angle_, theta2_, sense, color_="black"):
+def _drawcirc(ax, radius, centX, centY, angle_, theta2_, sense, color_="black"):
     "A little circle helper"
     # ========Line
     arc = Arc(
@@ -82,8 +83,8 @@ def _drawCirc(ax, radius, centX, centY, angle_, theta2_, sense, color_="black"):
     # Make sure you keep the axes scaled or else arrow will distort
 
 
-# _drawCirc(ax,1,1,1,0,250)
-# _drawCirc(ax,2,1,1,90,330,color_='blue')
+# _drawcirc(ax,1,1,1,0,250)
+# _drawcirc(ax,2,1,1,90,330,color_='blue')
 # plt.show()
 
 
@@ -126,6 +127,13 @@ def plot_setup(m, set_limits=False):
     """
     Setup the plot.
 
+    - `m` = model dictionary.
+
+    Optional:
+
+    - `set_limits` = set the limits of the graphics manually or not?
+        Default is False.
+
     This function creates a figure and an axis object. The axes are returned.
     """
     fig = plt.figure()
@@ -144,6 +152,10 @@ def plot_setup(m, set_limits=False):
 def plot_members(m):
     """
     Plot the members of the structure.
+
+    - `m` = model dictionary.
+
+    Both truss and beam members will be included.
     """
     ax = plt.gca()
     if m["dim"] == 3:
@@ -239,10 +251,30 @@ def _plot_3d_beam_deflection(ax, member, i, j, scale):
     ax.plot(xs, ys, zs, "m-")
 
 
-def plot_deformations(m, scale=1.0):
+def plot_deformations(m, scale=0.0):
     """
-    Plot the deformations in the truss and beam members.
+    Plot the deformation of the structure.
+
+    - `m` = model dictionary.
+
+    Optional:
+
+    - `scale` = scale factor for the arrows. Default is 0.0, which
+        means compute this internally.
+
+    Both truss and beam members will be included.
     """
+    cd = characteristic_dimension(m)
+
+    def fun(j):
+        if "displacements" in j:
+            return j["displacements"]
+        else:
+            return [0]
+
+    maxmag = _largest_mag(m, fun)
+    if scale == 0.0:
+        scale = cd / 5 / maxmag
     ax = plt.gca()
     for member in m["truss_members"].values():
         connectivity = member["connectivity"]
@@ -313,6 +345,9 @@ def _plot_member_ids_3d(m):
 def plot_member_ids(m):
     """
     Plot the member numbers.
+
+    - `m` = model dictionary.
+
     """
     if m["dim"] == 3:
         ax = _plot_member_ids_3d(m)
@@ -324,6 +359,9 @@ def plot_member_ids(m):
 def plot_joint_ids(m):
     """
     Plot the joint numbers.
+
+    - `m` = model dictionary.
+
     """
     ax = plt.gca()
     for j in m["joints"].values():
@@ -395,7 +433,12 @@ def plot_bending_moments(m, scale=1.0, axis="y"):
     """
     Plot the bending moments in the beam members.
 
-    Optional: axis = "y" or "z" (default is "y", which is suitable for 2d beams).
+    - `m` = model dictionary.
+
+    Optional:
+
+    - `scale` = scale factor for the arrows. Default is 1.0.
+    - `axis` = "y" or "z" (default is "z", which is suitable for 2d beams).
     """
     ax = plt.gca()
     for member in m["beam_members"].values():
@@ -459,7 +502,12 @@ def plot_shear_forces(m, scale=1.0, axis="z"):
     """
     Plot the shear forces in the beam members.
 
-    Optional: axis = "y" or "z" (default is "z", which is suitable for 2d beams).
+    - `m` = model dictionary.
+
+    Optional:
+
+    - `scale` = scale factor for the arrows. Default is 1.0.
+    - `axis` = "y" or "z" (default is "z", which is suitable for 2d beams).
     """
     ax = plt.gca()
     for member in m["beam_members"].values():
@@ -538,7 +586,11 @@ def plot_axial_forces(m, scale=1.0):
     """
     Plot the axial forces in the members.
 
-    Optional: axis = "y" or "z" (default is "z", which is suitable for 2d beams).
+    - `m` = model dictionary.
+
+    Optional:
+
+    - `scale` = scale factor for the arrows. Default is 1.0.
     """
     ax = plt.gca()
     for member in m["truss_members"].values():
@@ -585,6 +637,12 @@ def _plot_3d_beam_torsion_moments(ax, member, i, j, scale):
 def plot_torsion_moments(m, scale=1.0):
     """
     Plot the torsion moments in the 3D beam members.
+
+    - `m` = model dictionary.
+
+    Optional:
+
+    - `scale` = scale factor for the arrows. Default is 1.0.
     """
     ax = plt.gca()
     for member in m["beam_members"].values():
@@ -600,7 +658,10 @@ def plot_member_orientation(m, scale=1.0):
     Plot the member orientations as cartesian triplets.
 
     - `m` = model dictionary,
-    - `scale` = scale factor for the member orientation vectors.
+
+    Optional:
+
+    - `scale` = scale factor for the member orientation vectors. Default is 1.0.
 
     The vectors are shown as red (x), green (y), and blue (z) lines that
     represent the basis vectors of a local cartesian coordinate system for each
@@ -666,16 +727,43 @@ def plot_member_orientation(m, scale=1.0):
     return ax
 
 
-def plot_applied_forces(m, scale=1.0):
+def _largest_mag(m, fun):
+    """
+    Find the maximum magnitude of a joint quantity.
+
+    - `m` = model dictionary.
+    """
+    maxmag = 0.0
+    for j in m["joints"].values():
+        jmag = max([abs(v) for v in fun(j)])
+        maxmag = max(maxmag, jmag)
+    return maxmag
+
+
+def plot_applied_forces(m, scale=0.0):
     """
     Plot the applied forces at the joints.
 
-    - `m` = model dictionary,
-    - `scale` = scale factor for the arrows.
+    - `m` = model dictionary.
+
+    Optional:
+
+    - `scale` = scale factor for the arrows. Forces are rendered with single
+      arrows. Default is 0.0, which means compute this internally.
     """
     ax = plt.gca()
     dim = m["dim"]
     cd = characteristic_dimension(m)
+
+    def fun(j):
+        if "loads" in j and j["loads"]:
+            return [v for (d, v) in j["loads"].items() if d < dim]
+        else:
+            return [0]
+
+    maxmag = _largest_mag(m, fun)
+    if scale == 0.0:
+        scale = cd / 2 / maxmag
     for j in m["joints"].values():
         if "loads" in j and j["loads"]:
             for d in j["loads"].keys():
@@ -712,20 +800,33 @@ def plot_applied_forces(m, scale=1.0):
     return ax
 
 
-def plot_applied_moments(m, scale=1.0, radius=0.0):
+def plot_applied_moments(m, scale=0.0, radius=1.0):
     """
     Plot the applied moments at the joints.
 
-    - `m` = model dictionary,
-    - `scale` = scale factor for the arrows. Moments are rendered with double
-      arrows.
+    - `m` = model dictionary.
 
-    Optional: `radius` = radius of the circle (2D only).
+    Optional:
+
+    - `scale` = scale factor for the arrows. Moments are rendered with double
+      arrows. Default is 0.0, which means compute this internally.
+    - `radius`  = radius of the circle to represent the moment (2D only).
+      Default is 1.0.
     """
     ax = plt.gca()
     dim = m["dim"]
     ndpn = ndof_per_joint(m)
     cd = characteristic_dimension(m)
+
+    def fun(j):
+        if "loads" in j and j["loads"]:
+            return [v for (d, v) in j["loads"].items() if d >= dim]
+        else:
+            return [0]
+
+    maxmag = _largest_mag(m, fun)
+    if scale == 0.0:
+        scale = cd / 2 / maxmag
     if radius <= 0.0:
         radius = cd / 10
     for j in m["joints"].values():
@@ -745,7 +846,7 @@ def plot_applied_moments(m, scale=1.0, radius=0.0):
                             st = 80
                             dl = 210
                             sense = -1
-                        _drawCirc(ax, radius, x, y, st, dl, sense, color_="cyan")
+                        _drawcirc(ax, radius, x, y, st, dl, sense, color_="cyan")
                     else:
                         x, y, z = j["coordinates"]
                         u, v, w = M
@@ -779,7 +880,12 @@ def plot_translation_supports(m, scale=1.0, shortest_arrow=1.0e-6):
     Plot the translation supports at the joints.
 
     - `m` = model dictionary,
-    - `scale` = scale factor for the arrows.
+
+    Optional:
+
+    - `scale` = scale factor for the arrows. Moments are rendered with double
+      arrows. Default is 1.0.
+    - `shortest_arrow` = how long should the shortest arrow be? Default is 1.0e-6.
     """
     ax = plt.gca()
     dim = m["dim"]
@@ -823,15 +929,18 @@ def plot_translation_supports(m, scale=1.0, shortest_arrow=1.0e-6):
     return ax
 
 
-def plot_rotation_supports(m, scale=1.0, radius=0.0, shortest_arrow=1.0e-6):
+def plot_rotation_supports(m, scale=1.0, radius=1.0, shortest_arrow=1.0e-6):
     """
     Plot the rotation supports at the joints.
 
-    - `m` = model dictionary,
-    - `scale` = scale factor for the arrows. Moments are rendered with double
-      arrows.
+    - `m` = model dictionary.
 
-    Optional: `radius` = radius of the circle (2D only).
+    Optional:
+
+    - `scale` = scale factor for the arrows. Moments are rendered with double
+      arrows. Default is 1.0.
+    - `radius` = radius of the circle (2D only). Default is 1.0.
+    - `shortest_arrow` = how long should the shortest arrow be? Default is 1.0e-6.
     """
     ax = plt.gca()
     dim = m["dim"]
@@ -860,7 +969,7 @@ def plot_rotation_supports(m, scale=1.0, radius=0.0, shortest_arrow=1.0e-6):
                             st = 80
                             dl = 210
                             sense = -1
-                        _drawCirc(ax, radius, x, y, st, dl, sense, color_="blue")
+                        _drawcirc(ax, radius, x, y, st, dl, sense, color_="blue")
                     else:
                         x, y, z = j["coordinates"]
                         u, v, w = scale * R
@@ -893,6 +1002,9 @@ def plot_rotation_supports(m, scale=1.0, radius=0.0, shortest_arrow=1.0e-6):
 def show(m):
     """
     Show the plot.
+
+    - `m` = model dictionary.
+
     """
     ax = plt.gca()
     ax.set_aspect("equal")
