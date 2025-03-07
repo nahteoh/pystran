@@ -85,7 +85,7 @@ def beam_3d_section(
     s["Iy"] = Iy
     s["Iz"] = Iz
     s["J"] = J
-    s["xz_vector"] = xz_vector
+    s["xz_vector"] = numpy.array(xz_vector)
     return s
 
 
