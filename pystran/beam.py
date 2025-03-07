@@ -207,7 +207,7 @@ def beam_2d_curv_displ_matrix(e_z, h, xi):
     return B
 
 
-def beam_2d_3rd_deriv_displ_matrix(e_z, h, xi):
+def beam_2d_3rd_deriv_displ_matrix(e_z, h):
     """
     Compute beam third derivative-displacement matrix.
 
@@ -220,7 +220,7 @@ def beam_2d_3rd_deriv_displ_matrix(e_z, h, xi):
     component at each joint are assumed, so the matrix $B$ has one row and six
     columns.
     """
-    d2Ndxi3 = herm_basis_xi3(xi)
+    d2Ndxi3 = herm_basis_xi3(0.0)
     B = zeros((1, 6))
     B[0, 0:2] = d2Ndxi3[0] * (2 / h) ** 3 * e_z
     B[0, 2] = (h / 2) * d2Ndxi3[1] * (2 / h) ** 3
@@ -379,10 +379,12 @@ def beam_3d_axial_force(member, i, j):
     return N
 
 
-def beam_3d_shear_force(member, i, j, axis):
+def beam_3d_shear_force(member, i, j, axis, xi):
     """
-    Compute 3d shear force based on the displacements stored at the joints. The
-    shear force in the direction of axis `axis`  (`'y'` or `'z'`) is uniform along the beam.
+    Compute 3d shear force based on the displacements stored at the joints.
+
+    The shear force in the direction of axis `axis`  (`'y'` or `'z'`) is
+    uniform along the beam. Therefore, `xi` value is immaterial.
     """
     sect = member["section"]
     _, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
@@ -400,15 +402,18 @@ def beam_3d_shear_force(member, i, j, axis):
 
 def beam_2d_shear_force(member, i, j, xi):
     """
-    Compute 2d beam shear force based on the displacements stored at the joints.
+    Compute 2d beam shear force based on the displacements stored at the
+    joints.
+
     The shear force is computed at the parametric location `xi` along the beam.
+    Therefore, `xi` value is immaterial.
     """
     _, e_z, h = geometry.member_2d_geometry(i, j)
     sect = member["section"]
     E, I = sect["E"], sect["I"]
     ui, uj = i["displacements"], j["displacements"]
     u = concatenate([ui, uj])
-    B = beam_2d_3rd_deriv_displ_matrix(e_z, h, xi)
+    B = beam_2d_3rd_deriv_displ_matrix(e_z, h)
     return -E * I * dot(B, u)
 
 
@@ -624,10 +629,10 @@ def beam_3d_end_forces(member, i, j):
     Myj = -beam_3d_moment(member, i, j, "y", +1.0)
     Mzi = beam_3d_moment(member, i, j, "z", -1.0)
     Mzj = -beam_3d_moment(member, i, j, "z", +1.0)
-    Qyi = beam_3d_shear_force(member, i, j, "y")
-    Qyj = -beam_3d_shear_force(member, i, j, "y")
-    Qzi = beam_3d_shear_force(member, i, j, "z")
-    Qzj = -beam_3d_shear_force(member, i, j, "z")
+    Qyi = beam_3d_shear_force(member, i, j, "y", -1.0)
+    Qyj = -beam_3d_shear_force(member, i, j, "y", +1.0)
+    Qzi = beam_3d_shear_force(member, i, j, "z", -1.0)
+    Qzj = -beam_3d_shear_force(member, i, j, "z", +1.0)
     return dict(
         Ni=Ni[0],
         Qyi=Qyi[0],

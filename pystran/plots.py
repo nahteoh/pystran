@@ -489,7 +489,7 @@ def _plot_2d_beam_shear_forces(ax, member, i, j, scale):
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     for _, xi in enumerate(linspace(-1, +1, n)):
-        Q = beam_2d_shear_force(member, i, j, xi)
+        Q = beam_2d_shear_force(member, i, j, 0.0)
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
@@ -512,7 +512,7 @@ def _plot_3d_beam_shear_forces(ax, member, i, j, axis, scale):
     if axis == "y":
         dirv = e_y
     for _, xi in enumerate(linspace(-1, +1, n)):
-        Q = beam_3d_shear_force(member, i, j, axis)
+        Q = beam_3d_shear_force(member, i, j, axis, xi)
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
@@ -546,9 +546,9 @@ def plot_shear_forces(m, scale=0.0, axis="z"):
 
     def fun(member, i, j, xi):
         if m["dim"] == 3:
-            return beam_3d_shear_force(member, i, j, axis)
+            return beam_3d_shear_force(member, i, j, axis, 0.0)
         else:
-            return beam_2d_shear_force(member, i, j)
+            return beam_2d_shear_force(member, i, j, 0.0)
 
     if scale == 0.0:
         cd = characteristic_dimension(m)
@@ -886,7 +886,7 @@ def plot_applied_forces(m, scale=0.0):
     return ax
 
 
-def plot_applied_moments(m, scale=0.0, radius=1.0):
+def plot_applied_moments(m, scale=0.0, radius=0.0):
     """
     Plot the applied moments at the joints.
 
@@ -897,7 +897,7 @@ def plot_applied_moments(m, scale=0.0, radius=1.0):
     - `scale` = scale factor for the arrows. Moments are rendered with double
       arrows. Default is 0.0, which means compute this internally.
     - `radius`  = radius of the circle to represent the moment (2D only).
-      Default is 1.0.
+      Default is 0.0, which means compute this internally.
     """
     ax = plt.gca()
     dim = m["dim"]
@@ -961,7 +961,7 @@ def plot_applied_moments(m, scale=0.0, radius=1.0):
     return ax
 
 
-def plot_translation_supports(m, scale=1.0, shortest_arrow=1.0e-6):
+def plot_translation_supports(m, scale=0.0, shortest_arrow=1.0e-6):
     """
     Plot the translation supports at the joints.
 
@@ -969,13 +969,24 @@ def plot_translation_supports(m, scale=1.0, shortest_arrow=1.0e-6):
 
     Optional:
 
-    - `scale` = scale factor for the arrows. Moments are rendered with double
-      arrows. Default is 1.0.
+    - `scale` = scale factor for the arrows. Supports are rendered as
+      arrows. Default is 0.0, which means the scale will be calculated internally.
     - `shortest_arrow` = how long should the shortest arrow be? Default is 1.0e-6.
     """
     ax = plt.gca()
     dim = m["dim"]
     cd = characteristic_dimension(m)
+
+    def fun(j):
+        if "supports" in j:
+            return j["supports"]
+        else:
+            return [0]
+
+    if scale == 0.0:
+        maxmag = _largest_mag_at_joints(m, fun)
+        scale = cd / 10 / maxmag
+
     for j in m["joints"].values():
         if "supports" in j and j["supports"]:
             for d in j["supports"].keys():
@@ -1015,7 +1026,7 @@ def plot_translation_supports(m, scale=1.0, shortest_arrow=1.0e-6):
     return ax
 
 
-def plot_rotation_supports(m, scale=1.0, radius=1.0, shortest_arrow=1.0e-6):
+def plot_rotation_supports(m, scale=0.0, radius=0.0, shortest_arrow=1.0e-6):
     """
     Plot the rotation supports at the joints.
 
@@ -1023,10 +1034,13 @@ def plot_rotation_supports(m, scale=1.0, radius=1.0, shortest_arrow=1.0e-6):
 
     Optional:
 
-    - `scale` = scale factor for the arrows. Moments are rendered with double
-      arrows. Default is 1.0.
-    - `radius` = radius of the circle (2D only). Default is 1.0.
-    - `shortest_arrow` = how long should the shortest arrow be? Default is 1.0e-6.
+    - `scale` = scale factor for the arrows. Prescribed rotations are rendered
+      with double arrows in 3D; with a circular arc in 2D. Default scale is
+      0.0, which means the scale is calculated internally.
+    - `radius` = radius of the circle (2D only). Default radius is
+      0.0, which means the scale is calculated internally.
+    - `shortest_arrow` = how long should the shortest arrow be? Default is
+      1.0e-6.
     """
     ax = plt.gca()
     dim = m["dim"]
@@ -1034,6 +1048,17 @@ def plot_rotation_supports(m, scale=1.0, radius=1.0, shortest_arrow=1.0e-6):
     if ndpn == dim:
         return
     cd = characteristic_dimension(m)
+
+    def fun(j):
+        if "supports" in j:
+            return j["supports"]
+        else:
+            return [0]
+
+    if scale == 0.0:
+        maxmag = _largest_mag_at_joints(m, fun)
+        scale = cd / 10 / maxmag
+
     if radius <= 0.0:
         radius = cd / 10
     for j in m["joints"].values():

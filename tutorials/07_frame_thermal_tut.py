@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -16,7 +16,7 @@ solution against these reference values.
 ## References
 
 This example is completely solved in the book Matrix Analysis of Structures by
-Robert E. Sennett, ISBN 978-1577661436 (Example 3.5). 
+Robert E. Sennett, ISBN 978-1577661436 (Example 3.5).
 """
 
 # We begin with the standard imports:
@@ -105,7 +105,7 @@ model.add_load(j, freedoms.UR3, +M_T)
 # The nodal moments can be visualized with the following plot.
 ax = plots.plot_setup(m)
 plots.plot_members(m)
-ax = plots.plot_applied_moments(m, 0.1)
+ax = plots.plot_applied_moments(m, 0.0, 50)
 ax.set_title("Applied moments")
 plots.show(m)
 

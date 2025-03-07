@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -8,7 +8,7 @@ pystran - Python package for structural analysis with trusses and beams
 ## Problem description:
 
 Statically indeterminate beam with two spans. The beam is supported at a pin
-that settles by a given amount. 
+that settles by a given amount.
 
 Displacements and internal forces are provided in the book, and we can check our
 solution against these reference values.
@@ -16,7 +16,7 @@ solution against these reference values.
 ## References
 
 This example is completely solved in the book Matrix Analysis of Structures by
-Robert E. Sennett, ISBN 978-1577661436 (Section 3.8). 
+Robert E. Sennett, ISBN 978-1577661436 (Section 3.8).
 """
 
 import context
@@ -28,7 +28,7 @@ from pystran import plots
 
 # US customary units, inches, pounds, seconds are assumed.
 
-# The book gives the product of the modulus of elasticity and the moment 
+# The book gives the product of the modulus of elasticity and the moment
 # of inertia as 2.9e6.
 E = 2.9e6
 I = 1.0
@@ -55,6 +55,15 @@ s1 = section.beam_2d_section("s1", E, A, I)
 model.add_beam_member(m, 1, [1, 2], s1)
 model.add_beam_member(m, 2, [2, 3], s1)
 
+# Next we display the displacements. We have to magnify the prescribed
+# displacement 50x, otherwise it would not be visible properly (the default
+# scale doesn't work well in this case).
+ax = plots.plot_setup(m, set_limits=True)
+plots.plot_members(m)
+plots.plot_translation_supports(m, 50)
+ax.set_title("Supports (magnified 50x)")
+plots.show(m)
+
 # Solve the discrete model.
 model.number_dofs(m)
 model.solve_statics(m)
@@ -65,8 +74,8 @@ for j in m["joints"].values():
 # The first sanity check is the plot of the deformation.
 plots.plot_setup(m)
 plots.plot_members(m)
-ax = plots.plot_deformations(m, 100.0)
-ax.set_title("Deformations (x100)")
+ax = plots.plot_deformations(m, 50.0)
+ax.set_title("Deformations (x50)")
 plots.show(m)
 
 
