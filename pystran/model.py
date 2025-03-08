@@ -104,6 +104,7 @@ def add_beam_member(m, mid, connectivity, sect):
     if mid in m["beam_members"]:
         raise RuntimeError("Beam member already exists")
     m["beam_members"][mid] = {
+        "mid": mid,
         "connectivity": connectivity,
         "section": sect,
     }
@@ -387,8 +388,8 @@ def statics_reactions(m):
     F = m["F"]
 
     # Compute reactions from the partitioned stiffness matrix and the
-    # partitioned displacement vector 
-    # R = dot(K[nf:nt, 0:nf], U[0:nf]) + dot(K[nf:nt, nf:nt], U[nf:nt]) - F[nf:nt] 
+    # partitioned displacement vector
+    # R = dot(K[nf:nt, 0:nf], U[0:nf]) + dot(K[nf:nt, nf:nt], U[nf:nt]) - F[nf:nt]
     # For convenience when working
     # with degrees of freedom, we compute this product and only use the rows
     # corresponding to fixed the degrees of freedom.
@@ -552,6 +553,10 @@ def refine_member(m, mid, n):
     - `m` = the model,
     - `mid` = the member identifier,
     - `n` = the number of new beam members to replace the old member with.
+
+    There new member identifiers are stored under the key `"descendants"` in
+    the refined member. The refined member is removed from the list of beam
+    members.
     """
     if n < 2:
         raise RuntimeError("Number of new members must be at least 2")
@@ -559,6 +564,8 @@ def refine_member(m, mid, n):
     connectivity = member["connectivity"]
     i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
     ci, cj = i["coordinates"], j["coordinates"]
+    # Store the descendants
+    descendants = []
     # First replacement member
     start = -1.0 + 2.0 / n
     c = (-1 + start) / (-2) * ci + (1 + start) / 2 * cj
@@ -566,6 +573,7 @@ def refine_member(m, mid, n):
     add_joint(m, newjid, c)
     newmid = str(mid) + "m" + "0"
     add_beam_member(m, newmid, [i["jid"], newjid], member["section"])
+    descendants.append(newmid)
     prevjid = newjid
     for k in range(n - 2):
         start += 2.0 / n
@@ -574,10 +582,14 @@ def refine_member(m, mid, n):
         add_joint(m, newjid, c)
         newmid = str(mid) + "m" + str(k + 1)
         add_beam_member(m, newmid, [prevjid, newjid], member["section"])
+        descendants.append(newmid)
         prevjid = newjid
     # Last replacement member
     newmid = str(mid) + "m" + str(n - 1)
     add_beam_member(m, newmid, [newjid, j["jid"]], member["section"])
+    descendants.append(newmid)
+    # Remember the provenance of the new members
+    member["descendants"] = descendants
     # Remove the old member
     del m["beam_members"][mid]
 
