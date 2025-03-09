@@ -352,14 +352,16 @@ def _build_stiffness_matrix(m):
 def _build_mass_matrix(m):
     nt = m["ntotaldof"]
     M = zeros((nt, nt))
-    for member in m["truss_members"].values():
-        connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        pystran.truss.assemble_mass(M, member, i, j)
-    for member in m["beam_members"].values():
-        connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        pystran.beam.assemble_mass(M, member, i, j)
+    if "truss_members" in m:
+        for member in m["truss_members"].values():
+            connectivity = member["connectivity"]
+            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            pystran.truss.assemble_mass(M, member, i, j)
+    if "beam_members" in m:
+        for member in m["beam_members"].values():
+            connectivity = member["connectivity"]
+            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            pystran.beam.assemble_mass(M, member, i, j)
     for j in m["joints"].values():
         if "masses" in j:
             for dof, value in j["masses"].items():
