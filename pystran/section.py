@@ -48,6 +48,19 @@ def beam_2d_section(name, E=0.0, A=0.0, I=0.0, rho=0.0, CTE=0.0):
     return s
 
 
+def rlink_section(name, Gamma):
+    """
+    Define a rigid link section.
+
+    - `Gamma`: diagonal matrix of penalty coefficients; zero coefficient means
+      the degrees of freedom are not linked.
+    """
+    s = dict()
+    s["name"] = name
+    s["Gamma"] = Gamma
+    return s
+
+
 def beam_3d_section(
     name,
     E=0.0,
@@ -95,11 +108,11 @@ def circular_tube(innerradius, outerradius):
     """
     Rext = outerradius
     Rint = innerradius
-    A = pi * (Rext ** 2 - Rint ** 2)
-    Iy = pi / 4 * (Rext ** 4 - Rint ** 4)
-    Iz = pi / 4 * (Rext ** 4 - Rint ** 4)
+    A = pi * (Rext**2 - Rint**2)
+    Iy = pi / 4 * (Rext**4 - Rint**4)
+    Iz = pi / 4 * (Rext**4 - Rint**4)
     Ix = Iy + Iz
-    J = pi / 2 * (Rext ** 4 - Rint ** 4)
+    J = pi / 2 * (Rext**4 - Rint**4)
     return A, Ix, Iy, Iz, J
 
 

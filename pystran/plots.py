@@ -159,27 +159,31 @@ def plot_members(m):
     """
     ax = plt.gca()
     if m["dim"] == 3:
-        for member in m["truss_members"].values():
-            connectivity = member["connectivity"]
-            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-            ci, cj = i["coordinates"], j["coordinates"]
-            plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], "k-")
-        for member in m["beam_members"].values():
-            connectivity = member["connectivity"]
-            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-            ci, cj = i["coordinates"], j["coordinates"]
-            plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], "k-")
+        if "truss_members" in m:
+            for member in m["truss_members"].values():
+                connectivity = member["connectivity"]
+                i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+                ci, cj = i["coordinates"], j["coordinates"]
+                plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], "k-")
+        if "beam_members" in m:
+            for member in m["beam_members"].values():
+                connectivity = member["connectivity"]
+                i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+                ci, cj = i["coordinates"], j["coordinates"]
+                plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], "k-")
     else:
-        for member in m["truss_members"].values():
-            connectivity = member["connectivity"]
-            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-            ci, cj = i["coordinates"], j["coordinates"]
-            plt.plot([ci[0], cj[0]], [ci[1], cj[1]], "k-")
-        for member in m["beam_members"].values():
-            connectivity = member["connectivity"]
-            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-            ci, cj = i["coordinates"], j["coordinates"]
-            plt.plot([ci[0], cj[0]], [ci[1], cj[1]], "k-")
+        if "truss_members" in m:
+            for member in m["truss_members"].values():
+                connectivity = member["connectivity"]
+                i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+                ci, cj = i["coordinates"], j["coordinates"]
+                plt.plot([ci[0], cj[0]], [ci[1], cj[1]], "k-")
+        if "beam_members" in m:
+            for member in m["beam_members"].values():
+                connectivity = member["connectivity"]
+                i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+                ci, cj = i["coordinates"], j["coordinates"]
+                plt.plot([ci[0], cj[0]], [ci[1], cj[1]], "k-")
     return ax
 
 
@@ -277,31 +281,33 @@ def plot_deformations(m, scale=0.0):
         maxmag = _largest_mag_at_joints(m, fun)
         scale = cd / 5 / maxmag
     ax = plt.gca()
-    for member in m["truss_members"].values():
-        connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        di, dj = i["displacements"], j["displacements"]
-        ci, cj = i["coordinates"], j["coordinates"]
-        if m["dim"] == 3:
-            ax.plot(
-                [ci[0] + scale * di[0], cj[0] + scale * dj[0]],
-                [ci[1] + scale * di[1], cj[1] + scale * dj[1]],
-                [ci[2] + scale * di[2], cj[2] + scale * dj[2]],
-                "m-",
-            )
-        else:
-            ax.plot(
-                [ci[0] + scale * di[0], cj[0] + scale * dj[0]],
-                [ci[1] + scale * di[1], cj[1] + scale * dj[1]],
-                "m-",
-            )
-    for member in m["beam_members"].values():
-        connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        if m["dim"] == 3:
-            _plot_3d_beam_deflection(ax, member, i, j, scale)
-        else:
-            _plot_2d_beam_deflection(ax, member, i, j, scale)
+    if "truss_members" in m:
+        for member in m["truss_members"].values():
+            connectivity = member["connectivity"]
+            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            di, dj = i["displacements"], j["displacements"]
+            ci, cj = i["coordinates"], j["coordinates"]
+            if m["dim"] == 3:
+                ax.plot(
+                    [ci[0] + scale * di[0], cj[0] + scale * dj[0]],
+                    [ci[1] + scale * di[1], cj[1] + scale * dj[1]],
+                    [ci[2] + scale * di[2], cj[2] + scale * dj[2]],
+                    "m-",
+                )
+            else:
+                ax.plot(
+                    [ci[0] + scale * di[0], cj[0] + scale * dj[0]],
+                    [ci[1] + scale * di[1], cj[1] + scale * dj[1]],
+                    "m-",
+                )
+    if "beam_members" in m:
+        for member in m["beam_members"].values():
+            connectivity = member["connectivity"]
+            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            if m["dim"] == 3:
+                _plot_3d_beam_deflection(ax, member, i, j, scale)
+            else:
+                _plot_2d_beam_deflection(ax, member, i, j, scale)
     return ax
 
 

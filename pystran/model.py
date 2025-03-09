@@ -20,8 +20,6 @@ def create(dim=2):
     m = {}
     m["dim"] = dim  # Dimension of the model
     m["joints"] = {}
-    m["truss_members"] = {}
-    m["beam_members"] = {}
     # Depending on the number of space dimensions, a set of degrees of freedom
     # will consist of either two translations and one rotation, or three
     # translations and three rotations.
@@ -79,6 +77,8 @@ def add_truss_member(m, mid, connectivity, sect):
 
     Returns: the newly created member.
     """
+    if "truss_members" not in m:
+        m["truss_members"] = {}
     if mid in m["truss_members"]:
         raise RuntimeError("Truss member already exists")
     m["truss_members"][mid] = {
@@ -101,6 +101,8 @@ def add_beam_member(m, mid, connectivity, sect):
 
     Returns: the newly created member.
     """
+    if "beam_members" not in m:
+        m["beam_members"] = {}
     if mid in m["beam_members"]:
         raise RuntimeError("Beam member already exists")
     m["beam_members"][mid] = {
@@ -109,6 +111,33 @@ def add_beam_member(m, mid, connectivity, sect):
         "section": sect,
     }
     return m["beam_members"][mid]
+
+
+def add_rlink(m, mid, connectivity, sect):
+    """
+    Add a rigid link member to the model.
+
+    - `m` = the model,
+    - `mid` = the member identifier, must be unique, but can be anything that
+      is a legal dictionary key (integer, string, ...),
+    - `connectivity` = the list (or a tuple) of the joint identifiers; the
+      first is the *master* (its motion determines the motion of the
+      subordinate), the second is the *subordinate* (its motion follows that of
+      the master).
+    - `sect` = the section of the member.
+
+    Returns: the newly created member.
+    """
+    if "rlink_members" not in m:
+        m["rlink_members"] = {}
+    if mid in m["rlink_members"]:
+        raise RuntimeError("Rigid link member already exists")
+    m["rlink_members"][mid] = {
+        "mid": mid,
+        "connectivity": connectivity,
+        "section": sect,
+    }
+    return m["rlink_members"][mid]
 
 
 def add_support(j, dof, value=0.0):
@@ -298,14 +327,21 @@ def _build_stiffness_matrix(m):
     nt = m["ntotaldof"]
     # Assemble global stiffness matrix and mass matrix
     K = zeros((nt, nt))
-    for member in m["truss_members"].values():
-        connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        pystran.truss.assemble_stiffness(K, member, i, j)
-    for member in m["beam_members"].values():
-        connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        pystran.beam.assemble_stiffness(K, member, i, j)
+    if "truss_members" in m:
+        for member in m["truss_members"].values():
+            connectivity = member["connectivity"]
+            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            pystran.truss.assemble_stiffness(K, member, i, j)
+    if "beam_members" in m:
+        for member in m["beam_members"].values():
+            connectivity = member["connectivity"]
+            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            pystran.beam.assemble_stiffness(K, member, i, j)
+    if "rlink_members" in m:
+        for member in m["rlink_members"].values():
+            connectivity = member["connectivity"]
+            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            pystran.rlink.assemble_stiffness(K, member, i, j)
     for j in m["joints"].values():
         if "springs" in j:
             pystran.spring.assemble_stiffness(K, j)
