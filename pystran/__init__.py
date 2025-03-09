@@ -6,6 +6,8 @@ pystran - Python package for structural analysis with trusses and beams
 This package is intended for educational purposes only. Professional users may
 find it too bare bones.
 
+## Approach
+
 The approach is based on classical weighted residual formulation (Galerkin). The
 formulations are derived in the "Finite element modeling with shells and beams"
 [book](http://hogwarts.ucsd.edu/~pkrysl/femstructures-book/).
@@ -57,7 +59,6 @@ using numerical integration.
 
 # Define the __all__ variable
 __all__ = [
-    "pystran",
     "gauss",
     "freedoms",
     "model",
@@ -66,6 +67,7 @@ __all__ = [
     "geometry",
     "assemble",
     "truss",
+    "rlink",
     "beam",
     "spring",
     "plots",
@@ -80,6 +82,7 @@ from . import geometry
 from . import gauss
 from . import assemble
 from . import truss
+from . import rlink
 from . import beam
 from . import spring
 from . import plots
