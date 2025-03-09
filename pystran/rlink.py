@@ -9,14 +9,29 @@ from pystran import gauss
 
 
 def rlink_stiffness(e_x, h, Gamma):
-    """
+    r"""
     Compute rigid link stiffness matrix.
 
     The stiffness matrix is computed as
 
-    $K = \\left[\\right]$.
+    $$
+    K =\begin{bmatrix} 
+          C^T\Gamma C & -C^T\Gamma  \\
+          -\Gamma C & \Gamma \\
+       \end{bmatrix}.
+    $$
 
-    $r = h e_x$
+    Here $C$ is a matrix computed from the vector    $r = h e_x$.
+    In three dimensions
+    $$
+    C =\begin{bmatrix} 
+          1 & \widetilde{r} \\
+          0 & 1 \\
+       \end{bmatrix}.
+    $$
+    Here $ \widetilde{r}$ is a skew matrix corresponding to the 
+    vector $r$, and $0$ and $1$ stand for $3\times3$ zero 
+    and identity matrices respectively.
     """
     if len(e_x) == 2:
         I = eye(2)
@@ -38,10 +53,13 @@ def rlink_stiffness(e_x, h, Gamma):
         C[1, 5] = +rx
         C[2, 3] = +ry
         C[2, 4] = -rx
-    k = concatenate([
-        concatenate([dot(C.T, dot(Gamma, C)), -dot(C.T, Gamma)], axis=1),
-        concatenate([-dot(Gamma, C), Gamma], axis=1)
-        ], axis=0)
+    k = concatenate(
+        [
+            concatenate([dot(C.T, dot(Gamma, C)), -dot(C.T, Gamma)], axis=1),
+            concatenate([-dot(Gamma, C), Gamma], axis=1),
+        ],
+        axis=0,
+    )
     return k
 
 

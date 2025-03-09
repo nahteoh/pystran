@@ -54,6 +54,7 @@ using numerical integration.
 - Degrees of freedom are only along the global Cartesian axes. Skew supports are not
   included (except with a penalty method based on springs)
 - Offsets of the beams from the joints are currently not implemented.
+- Rigid links between pairs of joints can be modeled with a penalty approach.
 
 """
 
