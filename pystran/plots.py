@@ -306,7 +306,8 @@ def plot_deformations(m, scale=0.0):
 
     if scale == 0.0:
         maxmag = _largest_mag_at_joints(m, fun)
-        scale = cd / 5 / maxmag
+        if maxmag != 0:            
+            scale = cd / 5 / maxmag
 
     ax = plt.gca()
     if "truss_members" in m:
@@ -502,7 +503,8 @@ def plot_bending_moments(m, scale=0.0, axis="y"):
     if scale == 0.0:
         cd = characteristic_dimension(m)
         maxmag = _largest_mag_on_beam_members(m, fun)
-        scale = cd / 5 / maxmag
+        if maxmag != 0:            
+            scale = cd / 5 / maxmag
 
     ax = plt.gca()
     for member in m["beam_members"].values():
@@ -879,10 +881,11 @@ def plot_applied_forces(m, scale=0.0):
             return [v for (d, v) in j["loads"].items() if d < dim]
         else:
             return [0]
-
-    maxmag = _largest_mag_at_joints(m, fun)
+    
     if scale == 0.0:
-        scale = cd / 2 / maxmag
+        maxmag = _largest_mag_at_joints(m, fun)
+        if maxmag != 0:            
+            scale = cd / 2 / maxmag
     for j in m["joints"].values():
         if "loads" in j and j["loads"]:
             for d in j["loads"].keys():
@@ -943,9 +946,10 @@ def plot_applied_moments(m, scale=0.0, radius=0.0):
         else:
             return [0]
 
-    maxmag = _largest_mag_at_joints(m, fun)
     if scale == 0.0:
-        scale = cd / 2 / maxmag
+        maxmag = _largest_mag_at_joints(m, fun)
+        if maxmag != 0:            
+            scale = cd / 2 / maxmag
     if radius <= 0.0:
         radius = cd / 10
     for j in m["joints"].values():
@@ -1018,7 +1022,8 @@ def plot_translation_supports(m, scale=0.0, shortest_arrow=1.0e-6):
 
     if scale == 0.0:
         maxmag = _largest_mag_at_joints(m, fun)
-        scale = cd / 10 / maxmag
+        if maxmag != 0:            
+            scale = cd / 10 / maxmag
 
     for j in m["joints"].values():
         if "supports" in j and j["supports"]:
@@ -1090,7 +1095,8 @@ def plot_rotation_supports(m, scale=0.0, radius=0.0, shortest_arrow=1.0e-6):
 
     if scale == 0.0:
         maxmag = _largest_mag_at_joints(m, fun)
-        scale = cd / 10 / maxmag
+        if maxmag != 0:            
+            scale = cd / 10 / maxmag
 
     if radius <= 0.0:
         radius = cd / 10
