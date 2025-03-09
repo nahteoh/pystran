@@ -246,7 +246,7 @@ def _copy_dof_num_to_linked(m, j, d, n):
 
 
 def _have_rotations(m):
-    with_rotations = m["beam_members"]
+    with_rotations = "beam_members" in m and m["beam_members"]
     if with_rotations:
         return True
     for j in m["joints"].values():
