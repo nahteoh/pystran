@@ -338,20 +338,22 @@ def plot_deformations(m, scale=0.0):
 
 def _plot_member_ids_2d(m):
     ax = plt.gca()
-    for jid in m["truss_members"].keys():
-        member = m["truss_members"][jid]
-        connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        ci, cj = i["coordinates"], j["coordinates"]
-        xm = (ci + cj) / 2.0
-        ax.text(xm[0], xm[1], str(jid))
-    for jid in m["beam_members"].keys():
-        member = m["beam_members"][jid]
-        connectivity = member["connectivity"]
-        i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-        ci, cj = i["coordinates"], j["coordinates"]
-        xm = (ci + cj) / 2.0
-        ax.text(xm[0], xm[1], str(jid))
+    if "truss_members" in m:
+        for jid in m["truss_members"].keys():
+            member = m["truss_members"][jid]
+            connectivity = member["connectivity"]
+            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            ci, cj = i["coordinates"], j["coordinates"]
+            xm = (ci + cj) / 2.0
+            ax.text(xm[0], xm[1], str(jid))
+    if "beam_members" in m:
+        for jid in m["beam_members"].keys():
+            member = m["beam_members"][jid]
+            connectivity = member["connectivity"]
+            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            ci, cj = i["coordinates"], j["coordinates"]
+            xm = (ci + cj) / 2.0
+            ax.text(xm[0], xm[1], str(jid))
     return ax
 
 
@@ -782,7 +784,7 @@ def plot_member_orientation(m, scale=0.0):
         scale = cd / 15
 
     ax = plt.gca()
-    member_values = (m["truss_members"].values(), m["beam_members"].values())
+    member_values = [m[k].values() for k in ["truss_members", "beam_members"] if k in m]
     for v in member_values:
         for member in v:
             sect = member["section"]
