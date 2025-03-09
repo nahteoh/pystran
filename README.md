@@ -69,9 +69,9 @@ Or, [use Spyder](docs/spyder/spyder.md).
 
 ## Documentation
 
-The functions in the package are documented. The documentation in nicely formatted form can be obtained by running `pdoc`. In the `pystran` folder, run
+The functions in the package are documented. The documentation in nicely formatted form can be obtained by running `pdoc3`. In the `pystran` folder, run
 ```
-pdoc pystran/ --math -o html
+pdoc .\pystran\ --config latex_math=True  --output html --html --force
 ```
 which will create an `./html` folder. double click the `index.html` file in that folder.
 
