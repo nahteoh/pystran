@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl
 
@@ -16,7 +16,7 @@ Classically, the geometrical transformations are developed explicitly to push
 the stiffness and mass matrices from special orientations to the real
 orientation in space. This requires multiplication of the stiffness and mass
 matrices by large transformation matrices on the left and right. The matrices in
-special orientations are usually developed analytically, and these explicit
+special orientations are usually derived analytically, and these explicit
 expressions become the starting point for developing computations. So for
 instance for spatial beams, the starting point are 12x12 matrices.
 
@@ -37,18 +37,20 @@ using numerical integration.
 
 - The package analyzes two-dimensional and three-dimensional structures made up
   of truss (axial) members and beams (even in combination), with added masses
-  and springs at joints.
+  and springs at joints possible.
 - Linear statics and dynamics (free vibration) solvers are included.
-- The Bernoulli-Euler model is implemented, so no shear deformation is taken into account.
 - Only elastic models can be solved.
+- For beams, only the Bernoulli-Euler model is implemented, so no shear deformation is taken into account.
 - Only straight members are treated.
-- Only doubly symmetric cross sections can be handled in three dimensions. Hence
-  there is no coupling between the bending actions in the two orthogonal planes.
+- It is assumed that there is no coupling between the bending actions in the two orthogonal
+  planes.
+- Coupling of axial and bending action is not implemented. This means that the
+  neutral axis must pass through the centroid.
 - Warping of the cross sections is not modelled, hence only free torsion effects are included.
 - Member loading is not considered. All member loading needs to be converted to nodal forces.
 - Internal hinges can be modelled with linked joints. No member end releases are implemented.
-- Degrees of freedom are only along the cartesian axes. Skew supports are not
+- Degrees of freedom are only along the global Cartesian axes. Skew supports are not
   included (except with a penalty method based on springs)
-- Offsets are currently not implemented.
+- Offsets of the beams from the joints are currently not implemented.
 
 """
