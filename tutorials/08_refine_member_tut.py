@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -91,8 +91,7 @@ model.solve_statics(m)
 # These displacements can be compared with the reference values from literature.
 if norm(m["U"][0:3] - [-0.02969075, -0.02742406, 0.03952194]) > 1.0e-3:
     raise ValueError("Displacement calculation error")
-else:
-    print("Displacement calculation OK")
+print("Displacement calculation OK")
 
 # The displacements can be seen to be the same as in  02_continuous_beam_2_spans_consist_tut.py.
 # The deformed shape shows the curvatures of the beam.
