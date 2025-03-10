@@ -71,19 +71,19 @@ for k in range(NUM_JOINTS - 1):
     model.add_beam_member(m, k, [k, k + 1], sect_1)
 
 # A handful of plots to review the supports and the loads.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_translation_supports(m)
 ax.set_title("Translation supports")
 plots.show(m)
 
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_rotation_supports(m)
 ax.set_title("Rotation supports")
 plots.show(m)
 
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_applied_forces(m, 5)
 ax.set_title("Loads ")
@@ -100,14 +100,14 @@ if abs(m["joints"][NUM_JOINTS - 1]["displacements"][2] - 134.33) > 0.01:
     raise ValueError("Displacement calculation error")
 
 # Plot the deformation.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_deformations(m, scale=2.0)
 ax.set_title("Deformation (x2)")
 plots.show(m)
 
 # Also plot the torsion moment.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_torsion_moments(m)
 ax.set_title("Torsion moment")

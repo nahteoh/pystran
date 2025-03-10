@@ -123,7 +123,7 @@ def _arrow3D(ax, x, y, z, dx, dy, dz, *args, **kwargs):
 setattr(Axes3D, "arrow3D", _arrow3D)
 
 
-def plot_setup(m, set_limits=False):
+def setup(m, set_limits=False):
     """
     Setup the plot.
 

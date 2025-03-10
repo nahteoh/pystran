@@ -70,7 +70,7 @@ model.add_load(m["joints"][2], freedoms.U1, 1000.0)
 
 # The discrete model can now be reviewed. Note the orientations of the local
 # coordinate systems.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_ids(m)
 plots.plot_joint_ids(m)
@@ -82,7 +82,7 @@ model.number_dofs(m)
 model.solve_statics(m)
 
 # First check of the solution is the plot of the deformation.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_deformations(m, 100.0)
 ax.set_title("Deformations (x100)")
@@ -108,13 +108,13 @@ if abs(d2[1] - 0.00041) / 0.00041 > 1e-2:
     raise ValueError("Incorrect displacement")
 
 # The obligatory diagrams of bending moments and shear forces follow.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_bending_moments(m)
 ax.set_title("Moments")
 plots.show(m)
 
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_shear_forces(m)
 ax.set_title("Shear forces")

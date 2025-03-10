@@ -86,7 +86,7 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         self.assertAlmostEqual(m["frequencies"][2], expected[2], places=0)
 
         # for mode in range(3):
-        #     plots.plot_setup(m)
+        #     plots.setup(m)
         #     plots.plot_members(m)
         #     model.set_solution(m, mode)
         #     ax = plots.plot_deformations(m, 50.0)
@@ -162,25 +162,25 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         if abs(f["Myi"] / 215.7738 - 1) > 1e-3:
             raise ValueError("Incorrect force")
 
-        # plots.plot_setup(m, set_limits=True)
+        # plots.setup(m, set_limits=True)
         # plots.plot_members(m)
         # plots.plot_member_ids(m)
         # plots.plot_joint_ids(m)
         # plots.plot_member_orientation(m, 10.0)
         # plots.show(m)
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_deformations(m, 100.0)
         # plots.show(m)
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # ax = plots.plot_bending_moments(m, 0.5)
         # ax.set_title("Moments")
         # plots.show(m)
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # ax = plots.plot_shear_forces(m, 5.5)
         # ax.set_title("Shear forces")
@@ -270,25 +270,25 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         # if abs(f["Myi"] / 215.7738 - 1) > 1e-3:
         #     raise ValueError("Incorrect force")
 
-        # plots.plot_setup(m, set_limits=True)
+        # plots.setup(m, set_limits=True)
         # plots.plot_members(m)
         # plots.plot_member_ids(m)
         # plots.plot_joint_ids(m)
         # plots.plot_member_orientation(m, 10.0)
         # plots.show(m)
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_deformations(m, 100.0)
         # plots.show(m)
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # ax = plots.plot_bending_moments(m, 0.0005)
         # ax.set_title("Moments")
         # plots.show(m)
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # ax = plots.plot_shear_forces(m, 0.01)
         # ax.set_title("Shear forces")
@@ -339,7 +339,7 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         model.add_beam_member(m, 5, [6, 3], s1)
         model.add_beam_member(m, 6, [6, 5], s1)
 
-        # plots.plot_setup(m, set_limits=True)
+        # plots.setup(m, set_limits=True)
         # plots.plot_members(m)
         # plots.plot_member_ids(m)
         # plots.plot_member_orientation(m, 0.05)
@@ -355,7 +355,7 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         for i in range(6):
             model.refine_member(m, i + 1, nref)
 
-        # plots.plot_setup(m, set_limits=True)
+        # plots.setup(m, set_limits=True)
         # plots.plot_members(m)
         # ax = plots.plot_joint_ids(m)
         # ax.set_title("Structure after refinement")
@@ -375,7 +375,7 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         # Show the first four modes.
         # for mode in range(0, 4):
         #     print(f"Mode {mode}: ", m["frequencies"][mode])
-        #     ax = plots.plot_setup(m)
+        #     ax = plots.setup(m)
         #     plots.plot_members(m)
         #     model.set_solution(m, mode)
         #     plots.plot_deformations(m, 0.2)
@@ -443,7 +443,7 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         # The expected frequency is 1.876 CPS, hence the vibration period is 0.533 sec.
         self.assertAlmostEqual(m["frequencies"][0], 1.876, places=3)
         # for mode in range(1):
-        #     plots.plot_setup(m)
+        #     plots.setup(m)
         #     plots.plot_members(m)
         #     model.set_solution(m, m["eigvecs"][:, mode])
         #     ax = plots.plot_deformations(m, 50.0)

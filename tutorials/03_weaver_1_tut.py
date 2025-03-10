@@ -75,7 +75,7 @@ model.add_support(m["joints"][4], freedoms.ALL_DOFS)
 
 # At this point we can visualize the supports. The translation supports are
 # shown with arrow heads.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_joint_ids(m)
 plots.plot_translation_supports(m)
 ax.view_init(elev=137, azim=-67, roll=30)
@@ -83,7 +83,7 @@ ax.set_title("Translation supports")
 plots.show(m)
 
 # The rotation supports are shown next.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_joint_ids(m)
 plots.plot_rotation_supports(m)
 ax.view_init(elev=137, azim=-67, roll=30)
@@ -123,7 +123,7 @@ model.add_beam_member(m, 3, [2, 4], sect_2)
 # Now we can plot the geometry of the structure. We show the members, the
 # member numbers, and the orientations of the local coordinate systems.
 
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_ids(m)
 plots.plot_joint_ids(m)
@@ -142,7 +142,7 @@ model.add_load(m["joints"][2], freedoms.UR3, -M)
 
 # And the applied forces can now be rendered.
 
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_applied_forces(m, 100.0)
 ax.view_init(elev=130, azim=-70, roll=25)
@@ -152,7 +152,7 @@ plots.show(m)
 
 # Similarly, we can render the applied moments:
 
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_applied_moments(m, 1.0)
 ax.view_init(elev=130, azim=-70, roll=25)
@@ -246,7 +246,7 @@ if norm(allforces) > 1.0e-10:
 
 # The solution to the problem can be visualized with a number of plots. We
 # start with the deformed shape of the frame.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m)
 ax = plots.plot_deformations(m)
@@ -256,7 +256,7 @@ plots.show(m)
 
 # The shear forces in the members can be visualized with diagrams.
 # For instance, the shear forces along the z-axis are shown.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m)
 ax = plots.plot_shear_forces(m)
@@ -265,7 +265,7 @@ ax.view_init(elev=137, azim=-67, roll=30)
 plots.show(m)
 
 # Analogous diagrams can be produced for the torsional moments in the members.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m)
 ax = plots.plot_torsion_moments(m)
@@ -274,7 +274,7 @@ ax.view_init(elev=137, azim=-67, roll=30)
 plots.show(m)
 
 # Finally, the axial forces in the members can be visualized.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m)
 ax = plots.plot_axial_forces(m)

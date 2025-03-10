@@ -59,7 +59,7 @@ model.add_beam_member(m, 2, (3, 4), sb)
 model.add_rigid_link_member(m, 1, (2, 4), sr)
 
 # The rigid link is shown with a slightly thicker line.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 plots.show(m)
 
@@ -68,7 +68,7 @@ model.add_support(m["joints"][3], freedoms.ALL_DOFS)
 model.add_load(m["joints"][4], freedoms.U2, -F)
 
 # The transverse force is applied to only one of the bars.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 plots.plot_applied_forces(m)
 plots.show(m)
@@ -86,7 +86,7 @@ print("Expected tip deflection: ", [0.0, -1.25250329e-01, 0])
 for j in m["joints"].values():
     print(j["displacements"])
 
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 plots.plot_deformations(m)
 plots.show(m)
@@ -94,7 +94,7 @@ plots.show(m)
 # Again using the basic stiffness, we deduce the correct magnitude of the bending moment:
 M = 6 * h * E * I / h**3 * w2
 print("Analytical bending moment magnitude: ", M)
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 plots.plot_bending_moments(m)
 plots.show(m)

@@ -127,7 +127,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # print('Reference: ', [-0.02238452,  0.00419677,  0.00593197])
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # # plots.plot_member_ids(m)
         # plots.plot_deformations(m, 100.0)
@@ -212,7 +212,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         # else:
         #     print("Displacement calculation OK")
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # # plots.plot_member_ids(m)
         # plots.plot_deformations(m, 30.0)
@@ -371,7 +371,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         self.assertAlmostEqual(j["reactions"][4], -17.656, places=3)
         self.assertAlmostEqual(j["reactions"][5], 96.284, places=3)
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_member_orientation(m, 20)
         # plots.plot_deformations(m, 80.0)
@@ -462,7 +462,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         j3 = m["joints"][3]
         self.assertAlmostEqual(j1["reactions"][2] + j3["reactions"][2], P)
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_member_ids(m)
         # plots.plot_deformations(m, 100.0)
@@ -558,7 +558,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
             j2["displacements"][freedoms.U2], j4["displacements"][freedoms.U2]
         )
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_member_ids(m)
         # plots.plot_deformations(m, 100.0)
@@ -659,7 +659,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         #         f"   Rx={j['reactions'][0]:.5}, Ry={j['reactions'][1]:.5}, Rz={j['reactions'][2]:.5}, Mx={j['reactions'][3]:.5}, My={j['reactions'][4]:.5}, Mz={j['reactions'][5]:.5}: "
         #     )
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_member_ids(m)
         # plots.plot_deformations(m, 200.0)
@@ -742,7 +742,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         d = m["joints"][4]
         model.add_load(d, freedoms.U2, -1e3)
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_member_orientation(m, 1.0)
         # plots.plot_member_ids(m)
@@ -789,7 +789,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         self.assertAlmostEqual(m["joints"][1]["reactions"][3], -2.6087e04, places=0)
         self.assertAlmostEqual(m["joints"][3]["reactions"][3], -1.3913e04, places=0)
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_deformations(m, 1000.0)
         # plots.plot_torsion_moments(m, scale=0.04)
@@ -930,7 +930,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
             )
             # print(f"Mode {mode}: {m["frequencies"][mode]:.3f} Hz")
             # print(f"  Reference: ", reffs[mode])
-            # ax = plots.plot_setup(m)
+            # ax = plots.setup(m)
             # plots.plot_members(m)
             # model.set_solution(m, mode)
             # plots.plot_deformations(m, 100.0)
@@ -1014,7 +1014,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         # Now we can plot the geometry of the structure. We show the members, the member
         # numbers, and the orientations of the local coordinate systems.
 
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_member_ids(m)
         # plots.plot_joint_ids(m)
@@ -1050,14 +1050,14 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         model.add_torsion_spring_to_ground(m["joints"][2], 2, [0, 0, 1], K)
 
         # Let us look at the translation and rotation supports:
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_joint_ids(m)
         # plots.plot_translation_supports(m)
         # ax.set_title("Translation supports")
         # plots.show(m)
 
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_joint_ids(m)
         # plots.plot_rotation_supports(m)
@@ -1073,7 +1073,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # The solution to the problem can be visualized with a number of plots. We start
         # with the deformed shape of the frame.
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_joint_ids(m)
         # ax = plots.plot_deformations(m, 2.0)
@@ -1097,7 +1097,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
 
         # Moment diagrams can be produced for the torsional and bending moments in the
         # members.
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_joint_ids(m)
         # plots.plot_member_orientation(m, 0.2)
@@ -1105,7 +1105,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         # ax.set_title("Torsion moments")
         # plots.show(m)
 
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_joint_ids(m)
         # plots.plot_member_orientation(m, 0.2)
@@ -1113,7 +1113,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         # ax.set_title("Moments M_y")
         # plots.show(m)
 
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_joint_ids(m)
         # plots.plot_member_orientation(m, 0.2)
@@ -1268,7 +1268,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
                     raise ValueError("Stiffness matrix is not correct")
         # print("Stiffness matrix is correct")
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # # plots.plot_deformations(m, 10.0)
         # # ax = plots.plot_shear_forces(m, scale=0.50e-3)
@@ -1311,19 +1311,19 @@ class UnitTestsSpaceFrames(unittest.TestCase):
             model.add_beam_member(m, k, [k, k + 1], sect_1)
 
         # A handful of plots to review the supports and the loads.
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_translation_supports(m)
         # ax.set_title("Translation supports")
         # plots.show(m)
 
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_rotation_supports(m)
         # ax.set_title("Rotation supports")
         # plots.show(m)
 
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_applied_forces(m, 5)
         # ax.set_title("Loads ")
@@ -1339,7 +1339,7 @@ class UnitTestsSpaceFrames(unittest.TestCase):
         if abs(m["joints"][NUM_JOINTS - 1]["displacements"][2] - 134.33) > 0.01:
             raise ValueError("Displacement calculation error")
 
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_deformations(m, scale=2.0)
         # ax.set_title("Deformation (x2))")

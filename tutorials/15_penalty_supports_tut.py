@@ -129,7 +129,7 @@ if norm(kbars * m["joints"][2]["displacements"] - [10.66988249, 4.33013068]) > 1
 if norm(kbars * m["joints"][3]["displacements"] - [-1.83012135, -3.16987316]) > 1e-3:
     print("Displacements at 3 wrong")
 
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_deformations(m, 100000.0)
 ax.set_title("Deformations (x100000)")

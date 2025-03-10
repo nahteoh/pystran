@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -19,7 +19,7 @@ orientation in the book, where the web is parallel to the y axis.
 ## References
 
 This example is completely solved in the book Matrix Analysis of Structures by
-Robert E. Sennett, ISBN 978-1577661436 (Section 6.4). 
+Robert E. Sennett, ISBN 978-1577661436 (Section 6.4).
 """
 
 # We begin with the standard imports:
@@ -53,7 +53,7 @@ M = 41000 * 12  # Applied moment at joint 2 in lb-in
 # The model is created as three dimensional (3 as argument!).
 m = model.create(3)
 
-# Joints are added at their locations, and the supports of the clamped 
+# Joints are added at their locations, and the supports of the clamped
 # joints are specified.
 model.add_joint(m, 1, [L, 0.0, L])
 model.add_joint(m, 2, [0.0, 0.0, L])
@@ -67,14 +67,14 @@ model.add_support(m["joints"][4], freedoms.ALL_DOFS)
 
 # At this point we can visualize the supports. The translation supports are
 # shown with arrow heads.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_joint_ids(m)
 plots.plot_translation_supports(m)
 ax.set_title("Translation supports")
 plots.show(m)
 
 # # The rotation supports are shown next.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_joint_ids(m)
 plots.plot_rotation_supports(m)
 ax.set_title("Rotation supports")
@@ -109,7 +109,7 @@ model.add_beam_member(m, 3, [1, 4], sect_3)
 
 # This plot shows the orientations of the local coordinate systems of the
 # beams.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_joint_ids(m)
 plots.plot_members(m)
 plots.plot_member_ids(m)
@@ -124,7 +124,7 @@ model.add_load(m["joints"][1], freedoms.UR2, M)
 
 # we can render the applied moment:
 
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_applied_moments(m, 0.0003)
 ax.set_title("Applied moments")
@@ -189,7 +189,7 @@ if abs(f["Mzi"] - -88) / 88 > 1e-2:
 
 # The solution to the problem can be visualized with a number of plots. We start
 # with the deformed shape of the frame.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m, 20)
 ax = plots.plot_deformations(m, 80.0)
@@ -199,7 +199,7 @@ plots.show(m)
 # The shear forces in the members can be visualized with diagrams.
 # For instance, the shear forces along the z-axis are shown.
 # Note that the shear forces are plotted in the plane in which they act.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m, 20)
 ax = plots.plot_shear_forces(m, scale=0.0050)
@@ -209,7 +209,7 @@ plots.show(m)
 # Analogous diagrams can be produced for the torsional moments in the members.
 # The torsional moments are plotted in a local plane of the beam, but of course
 # they are axial.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m, 20)
 ax = plots.plot_torsion_moments(m, scale=0.5)
@@ -219,7 +219,7 @@ plots.show(m)
 # Finally, the axial forces in the members can be visualized. The axial forces
 # are by definition along the axis of the beam, but they are plotted orthogonal
 # to the axis in one of the coordinate planes of the beam.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m, 20)
 ax = plots.plot_axial_forces(m, scale=0.01)

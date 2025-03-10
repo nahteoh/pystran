@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -61,7 +61,7 @@ s2 = section.beam_2d_section("section_2", E, A, I)
 model.add_beam_member(m, "m2", ["j2", "j3"], s2)
 
 # Let's have a look at the model before it is refined.
-plots.plot_setup(m, set_limits=True)
+plots.setup(m, set_limits=True)
 plots.plot_members(m)
 plots.plot_member_ids(m)
 ax = plots.plot_joint_ids(m)
@@ -73,7 +73,7 @@ plots.show(m)
 model.refine_member(m, "m2", 3)
 
 # The model is shown after the refinement.
-plots.plot_setup(m, set_limits=True)
+plots.setup(m, set_limits=True)
 plots.plot_members(m)
 plots.plot_member_ids(m)
 ax = plots.plot_joint_ids(m)
@@ -100,21 +100,21 @@ else:
 # The displacements can be seen to be the same as in
 # 02_continuous_beam_2_spans_consist_tut.py. The deformed shape shows the
 # curvatures of the beam.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_deformations(m, 10.0)
 ax.set_title("Deformed shape (magnified 10 times)")
 plots.show(m)
 
 # And the internal forces too. The bending moment:
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_bending_moments(m, 0.0001)
 ax.set_title("Moments")
 plots.show(m)
 
 # The shear forces:
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_shear_forces(m, 0.0001)
 ax.set_title("Shear forces")

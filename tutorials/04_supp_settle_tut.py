@@ -58,7 +58,7 @@ model.add_beam_member(m, 2, [2, 3], s1)
 # Next we display the displacements. We have to magnify the prescribed
 # displacement 50x, otherwise it would not be visible properly (the default
 # scale doesn't work well in this case).
-ax = plots.plot_setup(m, set_limits=True)
+ax = plots.setup(m, set_limits=True)
 plots.plot_members(m)
 plots.plot_translation_supports(m, 50)
 ax.set_title("Supports (magnified 50x)")
@@ -72,7 +72,7 @@ for j in m["joints"].values():
     print("Joint", j["jid"], "displacements", j["displacements"])
 
 # The first sanity check is the plot of the deformation.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_deformations(m, 50.0)
 ax.set_title("Deformations (x50)")
@@ -108,7 +108,7 @@ if abs(f["Myi"] / 215.7738 - 1) > 1e-3:
 
 # Here we show the local coordinate systems, in which the internal resultants
 # are displayed in the next two graphs.
-plots.plot_setup(m, set_limits=True)
+plots.setup(m, set_limits=True)
 plots.plot_members(m)
 plots.plot_member_ids(m)
 plots.plot_joint_ids(m)
@@ -118,14 +118,14 @@ plots.show(m)
 
 # The internal forces are shown in the local coordinate system of the beams.
 # These are the bending moments.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_bending_moments(m, 0.5)
 ax.set_title("Moments")
 plots.show(m)
 
 # And these are the shear forces.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_shear_forces(m, 5.5)
 ax.set_title("Shear forces")

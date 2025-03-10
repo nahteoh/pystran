@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -14,7 +14,7 @@ combination of loads.
 ## References
 
 Original source: "Guide de validation des progiciels de calcul de structures"
-publié par l'AFNOR 1990 (ISBN 2-12-486611-7).  
+publié par l'AFNOR 1990 (ISBN 2-12-486611-7).
 
 Data taken from: ICAB Force Exemples Exemples de calculs de statique pour ICAB
 Force. www.icab.fr
@@ -112,7 +112,7 @@ model.add_truss_member(m, 19, [10, 6], s2)
 model.add_truss_member(m, 20, [9, 11], sr)
 
 # Inspect be base structure visually.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_joint_ids(m)
 plots.plot_members(m)
 ax.set_title("Truss definition")
@@ -232,7 +232,7 @@ if abs(UD - (UD1 + UD2 + UD3)) > 1.0e-9:
     raise ValueError("Displacement of D incorrect.")
 
 # Finally, display the deformed truss.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_joint_ids(m)
 ax = plots.plot_deformations(m, 20.0)
