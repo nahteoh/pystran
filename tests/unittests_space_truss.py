@@ -126,7 +126,7 @@ class UnitTestsSpaceTruss(unittest.TestCase):
         #     eps = dot(B, u)
         #     print('Bar ' + str(connectivity) + ' force = ', E * A * eps[0])
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_deformations(m, 5.0)
         # plots.show(m)

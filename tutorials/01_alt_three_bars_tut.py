@@ -69,7 +69,7 @@ for i in ["B", "C", "D"]:
 
 # At this point we can visualize the structure. We show all members, member
 # orientations, and the joint numbers.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m)
 plots.plot_joint_ids(m)
@@ -79,7 +79,7 @@ plots.show(m)
 
 # At this point we can visualize the supports. The translation supports are
 # shown with arrow heads.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_joint_ids(m)
 plots.plot_translation_supports(m)
 ax.set_title("Translation supports")
@@ -91,7 +91,7 @@ model.add_load(jA, 1, -10000.0 / 2.0)
 
 # The model is shown graphically, members are displayed with the member numbers attached.
 # The applied forces are also shown.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 plots.plot_applied_forces(m, 1 / 3000.0)
 plots.plot_member_ids(m)
@@ -141,7 +141,7 @@ print("Reference forces: ", -0.656854250e4, -0.48528137e4, -0.15685425e4)
 
 
 # The solution is visualized with deformed shape.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_deformations(m, 100.0)
 ax.set_title("Deformed shape (magnification factor = 100)")
@@ -150,7 +150,7 @@ plots.show(m)
 
 # The solution is further visualized with graphical representation of the
 # internal (axial) forces.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_ids(m)
 ax = plots.plot_axial_forces(m, 1 / 3000.0)

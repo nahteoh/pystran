@@ -87,7 +87,7 @@ model.add_beam_member(m, 4, ["N_H2", "N_C"], sect_1)
 # Now we can plot the geometry of the structure. We show the members,
 # the member numbers, and the orientations of the local coordinate systems.
 
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_ids(m)
 plots.plot_joint_ids(m)
@@ -158,14 +158,14 @@ model.add_spring_member(
 
 
 # Let us look at the translation and rotation supports:
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_joint_ids(m)
 plots.plot_translation_supports(m)
 ax.set_title("Translation supports")
 plots.show(m)
 
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_joint_ids(m)
 plots.plot_rotation_supports(m)
@@ -182,7 +182,7 @@ model.solve_statics(m)
 
 # The solution to the problem can be visualized with a number of plots. We start
 # with the deformed shape of the frame.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_joint_ids(m)
 ax = plots.plot_deformations(m, 2.0)
@@ -210,7 +210,7 @@ print("Displacement calculation OK")
 
 # Moment diagrams can be produced for the torsional and bending moments in the
 # members.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_joint_ids(m)
 plots.plot_member_orientation(m, 0.2)
@@ -218,7 +218,7 @@ ax = plots.plot_torsion_moments(m, scale=0.0001)
 ax.set_title("Torsion moments")
 plots.show(m)
 
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_joint_ids(m)
 plots.plot_member_orientation(m, 0.2)
@@ -226,7 +226,7 @@ ax = plots.plot_bending_moments(m, scale=0.0001, axis="y")
 ax.set_title("Moments M_y")
 plots.show(m)
 
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_joint_ids(m)
 plots.plot_member_orientation(m, 0.2)

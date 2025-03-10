@@ -9,11 +9,7 @@ and beam members, both in two dimensions and in three dimensions.
 ## News
 
 - 03/10/2025: Add rigid links and general springs.
-- 03/05/2025: Describe the operation of the scripts.
-- 02/12/2025: Make it possible to use general joint and member identifiers.
-- 02/05/2025: Add general springs to ground.
-- 01/30/2025: Add tutorials.
-- 01/22/2025: Implement initial functionality. 
+
 
 [Past news](#past-news)
 
@@ -49,6 +45,10 @@ and beam members, both in two dimensions and in three dimensions.
 - NumPy
 - SciPy
 - Matplotlib
+
+Optionally:
+
+- pdoc3 (if documentation is desired)
 
 These requirements can be easily satisfied by running the examples in the [Spyder](docs/spyder/spyder.md) IDE.
 
@@ -92,3 +92,9 @@ py unittests_planar_truss.py
 or analogously for the other unit test files.
 
 ## <a name="past-news"></a>Past news
+
+- 03/05/2025: Describe the operation of the scripts.
+- 02/12/2025: Make it possible to use general joint and member identifiers.
+- 02/05/2025: Add general springs to ground.
+- 01/30/2025: Add tutorials.
+- 01/22/2025: Implement initial functionality. 

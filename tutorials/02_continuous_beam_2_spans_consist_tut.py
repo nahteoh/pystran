@@ -7,7 +7,7 @@ pystran - Python package for structural analysis with trusses and beams
 
 ## Problem description:
 
-Continuous simply supported beam with two spans. The beam is loaded with 
+Continuous simply supported beam with two spans. The beam is loaded with
 moments at the joint.
 
 Displacements and internal forces are provided in the verification manual.
@@ -100,28 +100,28 @@ print("Reactions = ", R)
 
 # In order to understand moment and shear diagrams, we start by plotting the
 # geometry with the orientation of the local coordinate system on each beam.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_member_orientation(m, 1.0)
 ax.set_title("Local coordinate systems (red -- local x, blue -- local z)")
 plots.show(m)
 
 # The deformed shape shows the curvatures of the beam.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_deformations(m, 10.0)
 ax.set_title("Deformed shape (magnified 10 times)")
 plots.show(m)
 
 # The bending moment can be compared with the curvature of the beam.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_bending_moments(m, 0.0001)
 ax.set_title("Moments")
 plots.show(m)
 
 # The shear forces are the slopes of the moment diagram.
-plots.plot_setup(m)
+plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_shear_forces(m, 0.0001)
 ax.set_title("Shear forces")

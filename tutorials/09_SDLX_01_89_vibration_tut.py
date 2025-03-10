@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -7,14 +7,14 @@ pystran - Python package for structural analysis with trusses and beams
 
 ## Problem description:
 
-Planar frame of two stories, vibrating only in the plane. 
+Planar frame of two stories, vibrating only in the plane.
 The frame members are automatically refined into multiple elements.
 
 Analytical solutions are available for the first few modes of vibration.
 
 ## References
 
-SCIA Engineer 24.0.1020 test case SDLX 01/89 
+SCIA Engineer 24.0.1020 test case SDLX 01/89
 """
 
 import context
@@ -53,7 +53,7 @@ model.add_beam_member(m, 4, [6, 4], s1)
 model.add_beam_member(m, 5, [6, 3], s1)
 model.add_beam_member(m, 6, [6, 5], s1)
 
-plots.plot_setup(m, set_limits=True)
+plots.setup(m, set_limits=True)
 plots.plot_members(m)
 plots.plot_member_ids(m)
 plots.plot_member_orientation(m, 0.05)
@@ -69,7 +69,7 @@ nref = 8
 for i in range(6):
     model.refine_member(m, i + 1, nref)
 
-plots.plot_setup(m, set_limits=True)
+plots.setup(m, set_limits=True)
 plots.plot_members(m)
 ax = plots.plot_joint_ids(m)
 ax.set_title("Structure after refinement")
@@ -89,7 +89,7 @@ for mode, reff in enumerate(reffs):
 # Show the first four modes.
 for mode in range(0, 4):
     print(f"Mode {mode}: ", m["frequencies"][mode])
-    ax = plots.plot_setup(m)
+    ax = plots.setup(m)
     plots.plot_members(m)
     model.set_solution(m, m["eigvecs"][:, mode])
     plots.plot_deformations(m, 0.2)

@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -90,7 +90,7 @@ for mode in range(0, 6):
         > 1.0e-3
     ):
         raise ValueError("Error in the normalized frequency")
-    ax = plots.plot_setup(m)
+    ax = plots.setup(m)
     plots.plot_members(m)
     model.set_solution(m, m["eigvecs"][:, mode])
     plots.plot_deformations(m, 0.25)

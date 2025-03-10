@@ -68,7 +68,7 @@ model.solve_free_vibration(m)
 
 # The expected frequency is 1.876 CPS, hence the vibration period is 0.533 sec.
 for mode in range(1):
-    plots.plot_setup(m)
+    plots.setup(m)
     plots.plot_members(m)
     model.set_solution(m, m["eigvecs"][:, mode])
     ax = plots.plot_deformations(m, 50.0)

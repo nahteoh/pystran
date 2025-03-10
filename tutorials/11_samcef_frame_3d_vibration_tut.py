@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -12,13 +12,13 @@ refined into multiple elements.
 
 The comparison is made four four modes of vibration. The mode shapes correlate
 reasonably well. The agreement of the frequencies is decent, but there are small
-discrepancies, the source of which is at this point unknown. 
+discrepancies, the source of which is at this point unknown.
 
 ## References
 
 Example 5.3 from the book: MECHANICAL VIBRATIONS THEORY AND APPLICATION TO
 STRUCTURAL DYNAMICS, ThirdEdition, Michel Géradin, Daniel J. Rixen
-    
+
 Original citation: Samcef. 1992 Samcef manual: Asef–Stabi–Dynam–Repdyn (M4)
 Samtech SA Liège, Belgium.
 """
@@ -131,7 +131,7 @@ reffs = [3.08, 4.65, 7.87, 8.23]
 for mode in range(0, 4):
     print(f"Mode {mode}: {m['frequencies'][mode]:.3f} Hz")
     print("  Reference: ", reffs[mode])
-    ax = plots.plot_setup(m)
+    ax = plots.setup(m)
     plots.plot_members(m)
     model.set_solution(m, m["eigvecs"][:, mode])
     plots.plot_deformations(m, 100.0)

@@ -52,14 +52,14 @@ model.add_support(m["joints"][3], freedoms.ALL_DOFS)
 
 # At this point we can visualize the supports. The translation supports are
 # shown with arrow heads.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_joint_ids(m)
 plots.plot_translation_supports(m)
 ax.set_title("Translation supports")
 plots.show(m)
 
 # The rotation supports are shown next.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_joint_ids(m)
 plots.plot_rotation_supports(m, radius=17)
 ax.set_title("Rotation supports")
@@ -73,7 +73,7 @@ model.add_beam_member(m, 1, [1, 2], sect_12)
 model.add_beam_member(m, 2, [3, 1], sect_12)
 
 # This plot shows the orientations of the local coordinate systems of the beams.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_joint_ids(m)
 plots.plot_members(m)
 plots.plot_member_ids(m)
@@ -103,7 +103,7 @@ model.add_load(i, freedoms.UR3, -M_T)
 model.add_load(j, freedoms.UR3, +M_T)
 
 # The nodal moments can be visualized with the following plot.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 ax = plots.plot_applied_moments(m, 0.0, 50)
 ax.set_title("Applied moments")
@@ -115,7 +115,7 @@ model.solve_statics(m)
 
 # The solution to the problem can be visualized with a number of plots. We start
 # with the deformed shape of the frame.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m, 20)
 ax = plots.plot_deformations(m, 500.0)
@@ -162,7 +162,7 @@ if abs((f["Myj"] + M_T) / 40171 - 1) > 1e-2:
 # the thermal forces, they represent the response of the frame with the nodal loads.
 
 # The shear forces in the members can be visualized with diagrams.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m, 20)
 ax = plots.plot_shear_forces(m, scale=0.0050)
@@ -170,7 +170,7 @@ ax.set_title("Shear forces along z-axis")
 plots.show(m)
 
 # The bending moment diagram is shown next.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m, 20)
 ax = plots.plot_bending_moments(m, scale=0.0005)
@@ -178,7 +178,7 @@ ax.set_title("Bending moments")
 plots.show(m)
 
 # Finally, the axial forces in the members are shown.
-ax = plots.plot_setup(m)
+ax = plots.setup(m)
 plots.plot_members(m)
 plots.plot_member_orientation(m, 20)
 ax = plots.plot_axial_forces(m, scale=0.0001)

@@ -164,14 +164,14 @@ class UnitTestsPlanarTrusses(unittest.TestCase):
         model.add_truss_member(m, 2, [2, 4], s1)
         model.add_truss_member(m, 3, [3, 4], s1)
 
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_joint_ids(m)
         # plots.plot_members(m)
         # plots.show(m)
 
         add_thermal_loads(m)
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # ax = plots.plot_applied_forces(m, 0.001)
         # ax.set_title("Forces")
@@ -195,13 +195,13 @@ class UnitTestsPlanarTrusses(unittest.TestCase):
             if abs(N - N_T - res) > 1.0e-3 * abs(res):
                 raise ValueError("Force calculation error")
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # ax = plots.plot_deformations(m, 50.0)
         # ax.set_title("Deformed shape (magnification factor = 50)")
         # plots.show(m)
 
-        # plots.plot_setup(m)
+        # plots.setup(m)
         # plots.plot_members(m)
         # ax = plots.plot_axial_forces(m, 0.001)
         # ax.set_title("Deformed shape (magnification factor = 50)")
@@ -315,7 +315,7 @@ class UnitTestsPlanarTrusses(unittest.TestCase):
         model.add_truss_member(m, 20, [9, 11], sr)
 
         # Inspect be base structure visually.
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_joint_ids(m)
         # plots.plot_members(m)
         # ax.set_title("Truss definition")
@@ -434,7 +434,7 @@ class UnitTestsPlanarTrusses(unittest.TestCase):
             raise ValueError("Displacement of D incorrect.")
 
         # Finally, display the deformed truss.
-        # ax = plots.plot_setup(m)
+        # ax = plots.setup(m)
         # plots.plot_members(m)
         # plots.plot_joint_ids(m)
         # ax = plots.plot_deformations(m, 20.0)
