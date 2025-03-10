@@ -21,7 +21,10 @@ def rigid_link_stiffness(e_x, h, Gamma):
        \end{bmatrix}.
     $$
 
-    Here $C$ is a matrix computed from the vector    $r = h e_x$.
+    Here $C$ is a matrix computed from the vector    $r = h e_x$, 
+    which is the difference between the location of 
+    the subordinate and the location of the master.
+
     In three dimensions
     $$
     C =\begin{bmatrix} 
@@ -32,6 +35,14 @@ def rigid_link_stiffness(e_x, h, Gamma):
     Here $ \widetilde{r}$ is a skew matrix corresponding to the 
     vector $r$, and $0$ and $1$ stand for $3\times3$ zero 
     and identity matrices respectively.
+
+    Further, $\Gamma$ is a diagonal matrix, such that 
+    the diagonal entries provide penalty on the difference 
+    between the individual degrees of freedom.
+
+    Reference: APPLICATION OF RIGID LINKS  IN STRUCTURAL DESIGN MODELS,
+    Sergey Yu. Fialko, International Journal for Computational Civil 
+    and Structural Engineering, 13(3) 119-137 (2017). 
     """
     if len(e_x) == 2:
         I = eye(2)
