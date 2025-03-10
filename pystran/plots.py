@@ -168,8 +168,8 @@ def plot_members(m):
                 i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
                 ci, cj = i["coordinates"], j["coordinates"]
                 plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], "k-")
-        if "rlink_members" in m:
-            for member in m["rlink_members"].values():
+        if "rigid_link_members" in m:
+            for member in m["rigid_link_members"].values():
                 connectivity = member["connectivity"]
                 i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
                 ci, cj = i["coordinates"], j["coordinates"]
@@ -186,8 +186,8 @@ def plot_members(m):
                 i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
                 ci, cj = i["coordinates"], j["coordinates"]
                 plt.plot([ci[0], cj[0]], [ci[1], cj[1]], "k-")
-        if "rlink_members" in m:
-            for member in m["rlink_members"].values():
+        if "rigid_link_members" in m:
+            for member in m["rigid_link_members"].values():
                 connectivity = member["connectivity"]
                 i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
                 ci, cj = i["coordinates"], j["coordinates"]
@@ -195,7 +195,7 @@ def plot_members(m):
     return ax
 
 
-def _plot_truss_or_rlink(ax, member, i, j, scale):
+def _plot_truss_or_rigid_link(ax, member, i, j, scale):
     di, dj = i["displacements"], j["displacements"]
     ci, cj = i["coordinates"], j["coordinates"]
     if len(ci) == 3:
@@ -306,7 +306,7 @@ def plot_deformations(m, scale=0.0):
 
     if scale == 0.0:
         maxmag = _largest_mag_at_joints(m, fun)
-        if maxmag != 0:            
+        if maxmag != 0:
             scale = cd / 5 / maxmag
 
     ax = plt.gca()
@@ -314,12 +314,12 @@ def plot_deformations(m, scale=0.0):
         for member in m["truss_members"].values():
             connectivity = member["connectivity"]
             i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-            _plot_truss_or_rlink(ax, member, i, j, scale)
-    if "rlink_members" in m:
-        for member in m["rlink_members"].values():
+            _plot_truss_or_rigid_link(ax, member, i, j, scale)
+    if "rigid_link_members" in m:
+        for member in m["rigid_link_members"].values():
             connectivity = member["connectivity"]
             i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-            _plot_truss_or_rlink(ax, member, i, j, scale)
+            _plot_truss_or_rigid_link(ax, member, i, j, scale)
     if "beam_members" in m:
         for member in m["beam_members"].values():
             connectivity = member["connectivity"]
@@ -503,7 +503,7 @@ def plot_bending_moments(m, scale=0.0, axis="y"):
     if scale == 0.0:
         cd = characteristic_dimension(m)
         maxmag = _largest_mag_on_beam_members(m, fun)
-        if maxmag != 0:            
+        if maxmag != 0:
             scale = cd / 5 / maxmag
 
     ax = plt.gca()
@@ -881,10 +881,10 @@ def plot_applied_forces(m, scale=0.0):
             return [v for (d, v) in j["loads"].items() if d < dim]
         else:
             return [0]
-    
+
     if scale == 0.0:
         maxmag = _largest_mag_at_joints(m, fun)
-        if maxmag != 0:            
+        if maxmag != 0:
             scale = cd / 2 / maxmag
     for j in m["joints"].values():
         if "loads" in j and j["loads"]:
@@ -948,7 +948,7 @@ def plot_applied_moments(m, scale=0.0, radius=0.0):
 
     if scale == 0.0:
         maxmag = _largest_mag_at_joints(m, fun)
-        if maxmag != 0:            
+        if maxmag != 0:
             scale = cd / 2 / maxmag
     if radius <= 0.0:
         radius = cd / 10
@@ -1022,7 +1022,7 @@ def plot_translation_supports(m, scale=0.0, shortest_arrow=1.0e-6):
 
     if scale == 0.0:
         maxmag = _largest_mag_at_joints(m, fun)
-        if maxmag != 0:            
+        if maxmag != 0:
             scale = cd / 10 / maxmag
 
     for j in m["joints"].values():
@@ -1095,7 +1095,7 @@ def plot_rotation_supports(m, scale=0.0, radius=0.0, shortest_arrow=1.0e-6):
 
     if scale == 0.0:
         maxmag = _largest_mag_at_joints(m, fun)
-        if maxmag != 0:            
+        if maxmag != 0:
             scale = cd / 10 / maxmag
 
     if radius <= 0.0:

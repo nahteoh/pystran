@@ -58,6 +58,8 @@ model.add_joint(m, "N_C", [0.0, 0.0, -1.0])
 model.add_joint(m, "N_D", [0.0, 0.0, +1.0])
 model.add_joint(m, "N_H1", [0.0, 0.0, 0.0])
 model.add_joint(m, "N_H2", [0.0, 0.0, 0.0])
+# The ground is represented as joint, which we will make immovable below.
+ground = model.add_joint(m, "ground", [0.0, 0.0, 0.0])
 
 # There are four beams. The cross sectional properties are the same, but the
 # beam orientations need to be different.
@@ -110,15 +112,49 @@ model.add_support(jB, freedoms.U2)
 model.add_support(jB, freedoms.U3)
 model.add_support(jB, freedoms.UR1)
 
+# The ground "joint" is fully supported.
+model.add_support(ground, freedoms.ALL_DOFS)
+
+
 # Next we add the springs to the ground. The translation and rotation spring
 # constants have the same numerical value. First at joint N_A.
-model.add_extension_spring_to_ground(jA, "EXT_A", [0, 1, 0], K)
-model.add_torsion_spring_to_ground(jA, "TOR_A_X", [1, 0, 0], K)
-model.add_torsion_spring_to_ground(jA, "TOR_A_Z", [0, 0, 1], K)
+model.add_spring_member(
+    m,
+    1,
+    ["N_A", "ground"],
+    section.spring_section("EXT_A", "extension", [0, 1, 0], K),
+)
+model.add_spring_member(
+    m,
+    2,
+    ["N_A", "ground"],
+    section.spring_section("TOR_A_X", "torsion", [1, 0, 0], K),
+)
+model.add_spring_member(
+    m,
+    3,
+    ["N_A", "ground"],
+    section.spring_section("TOR_A_Z", "torsion", [0, 0, 1], K),
+)
 # Then at joint N_B.
-model.add_extension_spring_to_ground(jB, "EXT_B", [1, 0, 0], K)
-model.add_torsion_spring_to_ground(jB, "TOR_B_Y", [0, 1, 0], K)
-model.add_torsion_spring_to_ground(jB, "TOR_B_Z", [0, 0, 1], K)
+model.add_spring_member(
+    m,
+    4,
+    ["N_B", "ground"],
+    section.spring_section("EXT_B", "extension", [1, 0, 0.0], K),
+)
+model.add_spring_member(
+    m,
+    5,
+    ["N_B", "ground"],
+    section.spring_section("TOR_B_Y", "torsion", [0, 1, 0], K),
+)
+model.add_spring_member(
+    m,
+    6,
+    ["N_B", "ground"],
+    section.spring_section("TOR_B_Z", "torsion", [0, 0, 1], K),
+)
 
 
 # Let us look at the translation and rotation supports:
