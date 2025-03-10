@@ -8,7 +8,7 @@ from pystran import assemble
 from pystran import gauss
 
 
-def rlink_stiffness(e_x, h, Gamma):
+def rigid_link_stiffness(e_x, h, Gamma):
     r"""
     Compute rigid link stiffness matrix.
 
@@ -78,6 +78,6 @@ def assemble_stiffness(Kg, member, i, j):
         e_x, _, h = geometry.member_2d_geometry(i, j)
     else:
         e_x, _, _, h = geometry.member_3d_geometry(i, j, array([]))
-    k = rlink_stiffness(e_x, h, Gamma)
+    k = rigid_link_stiffness(e_x, h, Gamma)
     dof = concatenate([i["dof"], j["dof"]])
     return assemble.assemble(Kg, dof, k)

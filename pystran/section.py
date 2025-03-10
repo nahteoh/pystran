@@ -48,7 +48,7 @@ def beam_2d_section(name, E=0.0, A=0.0, I=0.0, rho=0.0, CTE=0.0):
     return s
 
 
-def rlink_section(name, Gamma):
+def rigid_link_section(name, Gamma):
     """
     Define a rigid link section.
 
@@ -58,6 +58,24 @@ def rlink_section(name, Gamma):
     s = dict()
     s["name"] = name
     s["Gamma"] = Gamma
+    return s
+
+
+def spring_section(name, kind, direction, stiffness_coefficient=1.0):
+    """
+    Define a section for a general extension or torsion spring.
+
+    - `kind`: `"extension"` or `"torsion"`. The connected joints either react
+      to displacement or to rotation.
+    - `direction`: the spring acts *along* this direction for extension
+      springs, or about this direction for torsion springs.
+    - `stiffness_coefficient`: stiffness coefficient of the spring.
+    """
+    s = dict()
+    s["name"] = name
+    s["kind"] = kind
+    s["direction"] = direction
+    s["stiffness_coefficient"] = stiffness_coefficient
     return s
 
 

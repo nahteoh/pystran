@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -14,7 +14,7 @@ formulation with extension springs.
 ## References
 
 This example is completely solved in the book Matrix Analysis of Structures by
-Robert E. Sennett, ISBN 978-1577661436 (Example 7.3 on page 134). 
+Robert E. Sennett, ISBN 978-1577661436 (Example 7.3 on page 134).
 
 """
 
@@ -55,6 +55,11 @@ model.add_joint(m, 1, [-20 * 12, -10 * 12])
 model.add_joint(m, 2, [-10 * 12, 0.0])
 model.add_joint(m, 3, [0.0, -10 * 12])
 
+# Supports will be represented as springs between joints and the ground. The
+# ground itself will be represented as an immovable joint.
+model.add_joint(m, "ground", [0.0, 0.0])
+model.add_support(m["joints"]["ground"], freedoms.TRANSLATION_DOFS)
+
 # There are three truss bars. The cross sectional properties are computed so that
 # the axial stiffness is the same for all bars.
 connectivity = [1, 2]
@@ -89,10 +94,19 @@ model.add_load(m["joints"][2], freedoms.U2, 5)
 
 # The supports are enforced using extension springs. The springs are attached to
 # the ground.
-model.add_extension_spring_to_ground(m["joints"][1], 1, [0, 1], ksprings)
-model.add_extension_spring_to_ground(m["joints"][1], 2, [1, 0], ksprings)
-model.add_extension_spring_to_ground(
-    m["joints"][3], 1, [-cos(30 / 180 * pi), sin(30 / 180 * pi)], ksprings
+model.add_spring_member(
+    m, 1, [1, "ground"], section.spring_section("ss1", "extension", [1, 0], ksprings)
+)
+model.add_spring_member(
+    m, 2, [1, "ground"], section.spring_section("ss2", "extension", [0, 1], ksprings)
+)
+model.add_spring_member(
+    m,
+    3,
+    [3, "ground"],
+    section.spring_section(
+        "ss3", "extension", [-cos(30 / 180 * pi), sin(30 / 180 * pi)], ksprings
+    ),
 )
 
 # Now we can solve the static equilibrium of the frame.

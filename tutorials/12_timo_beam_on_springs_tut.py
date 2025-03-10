@@ -1,5 +1,5 @@
 """
-pystran - Python package for structural analysis with trusses and beams 
+pystran - Python package for structural analysis with trusses and beams
 
 (C) 2025, Petr Krysl, pkrysl@ucsd.edu
 
@@ -43,8 +43,12 @@ m = model.create(2)
 model.add_joint(m, 1, [0.0, 0.0])
 model.add_joint(m, 2, [da, 0.0])
 model.add_joint(m, 3, [da + db, 0.0])
+# The ground is represented with joint.
+model.add_joint(m, "ground", [0.0, 0.0])
 model.add_support(m["joints"][1], freedoms.U1)
 model.add_support(m["joints"][3], freedoms.U1)
+# The ground is immovable: all degrees of freedom are suppressed.
+model.add_support(m["joints"]["ground"], freedoms.ALL_DOFS)
 
 s2 = section.beam_2d_section("s2", E, A, I, rho)
 model.add_beam_member(m, 1, [1, 2], s2)
@@ -55,8 +59,9 @@ model.add_mass(m["joints"][2], freedoms.U2, M)
 
 # In the vertical direction, the spring stiffness is K. A spring is added at
 # either end of the beam.
-model.add_extension_spring_to_ground(m["joints"][1], 1, [0, 1], K)
-model.add_extension_spring_to_ground(m["joints"][3], 2, [0, 1], K)
+ss = section.spring_section("ss", "extension", [0, 1], K)
+model.add_spring_member(m, 1, [1, "ground"], ss)
+model.add_spring_member(m, 2, [3, "ground"], ss)
 
 model.number_dofs(m)
 model.solve_free_vibration(m)

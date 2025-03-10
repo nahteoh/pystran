@@ -43,7 +43,7 @@ F = 1.0e3
 # other stiffness in the system. This particular formulation does not require
 # the penalty to be many times larger, just in the ballpark. Here we take a
 # fraction of the `E*A`  product.
-sr = section.rlink_section("sr", Gamma=1e8 * numpy.diagflat([1.0, 1.0, 1.0]))
+sr = section.rigid_link_section("sr", Gamma=1e8 * numpy.diagflat([1.0, 1.0, 1.0]))
 
 m = model.create(2)
 
@@ -56,7 +56,7 @@ model.add_joint(m, 4, (h, -0.2))
 model.add_beam_member(m, 1, (1, 2), sb)
 model.add_beam_member(m, 2, (3, 4), sb)
 # There free ends are linked together rigidly.
-model.add_rlink(m, 1, (2, 4), sr)
+model.add_rigid_link_member(m, 1, (2, 4), sr)
 
 # The rigid link is shown with a slightly thicker line.
 plots.plot_setup(m)

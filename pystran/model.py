@@ -113,7 +113,7 @@ def add_beam_member(m, mid, connectivity, sect):
     return m["beam_members"][mid]
 
 
-def add_rlink(m, mid, connectivity, sect):
+def add_rigid_link_member(m, mid, connectivity, sect):
     """
     Add a rigid link member to the model.
 
@@ -128,16 +128,43 @@ def add_rlink(m, mid, connectivity, sect):
 
     Returns: the newly created member.
     """
-    if "rlink_members" not in m:
-        m["rlink_members"] = {}
-    if mid in m["rlink_members"]:
+    if "rigid_link_members" not in m:
+        m["rigid_link_members"] = {}
+    if mid in m["rigid_link_members"]:
         raise RuntimeError("Rigid link member already exists")
-    m["rlink_members"][mid] = {
+    m["rigid_link_members"][mid] = {
         "mid": mid,
         "connectivity": connectivity,
         "section": sect,
     }
-    return m["rlink_members"][mid]
+    return m["rigid_link_members"][mid]
+
+
+def add_spring_member(m, mid, connectivity, sect):
+    """
+    Add a spring member to the model.
+
+    - `m` = the model,
+    - `mid` = the member identifier, must be unique, but can be anything that
+      is a legal dictionary key (integer, string, ...),
+    - `connectivity` = the list (or a tuple) of the joint identifiers; the
+      first is the *master* (its motion determines the motion of the
+      subordinate), the second is the *subordinate* (its motion follows that of
+      the master).
+    - `sect` = the section of the member.
+
+    Returns: the newly created member.
+    """
+    if "spring_members" not in m:
+        m["spring_members"] = {}
+    if mid in m["spring_members"]:
+        raise RuntimeError("Spring member already exists")
+    m["spring_members"][mid] = {
+        "mid": mid,
+        "connectivity": connectivity,
+        "section": sect,
+    }
+    return m["spring_members"][mid]
 
 
 def add_support(j, dof, value=0.0):
@@ -191,9 +218,6 @@ def add_links(m, jids, dof):
     - `jids` = the list of joint identifiers,
     - `dof` = the degree of freedom at which the joints are to be linked.
     """
-    # If any of the joints is supported, the link is not allowed at this stage
-    # if "supports" in i or "supports" in j:
-    #     raise RuntimeError("Link must be applied before supports")
     # Now add the mutual links between the joints
     for jid1 in jids:
         for jid2 in jids:
@@ -337,14 +361,16 @@ def _build_stiffness_matrix(m):
             connectivity = member["connectivity"]
             i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
             pystran.beam.assemble_stiffness(K, member, i, j)
-    if "rlink_members" in m:
-        for member in m["rlink_members"].values():
+    if "rigid_link_members" in m:
+        for member in m["rigid_link_members"].values():
             connectivity = member["connectivity"]
             i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-            pystran.rlink.assemble_stiffness(K, member, i, j)
-    for j in m["joints"].values():
-        if "springs" in j:
-            pystran.spring.assemble_stiffness(K, j)
+            pystran.rigid.assemble_stiffness(K, member, i, j)
+    if "spring_members" in m:
+        for member in m["spring_members"].values():
+            connectivity = member["connectivity"]
+            i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
+            pystran.spring.assemble_stiffness(K, member, i, j)
 
     return K
 
@@ -648,47 +674,3 @@ def remove_supports(m):
     for joint in m["joints"].values():
         if "supports" in joint:
             joint["supports"] = {}
-
-
-def add_extension_spring_to_ground(j, sid, direction, coefficient=1.0):
-    """
-    Add a grounded extension spring to a joint.
-
-    - `j` = the joint (obtained from the model as `m["joints"][jid]`),
-    - `sid` = spring identifier, must be unique, but can be anything that is a
-      legal dictionary key (integer, string, ...),
-    - `direction` = the direction along the spring,
-    - `coefficient` = the magnitude (>0) of the spring stiffness.
-    """
-    # Make the direction of unit length
-    direction = array(direction, dtype=numpy.float64)
-    direction /= norm(direction)
-    if "springs" not in j:
-        j["springs"] = {}
-    if "extension" not in j["springs"]:
-        j["springs"]["extension"] = {}
-    j["springs"]["extension"][sid] = {
-        "direction": direction,
-        "coefficient": coefficient,
-    }
-
-
-def add_torsion_spring_to_ground(j, sid, direction, coefficient=1.0):
-    """
-    Add a grounded torsional spring to a joint.
-
-    - `j` = the joint (obtained from the model as `m["joints"][jid]`),
-    - `sid` = spring identifier, must be unique, but can be anything that is a
-      legal dictionary key (integer, string, ...),
-    - `direction` = the direction about which a torsion spring acts.
-      For a rotation in 2D, the direction is [1.0].
-    - `coefficient` = the magnitude (>0) of the spring stiffness.
-    """
-    # Make the direction of unit length
-    direction = array(direction, dtype=numpy.float64)
-    direction = direction / norm(direction)
-    if "springs" not in j:
-        j["springs"] = {}
-    if "moment" not in j["springs"]:
-        j["springs"]["moment"] = {}
-    j["springs"]["moment"][sid] = {"direction": direction, "coefficient": coefficient}
