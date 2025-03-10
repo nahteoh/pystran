@@ -422,8 +422,10 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         model.add_joint(m, 1, [0.0, 0.0])
         model.add_joint(m, 2, [da, 0.0])
         model.add_joint(m, 3, [da + db, 0.0])
+        model.add_joint(m, "ground", [0.0, 0.0])
         model.add_support(m["joints"][1], freedoms.U1)
         model.add_support(m["joints"][3], freedoms.U1)
+        model.add_support(m["joints"]["ground"], freedoms.ALL_DOFS)
 
         s2 = section.beam_2d_section("s2", E, A, I, rho)
         model.add_beam_member(m, 1, [1, 2], s2)
@@ -434,8 +436,9 @@ class UnitTestsPlanarFrames(unittest.TestCase):
 
         # In the vertical direction, the spring stiffness is K. A spring is added at
         # either end of the beam.
-        model.add_extension_spring_to_ground(m["joints"][1], 1, [0, 1, 0], K)
-        model.add_extension_spring_to_ground(m["joints"][3], 2, [0, 1, 0], K)
+        ss = section.spring_section("ss", "extension", [0, 1], K)
+        model.add_spring_member(m, 1, [1, "ground"], ss)
+        model.add_spring_member(m, 2, [3, "ground"], ss)
 
         model.number_dofs(m)
         model.solve_free_vibration(m)
