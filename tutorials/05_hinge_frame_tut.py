@@ -50,8 +50,8 @@ model.add_joint(m, 5, [0, L])
 
 # We supply the list of joints that need to be linked (2 and 5), and the
 # degrees of freedom that are to be the same.
-model.add_links(m, [2, 5], freedoms.U1)
-model.add_links(m, [2, 5], freedoms.U2)
+model.add_dof_links(m, [2, 5], freedoms.U1)
+model.add_dof_links(m, [2, 5], freedoms.U2)
 
 # Now we apply the supports -- both bottom joints are simply supported
 # (pinned).

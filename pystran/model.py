@@ -5,7 +5,6 @@ Define the functions for defining and manipulating a model.
 from math import sqrt
 import numpy
 from numpy import array, zeros, dot, mean, concatenate
-from numpy.linalg import norm
 import scipy
 import pystran
 from pystran import freedoms
@@ -15,7 +14,14 @@ def create(dim=2):
     """
     Create a new model.
 
-    Supply the dimension of the model (2 or 3).
+    Parameters
+    ----------
+    dim
+        Supply the dimension of the model (2 or 3)._
+
+    Returns
+    -------
+    dict
     """
     m = {}
     m["dim"] = dim  # Dimension of the model
@@ -44,15 +50,24 @@ def add_joint(m, jid, coordinates, dof=None):
     """
     Add a joint to the model.
 
-    - `m` = the model,
-    - `jid` = the joint identifier, which must be unique, but can be anything
-      that is a legal dictionary key (integer, string, ...),
-    - `coordinates` = the list (or a tuple) of coordinates of the joint; the
-      input is converted to an array.
-    - `dof` = optional: the degrees of freedom of the joint as a list (or a
-      tuple). If provided, do not use `number_dofs` later on.
+    Parameters
+    ----------
+    m
+        Model.
+    jid
+        The joint identifier, which must be unique, but can be anything
+        that is a legal dictionary key (integer, string, ...),
+    coordinates
+        The list (or a tuple) of coordinates of the joint; the
+        input is converted to an array.
+    dof
+        Optional: the degrees of freedom of the joint as a list (or a
+        tuple). If provided, do not use `number_dofs` later on.
 
-    Returns: the newly created joint.
+    Returns
+    -------
+    dict
+        Newly created joint.
     """
     if jid in m["joints"]:
         raise RuntimeError("Joint already exists")
@@ -69,13 +84,22 @@ def add_truss_member(m, mid, connectivity, sect):
     """
     Add a truss member to the model.
 
-    - `m` = the model,
-    - `mid` = the member identifier, must be unique, but can be anything that is
-      a legal dictionary key (integer, string, ...),
-    - `connectivity` = the list (or a tuple) of the joint identifiers,
-    - `sect` = the section of the member.
+    Parameters
+    ----------
+    m
+        Model.
+    mid
+        The member identifier, which must be unique, but can be anything
+        that is a legal dictionary key (integer, string, ...).
+    connectivity
+        The list (or a tuple) of the joint identifiers.
+    sect
+        Section of appropriate type.
 
-    Returns: the newly created member.
+    Returns
+    -------
+    dict
+        Newly created member.
     """
     if "truss_members" not in m:
         m["truss_members"] = {}
@@ -93,13 +117,22 @@ def add_beam_member(m, mid, connectivity, sect):
     """
     Add a beam member to the model.
 
-    - `m` = the model,
-    - `mid` = the member identifier, must be unique, but can be anything that is
-      a legal dictionary key (integer, string, ...),
-    - `connectivity` = the list (or a tuple) of the joint identifiers,
-    - `sect` = the section of the member.
+    Parameters
+    ----------
+    m
+        Model.
+    mid
+        The member identifier, which must be unique, but can be anything
+        that is a legal dictionary key (integer, string, ...).
+    connectivity
+        The list (or a tuple) of the joint identifiers.
+    sect
+        Section of appropriate type.
 
-    Returns: the newly created member.
+    Returns
+    -------
+    dict
+        Newly created member.
     """
     if "beam_members" not in m:
         m["beam_members"] = {}
@@ -117,16 +150,25 @@ def add_rigid_link_member(m, mid, connectivity, sect):
     """
     Add a rigid link member to the model.
 
-    - `m` = the model,
-    - `mid` = the member identifier, must be unique, but can be anything that
-      is a legal dictionary key (integer, string, ...),
-    - `connectivity` = the list (or a tuple) of the joint identifiers; the
-      first is the *master* (its motion determines the motion of the
-      subordinate), the second is the *subordinate* (its motion follows that of
-      the master).
-    - `sect` = the section of the member.
+    Parameters
+    ----------
+    m
+        Model.
+    mid
+        The member identifier, which must be unique, but can be anything
+        that is a legal dictionary key (integer, string, ...),
+    connectivity
+        The list (or a tuple) of the joint identifiers; the
+        first is the *master* (its motion determines the motion of the
+        subordinate), the second is the *subordinate* (its motion follows that of
+        the master).
+    sect
+        Section of appropriate type.
 
-    Returns: the newly created member.
+    Returns
+    -------
+    dict
+        Newly created member.
     """
     if "rigid_link_members" not in m:
         m["rigid_link_members"] = {}
@@ -144,16 +186,22 @@ def add_spring_member(m, mid, connectivity, sect):
     """
     Add a spring member to the model.
 
-    - `m` = the model,
-    - `mid` = the member identifier, must be unique, but can be anything that
-      is a legal dictionary key (integer, string, ...),
-    - `connectivity` = the list (or a tuple) of the joint identifiers; the
-      first is the *master* (its motion determines the motion of the
-      subordinate), the second is the *subordinate* (its motion follows that of
-      the master).
-    - `sect` = the section of the member.
+    Parameters
+    ----------
+    m
+        Model.
+    mid
+        The member identifier, which must be unique, but can be anything
+        that is a legal dictionary key (integer, string, ...),
+    connectivity
+        The list (or a tuple) of the joint identifiers.
+    sect
+        Section of appropriate type.
 
-    Returns: the newly created member.
+    Returns
+    -------
+    dict
+        Newly created member.
     """
     if "spring_members" not in m:
         m["spring_members"] = {}
@@ -171,9 +219,22 @@ def add_support(j, dof, value=0.0):
     """
     Add a support to a joint.
 
-    - `j` = the joint (obtained from the model as `m["joints"][jid]`),
-    - `dof` = the degree of freedom,
-    - `value` = the signed magnitude of the support motion (default is zero).
+    Parameters
+    ----------
+    j
+        The joint (obtained from the model as `m["joints"][jid]`).
+    dof
+        The degree of freedom (0, 1, ...). Refer to the module `freedoms`.
+    value
+        The signed magnitude of the support motion (default is zero).
+
+    Returns
+    -------
+    None
+
+    See Also
+    --------
+    pystran.freedoms
     """
     if "supports" not in j:
         j["supports"] = {}
@@ -186,9 +247,22 @@ def add_load(j, dof, value):
     """
     Add a load to a joint.
 
-    - `j` = the joint (obtained from the model as `m["joints"][jid]`),
-    - `dof` = the degree of freedom,
-    - `value` = signed magnitude of the load.
+    Parameters
+    ----------
+    j
+        The joint (obtained from the model as `m["joints"][jid]`).
+    dof
+        The degree of freedom (0, 1, ...).
+    value
+        The signed magnitude of the load.
+
+    Returns
+    -------
+    None
+
+    See Also
+    --------
+    pystran.freedoms
     """
     if "loads" not in j:
         j["loads"] = {}
@@ -201,22 +275,49 @@ def add_mass(j, dof, value):
     """
     Add a mass to a joint.
 
-    - `j` = the joint (obtained from the model as `m["joints"][jid]`),
-    - `dof` = the degree of freedom,
-    - `value` = magnitude of the mass.
+    Parameters
+    ----------
+    j
+        The joint (obtained from the model as `m["joints"][jid]`).
+    dof
+        The degree of freedom (0, 1, ...). Refer to the module `freedoms`.
+    value
+        The magnitude of the added mass.
+
+    Returns
+    -------
+    None
+
+    See Also
+    --------
+    pystran.freedoms
     """
     if "masses" not in j:
         j["masses"] = {}
     j["masses"][dof] = value
 
 
-def add_links(m, jids, dof):
+def add_dof_links(m, jids, dof):
     """
-    Add links between all joints in the list `jids` in the direction `dof`.
+    Add degree-of-freedom links between all joints in the list `jids` in the
+    direction `dof`.
 
-    - `m` = the model,
-    - `jids` = the list of joint identifiers,
-    - `dof` = the degree of freedom at which the joints are to be linked.
+    Parameters
+    ----------
+    m
+        The model.
+    jids
+        The list of joint identifiers.
+    dof
+        The degree of freedom at which the joints are to be linked.
+
+    Returns
+    -------
+    None
+
+    See Also
+    --------
+    pystran.freedoms
     """
     # Now add the mutual links between the joints
     for jid1 in jids:
@@ -236,6 +337,17 @@ def add_links(m, jids, dof):
 def bounding_box(m):
     """
     Compute the bounding box of the model.
+
+    Parameters
+    ----------
+    m
+        The model.
+
+    Returns
+    -------
+    array
+        Array of the lower and upper ranges (i.e. the bounding box that
+        encloses all the joints).
     """
     dim = m["dim"]
     box = numpy.array(
@@ -254,6 +366,16 @@ def characteristic_dimension(m):
     Compute the characteristic dimension of the model.
 
     This is the average of the dimensions of the bounding box.
+
+    Parameters
+    ----------
+    m
+        The model.
+
+    Returns
+    -------
+    float
+        Characteristic dimension.
     """
     dim = m["dim"]
     box = bounding_box(m)
@@ -284,6 +406,17 @@ def _have_rotations(m):
 def ndof_per_joint(m):
     """
     How many degrees of freedom are there per joint?
+
+    Parameters
+    ----------
+    m
+        The model.
+
+    Returns
+    -------
+    int
+        Number of the degrees of freedom per joint. Depends on the space
+        dimension of the model and the presence or absence of beams.
     """
     ndpn = m["dim"]
     with_rotations = _have_rotations(m)
@@ -299,7 +432,7 @@ def number_dofs(m):
     """
     Number degrees of freedom.
 
-    All current information about degrees of freedom will be lost when this
+    All current information about degrees of freedom will be replaced when this
     function is done.
 
     After this function returns, `m["nfreedof"]` will be the number of free
@@ -308,6 +441,15 @@ def number_dofs(m):
 
     The degrees of freedom are numbered in the order of free and then
     prescribed.
+
+    Parameters
+    ----------
+    m
+        The model.
+
+    Returns
+    -------
+    None
     """
     # Determine the number of degrees of freedom per joint
     ndpn = ndof_per_joint(m)
@@ -397,10 +539,57 @@ def _build_mass_matrix(m):
 
 
 def solve_statics(m):
-    """
+    r"""
     Solve the static equilibrium of the discrete model.
 
     `number_dofs` must be called before this function.
+
+    This function solves the equation of static equilibrium
+
+    $$ K \cdot U = F $$
+
+    Here $K$ is the stiffness matrix, $U$ is the displacement vector, and $F$
+    is the vector of forces acting on the joints.
+
+    Note that the degrees of freedom can be partitioned 
+    into 'free' and prescribed (given as 'data').
+
+    $$ 
+    \left[ \begin{array}{cc} 
+    K_{ff} & K_{fd} \\
+    K_{df} & K_{dd} \\
+    \end{array}\right] \cdot \left[ \begin{array}{cc} 
+    U_{f} \\
+    U_{d} \\
+    \end{array}\right] = \left[ \begin{array}{cc} 
+    L_{f} \\
+    L_{d} + R\\
+    \end{array}\right] 
+    $$
+
+    Here $L_f$ is the vector of active loads applied to the free degrees of freedom,
+    and $L_d$  is the vector of active loads applied to the data degrees of freedom.
+    The reactions $R$ due to supports act on the prescribed (data) degrees of freedom.
+
+    The system of equations is solved for the free degrees of freedom as
+
+    $$ 
+    K_{ff} \cdot U_{f} = -K_{fd} \cdot U_{d} +L_{f}  
+    $$
+    
+
+    Parameters
+    ----------
+    m
+        The model.
+
+    Returns
+    -------
+    None
+
+    See Also
+    --------
+    number_dofs
     """
     nt, nf = m["ntotaldof"], m["nfreedof"]
     if nt <= 0:
@@ -441,11 +630,51 @@ def solve_statics(m):
 
 
 def statics_reactions(m):
-    """
+    r"""
     Compute the reactions in the static equilibrium of the discrete model.
 
-    The static solution must be obtained with `solve_statics` before calling
-    this function.
+    The partitioned system of balanced equations reads
+
+    $$ 
+    \left[ \begin{array}{cc} 
+    K_{ff} & K_{fd} \\
+    K_{df} & K_{dd} \\
+    \end{array}\right] \cdot \left[ \begin{array}{cc} 
+    U_{f} \\
+    U_{d} \\
+    \end{array}\right] = \left[ \begin{array}{cc} 
+    L_{f} \\
+    L_{d} + R\\
+    \end{array}\right] 
+    $$
+
+    Here $L_f$ is the vector of active loads applied to the free degrees of freedom,
+    and $L_d$  is the vector of active loads applied to the data degrees of freedom.
+    The reactions $R$ due to supports act on the prescribed (data) degrees of freedom.
+
+    The system of equations is solved for the reactions as
+
+    $$ 
+    R = K_{ff} \cdot U_{f} + K_{fd} \cdot U_{d} -L_{d}  
+    $$
+    
+    once $U_f$ has been solved for in the `solve_statics` step.
+
+    The reactions are distributed to the joints, and can be retrieved from 
+    individual joint dictionaries as `j['reactions']`.
+
+    Parameters
+    ----------
+    m
+        The model.
+
+    Returns
+    -------
+    None
+
+    See Also
+    --------
+    solve_statics
     """
     K = m["K"]
     U = m["U"]
@@ -469,7 +698,7 @@ def statics_reactions(m):
 
 
 def solve_free_vibration(m):
-    """
+    r"""
     Solve the free vibration of the discrete model.
 
     The free vibration eigenvalue problem is solved for the eigenvalues and
@@ -477,7 +706,26 @@ def solve_free_vibration(m):
     frequencies are computed from the eigenvalues (can be retrieved as
     `m["frequencies"]`).
 
+    The equation of free vibration is
+    $$
+    K \cdot V = \omega^2 M \cdot V
+    $$
+    where $M$ is the mass matrix, $V$ is the eigenvector, and $\omega$ is the angular frequency.
+
     `number_dofs` must be called before this function.
+
+    Parameters
+    ----------
+    m
+        The model.
+
+    Returns
+    -------
+    None
+
+    See Also
+    --------
+    number_dofs
     """
     nf = m["nfreedof"]
     # Assemble global stiffness matrix and mass matrix
@@ -509,9 +757,21 @@ def set_solution(m, V):
     """
     Set the displacement solution from a vector.
 
-    - `m` = the model,
-    - `V` = the displacement vector. Either of length for only the free degrees
-      of freedom or for the total number of degrees of freedom.
+    Parameters
+    ----------
+    m
+        The model.
+    V
+        The displacement vector. Either of length `m["nfreedof"]` for only the free degrees
+        of freedom, or of length `m["ntotaldof"]` for the total number of degrees of freedom.
+
+    Returns
+    -------
+    None
+
+    See Also
+    --------
+    number_dofs
     """
     nf = m["nfreedof"]
     nt = m["ntotaldof"]
@@ -534,6 +794,20 @@ def free_body_check(m):
 
     `statics_reactions` must be called before this function as this calculation
     relies on the presence of reactions at the joints.
+
+    Parameters
+    ----------
+    m
+        The model.
+
+    Returns
+    -------
+    array
+        Array of resultant forces and moments.
+
+    See Also
+    --------
+    statics_reactions
     """
     if m["dim"] == 2:
         nrbm = 3  # Number of rigid body modes: assume 2 translations, 1 rotation
@@ -614,13 +888,22 @@ def refine_member(m, mid, n):
     The new joints are numbered starting from zero, and the joint identifier is
     composed of the member identifier plus the serial number of the new joint.
 
-    - `m` = the model,
-    - `mid` = the member identifier,
-    - `n` = the number of new beam members to replace the old member with.
-
     There new member identifiers are stored under the key `"descendants"` in
     the refined member. The refined member is removed from the list of beam
     members.
+
+    Parameters
+    ----------
+    m
+        The model.
+    mid
+        The identifier of the member to be refined.
+    n
+        The number of new beam members to replace the old member with.
+
+    Returns
+    -------
+    None
     """
     if n < 2:
         raise RuntimeError("Number of new members must be at least 2")
@@ -661,6 +944,11 @@ def refine_member(m, mid, n):
 def remove_loads(m):
     """
     Remove all the nodal loads in the model.
+
+    Parameters
+    ----------
+    m
+        The model.
     """
     for joint in m["joints"].values():
         if "loads" in joint:
@@ -670,6 +958,11 @@ def remove_loads(m):
 def remove_supports(m):
     """
     Remove all the nodal supports in the model.
+
+    Parameters
+    ----------
+    m
+        The model.
     """
     for joint in m["joints"].values():
         if "supports" in joint:
