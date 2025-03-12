@@ -604,7 +604,7 @@ def _plot_2d_beam_axial_forces(ax, member, i, j, scale):
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     for _, xi in enumerate(linspace(-1, +1, n)):
-        N = beam_2d_axial_force(member, i, j)
+        N = beam_2d_axial_force(member, i, j, 0.0)
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
@@ -621,7 +621,7 @@ def _plot_2d_beam_axial_forces(ax, member, i, j, scale):
 def _plot_2d_truss_axial_forces(ax, member, i, j, scale):
     _, e_z, _ = member_2d_geometry(i, j)
     ci, cj = i["coordinates"], j["coordinates"]
-    N = truss_axial_force(member, i, j)
+    N = truss_axial_force(member, i, j, 0.0)
     n = 13
     for _, xi in enumerate(linspace(-1, +1, n)):
         x = interpolate(xi, ci, cj)
@@ -717,7 +717,7 @@ def _plot_3d_beam_torsion_moments(ax, member, i, j, scale):
     n = 13
     dirv = e_z
     for _, xi in enumerate(linspace(-1, +1, n)):
-        T = beam_3d_torsion_moment(member, i, j)
+        T = beam_3d_torsion_moment(member, i, j, 0.0)
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
@@ -748,7 +748,7 @@ def plot_torsion_moments(m, scale=0.0):
 
     def fun(member, i, j, _):
         if m["dim"] == 3:
-            return beam_3d_torsion_moment(member, i, j)
+            return beam_3d_torsion_moment(member, i, j, 0.0)
         else:
             return 0.0
 

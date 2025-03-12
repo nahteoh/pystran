@@ -14,7 +14,15 @@ def beam_3d_xz_shape_fun(xi):
     """
     Compute the beam shape functions for deflection in the `x-z` plane.
 
-    An array of shape function values is returned (i.e. $[N_1(\\xi), ..., N_4(\\xi)]$).
+    Parameters
+    ----------
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the second.
+
+    Returns
+    -------
+    array
+        An array of shape function values is returned (i.e. $[N_1(\\xi), ..., N_4(\\xi)]$).
     """
     return herm_basis(xi)
 
@@ -24,8 +32,17 @@ def beam_3d_xz_shape_fun_xi2(xi):
     Compute the second derivative of the beam shape functions for deflection in
     the `x-z` plane.
 
-    An array of second derivatives of shape functions is returned (i.e.
-    $[d^2N_1(\\xi)/d\\xi^2, ..., d^2N_4(\\xi)/d\\xi^2]$).
+    Parameters
+    ----------
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    array
+        An array of second derivatives of shape functions is returned (i.e.
+        $[d^2N_1(\\xi)/d\\xi^2, ..., d^2N_4(\\xi)/d\\xi^2]$).
     """
     return herm_basis_xi2(xi)
 
@@ -34,10 +51,19 @@ def beam_3d_xy_shape_fun(xi):
     """
     Compute the beam shape functions for deflection in the x-y plane.
 
-    The signs of the shape functions that go with the rotations (i.e. the second
-    and fourth) need to be reversed: An array of second derivatives of shape
-    functions is returned (i.e. $[N_1(\\xi), -N_2(\\xi),
-    N_3(\\xi), -N_4(\\xi)]$).
+    Parameters
+    ----------
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    array
+        The signs of the shape functions that go with the rotations (i.e. the
+        second and fourth) need to be reversed relative to the x-z plane of
+        bending: An array of second derivatives of shape functions is returned
+        (i.e. $[N_1(\\xi), -N_2(\\xi), N_3(\\xi), -N_4(\\xi)]$).
     """
     N = herm_basis(xi)
     N[1] *= -1.0
@@ -50,10 +76,19 @@ def beam_3d_xy_shape_fun_xi2(xi):
     Compute the second derivative of the beam shape functions for deflection in
     the `x-y` plane.
 
-    The signs of the shape functions that go with the rotations (i.e. the second
-    and fourth) need to be reversed: An array of second derivatives of shape
-    functions is returned (i.e. $[d^2N_1(\\xi)/d\\xi^2, -d^2N_2(\\xi)/d\\xi^2,
-    d^2N_3(\\xi)/d\\xi^2, -d^2N_4(\\xi)/d\\xi^2]$).
+    Parameters
+    ----------
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    array
+        The signs of the shape functions that go with the rotations (i.e. the
+        second and fourth) need to be reversed: An array of second derivatives
+        of shape functions is returned (i.e. $[d^2N_1(\\xi)/d\\xi^2,
+        -d^2N_2(\\xi)/d\\xi^2, d^2N_3(\\xi)/d\\xi^2, -d^2N_4(\\xi)/d\\xi^2]$).
     """
     d2Ndxi2 = herm_basis_xi2(xi)
     d2Ndxi2[1] *= -1.0
@@ -66,8 +101,17 @@ def beam_3d_xz_shape_fun_xi3(xi):
     Compute the third derivative of the beam shape functions with respect to
     `xi` for deflection in the `x-z` plane.
 
-    An array of third derivatives of shape functions is returned (i.e.
-    $[d^3N_1(\\xi)/d\\xi^3, ..., d^3N_4(\\xi)/d\\xi^3]$).
+    Parameters
+    ----------
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    array
+        An array of third derivatives of shape functions is returned (i.e.
+        $[d^3N_1(\\xi)/d\\xi^3, ..., d^3N_4(\\xi)/d\\xi^3]$).
     """
     return herm_basis_xi3(xi)
 
@@ -77,10 +121,19 @@ def beam_3d_xy_shape_fun_xi3(xi):
     Compute the third derivative of the beam shape functions with respect to
     `xi` for deflection in the `x-y` plane.
 
-    The signs of the shape functions that go with the rotations (i.e. the second
-    and fourth) need to be reversed: An array of third derivatives of shape
-    functions is returned (i.e. $[d^3N_1(\\xi)/d\\xi^3, -d^3N_2(\\xi)/d\\xi^3,
-    d^3N_3(\\xi)/d\\xi^3, -d^3N_4(\\xi)/d\\xi^3]$).
+    Parameters
+    ----------
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    array
+        The signs of the shape functions that go with the rotations (i.e. the
+        second and fourth) need to be reversed: An array of third derivatives
+        of shape functions is returned (i.e. $[d^3N_1(\\xi)/d\\xi^3,
+        -d^3N_2(\\xi)/d\\xi^3, d^3N_3(\\xi)/d\\xi^3, -d^3N_4(\\xi)/d\\xi^3]$).
     """
     d3Ndxi3 = herm_basis_xi3(xi)
     d3Ndxi3[1] *= -1.0
@@ -99,9 +152,27 @@ def beam_2d_bending_stiffness(e_z, h, E, I_y):
     $K = (h/2) \\int_{-1}^{+1} EI_y B^T B  d\\xi$,
 
     where $B$ is the curvature-displacement matrix (computed by
-    `beam_2d_curv_displ_matrix`), and $h/2$ is the Jacobian. `I_y` is the second
-    moment of area about the `y` axis (which is orthogonal to the plane of
-    bending).
+    `beam_2d_curv_displ_matrix`), and $h/2$ is the Jacobian. `I_y` is the
+    second moment of area about the `y` axis (which is orthogonal to the plane
+    of bending).
+
+    Parameters
+    ----------
+    e_z
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    h
+        Length of the beam.
+    E
+        Young's modulus of elasticity.
+    I_y
+        Second moment of area for bending about the y-axis (i.e. bending in the
+        x-z plane).
+
+    Returns
+    -------
+    array
+        Stiffness matrix of the beam.
     """
     xiG, WG = gauss.rule(2)
     K = zeros((6, 6))
@@ -121,6 +192,25 @@ def beam_3d_xz_curv_displ_matrix(e_y, e_z, h, xi):
     $U$ is the displacement vector. All three displacement components and all
     three rotation components at each joint are assumed, so the matrix $B$ has
     one row and twelve columns.
+
+    Parameters
+    ----------
+    e_y
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    e_z
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    h
+        Length of the beam.
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    array
+        Matrix of the curvature-displacement matrix.
     """
     d2Ndxi2 = beam_3d_xz_shape_fun_xi2(xi)
     B = zeros((1, 12))
@@ -141,6 +231,25 @@ def beam_3d_xy_curv_displ_matrix(e_y, e_z, h, xi):
     $U$ is the displacement vector. All three displacement components and all
     three rotation components at each joint are assumed, so the matrix $B$ has
     one row and twelve columns.
+
+    Parameters
+    ----------
+    e_y
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    e_z
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    h
+        Length of the beam.
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    array
+        Matrix of the curvature-displacement matrix.
     """
     d2Ndxi2 = beam_3d_xy_shape_fun_xi2(xi)
     B = zeros((1, 12))
@@ -172,6 +281,30 @@ def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
     `beam_3d_xy_curv_displ_matrix`), and $h/2$ is the Jacobian. `I_y` is the
     second moment of area about the `y` axis, and `I_z`  is the second moment of
     area about the `z` axis.
+
+    Parameters
+    ----------
+    e_y
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    e_z
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    h
+        Length of the beam.
+    E
+        Young's modulus of elasticity.
+    Iy
+        Second moment of area for bending about the y-axis (i.e. bending in the
+        x-z plane).
+    Iz
+        Second moment of area for bending about the z-axis (i.e. bending in the
+        x-y plane).
+
+    Returns
+    -------
+    array
+        Stiffness matrix of the beam.
     """
     xiG, WG = gauss.rule(2)
     Kxy = zeros((12, 12))
@@ -197,6 +330,22 @@ def beam_2d_curv_displ_matrix(e_z, h, xi):
     $U$ is the displacement vector. Two displacement components and one rotation
     component at each joint are assumed, so the matrix $B$ has one row and six
     columns.
+
+    Parameters
+    ----------
+    e_z
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    h
+        Length of the beam.
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    array
+        Matrix of the curvature-displacement matrix.
     """
     d2Ndxi2 = herm_basis_xi2(xi)
     B = zeros((1, 6))
@@ -211,14 +360,28 @@ def beam_2d_3rd_deriv_displ_matrix(e_z, h):
     """
     Compute beam third derivative-displacement matrix.
 
-    Here the third derivative is with respect to the physical coordinate measured
-    along the member (local `x`).
+    Here the third derivative is with respect to the physical coordinate
+    measured along the member (local `x`).
 
-    The third derivative $d^3w/dx^3$ is computed in the local coordinate system of the
-    beam as $d^3w/dx^3 = B U$. Here $B$ is the third-derivative-displacement matrix and
-    $U$ is the displacement vector. Two displacement components and one rotation
-    component at each joint are assumed, so the matrix $B$ has one row and six
-    columns.
+    The third derivative $d^3w/dx^3$ is computed in the local coordinate system
+    of the beam as $d^3w/dx^3 = B U$. Here $B$ is the
+    third-derivative-displacement matrix and $U$ is the displacement vector.
+    Two displacement components and one rotation component at each joint are
+    assumed, so the matrix $B$ has one row and six columns. Note that this
+    matrix is constant (independent of the location along the beam).
+
+    Parameters
+    ----------
+    e_z
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    h
+        Length of the beam.
+
+    Returns
+    -------
+    array
+        Matrix of the third derivative-displacement matrix.
     """
     d2Ndxi3 = herm_basis_xi3(0.0)
     B = zeros((1, 6))
@@ -234,14 +397,31 @@ def beam_3d_xz_3rd_deriv_displ_matrix(e_y, e_z, h):
     Compute 3d beam third derivative-displacement matrix for displacements in
     the `x-z` plane.
 
-    Here the third derivative is with respect to the physical coordinate measured
-    along the member (local `x`).
+    Here the third derivative is with respect to the physical coordinate
+    measured along the member (local `x`).
 
-    The third derivative $d^3w/dx^3$ is computed in the local coordinate system of the
-    beam as $d^3w/dx^3 = B U$. Here $B$ is the third-derivative-displacement matrix and
-    $U$ is the displacement vector. All three displacement components and all
-    three rotation components at each joint are assumed, so the matrix $B$ has
-    one row and twelve columns.
+    The third derivative $d^3w/dx^3$ is computed in the local coordinate system
+    of the beam as $d^3w/dx^3 = B U$. Here $B$ is the
+    third-derivative-displacement matrix and $U$ is the displacement vector.
+    All three displacement components and all three rotation components at each
+    joint are assumed, so the matrix $B$ has one row and twelve columns. Note
+    that this matrix is constant (independent of the location along the beam).
+
+    Parameters
+    ----------
+    e_y
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    e_z
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    h
+        Length of the beam.
+
+    Returns
+    -------
+    array
+        Matrix of the third derivative-displacement matrix.
     """
     d2Ndxi3 = beam_3d_xz_shape_fun_xi3(0.0)
     B = zeros((1, 12))
@@ -257,14 +437,31 @@ def beam_3d_xy_3rd_deriv_displ_matrix(e_y, e_z, h):
     Compute 3d beam third derivative-displacement matrix for displacements in
     the `x-y` plane.
 
-    Here the third derivative is with respect to the physical coordinate measured
-    along the member (local `x`).
+    Here the third derivative is with respect to the physical coordinate
+    measured along the member (local `x`).
 
-    The third derivative $d^3v/dx^3$ is computed in the local coordinate system of the
-    beam as $d^3v/dx^3 = B U$. Here $B$ is the third-derivative-displacement matrix and
-    $U$ is the displacement vector. All three displacement components and all
-    three rotation components at each joint are assumed, so the matrix $B$ has
-    one row and twelve columns.
+    The third derivative $d^3v/dx^3$ is computed in the local coordinate system
+    of the beam as $d^3v/dx^3 = B U$. Here $B$ is the
+    third-derivative-displacement matrix and $U$ is the displacement vector.
+    All three displacement components and all three rotation components at each
+    joint are assumed, so the matrix $B$ has one row and twelve columns. Note
+    that this matrix is constant (independent of the location along the beam).
+
+    Parameters
+    ----------
+    e_y
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    e_z
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    h
+        Length of the beam.
+
+    Returns
+    -------
+    array
+        Matrix of the third derivative-displacement matrix.
     """
     d2Ndxi3 = beam_3d_xy_shape_fun_xi3(0.0)
     B = zeros((1, 12))
@@ -284,6 +481,23 @@ def beam_2d_moment(member, i, j, xi):
 
     The curvature is computed with the curvature-displacement matrix $B$ by the function
     `beam_2d_curv_displ_matrix`.
+
+    Parameters
+    ----------
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    float
+        The moment resultant.
     """
     _, e_z, h = geometry.member_2d_geometry(i, j)
     sect = member["section"]
@@ -307,6 +521,25 @@ def beam_3d_moment(member, i, j, axis, xi):
     The curvatures are computed with  curvature-displacement matrices $B$ by the
     functions `beam_3d_xz_curv_displ_matrix` and `beam_3d_xy_curv_displ_matrix`,
     respectively.
+
+    Parameters
+    ----------
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+    axis
+        Bending about which axis? Specify either `'y'` or `'z'`.
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    float
+        The moment resultant.
     """
     sect = member["section"]
     _, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
@@ -322,7 +555,7 @@ def beam_3d_moment(member, i, j, axis, xi):
     return M
 
 
-def beam_3d_torsion_moment(member, i, j):
+def beam_3d_torsion_moment(member, i, j, xi):
     """
     Compute 3d beam torsion moment based on the displacements stored at the
     joints. The moment is uniform along the beam.
@@ -332,26 +565,60 @@ def beam_3d_torsion_moment(member, i, j):
     torsion-displacement matrix $B$, obtained by the function
     `beam_3d_torsion_displ_matrix`.
 
-    The torsion moment is uniform along the beam.
+    The torsion moment is uniform along the beam. Hence, `xi` does not matter.
+
+    Parameters
+    ----------
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    float
+        The moment resultant.
     """
     sect = member["section"]
     e_x, _, _, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
     G, J = sect["G"], sect["J"]
     ui, uj = i["displacements"][3:6], j["displacements"][3:6]
     u = concatenate([ui, uj])
-    B = beam_3d_torsion_displ_matrix(e_x, h)
+    B = beam_3d_torsion_displ_matrix(e_x, h, 0.0)  # single-point integration
     T = G * J * dot(B, u)
     return T
 
 
-def beam_2d_axial_force(member, i, j):
+def beam_2d_axial_force(member, i, j, xi):
     """
     Compute 2d beam axial force based on the displacements stored at the joints.
 
     Refer to the function `truss.truss_strain_displacement` that computes the
     strain-displacement matrix for a truss member.
 
-    The axial force is uniform along the beam.
+    The axial force is uniform along the beam. Hence, `xi` does not matter.
+
+    Parameters
+    ----------
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    float
+        The force resultant.
     """
     sect = member["section"]
     e_x, _, h = geometry.member_2d_geometry(i, j)
@@ -363,18 +630,35 @@ def beam_2d_axial_force(member, i, j):
     return N
 
 
-def beam_3d_axial_force(member, i, j):
+def beam_3d_axial_force(member, i, j, xi):
     """
     Compute 3d beam axial force based on the displacements stored at the joints.
 
-    The axial force is uniform along the beam.
+    The axial force is uniform along the beam. Hence, `xi` does not matter.
+
+    Parameters
+    ----------
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    float
+        The force resultant.
     """
     sect = member["section"]
     e_x, _, _, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
     E, A = sect["E"], sect["A"]
     ui, uj = i["displacements"][0:3], j["displacements"][0:3]
     u = concatenate([ui, uj])
-    B = beam_3d_stretch_displ_matrix(e_x, h)
+    B = beam_3d_stretch_displ_matrix(e_x, h, 0.0)  # single-point integration
     N = E * A * dot(B, u)
     return N
 
@@ -384,7 +668,26 @@ def beam_3d_shear_force(member, i, j, axis, xi):
     Compute 3d shear force based on the displacements stored at the joints.
 
     The shear force in the direction of axis `axis`  (`'y'` or `'z'`) is
-    uniform along the beam. Therefore, `xi` value is immaterial.
+    uniform along the beam.  Hence, `xi` does not matter.
+
+    Parameters
+    ----------
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+    axis
+        Shearing in the direction of which axis? Specify either `'y'` or `'z'`.
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    float
+        The force resultant.
     """
     sect = member["section"]
     _, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
@@ -406,7 +709,24 @@ def beam_2d_shear_force(member, i, j, xi):
     joints.
 
     The shear force is computed at the parametric location `xi` along the beam.
-    Therefore, `xi` value is immaterial.
+    Hence, `xi` does not matter.
+
+    Parameters
+    ----------
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    float
+        The force resultant.
     """
     _, e_z, h = geometry.member_2d_geometry(i, j)
     sect = member["section"]
@@ -417,13 +737,32 @@ def beam_2d_shear_force(member, i, j, xi):
     return -E * I * dot(B, u)
 
 
-def beam_3d_stretch_displ_matrix(e_x, h):
+def beam_3d_stretch_displ_matrix(e_x, h, xi):
     """
     Compute beam stretch-displacement matrix.
 
     Stretch here means axial strain.
 
     The job is delegated to the truss module.
+
+    Parameters
+    ----------
+    e_x
+        Unit vector along the axis of the member.
+    h
+        Length of the member.
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    array
+        Stretch-displacement matrix.
+
+    See Also
+    --------
+    truss.truss_strain_displacement
     """
     return truss.truss_strain_displacement(e_x, h)
 
@@ -436,8 +775,29 @@ def beam_2d_3d_axial_stiffness(e_x, h, E, A):
 
     The axial stiffness matrix is computed as $K = EA B^T B h$. Here $B$ is the
     stretch-displacement matrix, computed by `beam_3d_stretch_displ_matrix`.
+
+    Parameters
+    ----------
+    e_x
+        Unit vector of the local cartesian coordinate system in the direction
+        of the axis of the beam.
+    h
+        Length of the beam.
+    E
+        Young's modulus of elasticity.
+    A
+        Cross section area.
+
+    Returns
+    -------
+    array
+        Stiffness matrix of the beam.
+
+    See Also
+    --------
+    beam_3d_stretch_displ_matrix
     """
-    B = beam_3d_stretch_displ_matrix(e_x, h)
+    B = beam_3d_stretch_displ_matrix(e_x, h, 0.0)  # single-point integration
     return E * A * outer(B.T, B) * h
 
 
@@ -447,16 +807,53 @@ def beam_3d_torsion_stiffness(e_x, h, G, J):
 
     The torsion stiffness matrix is computed as $K = GJ B^T B h$. Here $B$ is
     the torsion-displacement matrix, computed by `beam_3d_torsion_displ_matrix`.
+
+    Parameters
+    ----------
+    e_x
+        Unit vector of the local cartesian coordinate system in the direction
+        of the axis of the beam.
+    h
+        Length of the beam.
+    G
+        Shear modulus of elasticity.
+    J
+        Torsion constant of the section.
+
+    Returns
+    -------
+    array
+        Stiffness matrix of the beam.
+
+    See Also
+    --------
+    beam_3d_torsion_displ_matrix
     """
-    B = beam_3d_torsion_displ_matrix(e_x, h)
+    B = beam_3d_torsion_displ_matrix(e_x, h, 0.0)  # single-point integration
     return G * J * outer(B.T, B) * h
 
 
-def beam_3d_torsion_displ_matrix(e_x, h):
+def beam_3d_torsion_displ_matrix(e_x, h, xi):
     """
     Compute torsion-displacement matrix.
 
-    The torsion-displacement matrix is constant.
+    The torsion-displacement matrix is constant.  Hence, `xi` does not matter.
+
+    Parameters
+    ----------
+    e_x
+        Unit vector of the local cartesian coordinate system in the direction
+        of the axis of the beam.
+    h
+        Length of the beam.
+    xi
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
+
+    Returns
+    -------
+    array
+        The stiffness matrix of the bar.
     """
     B = zeros((1, 6))
     B[0, 0:3] = -e_x / h
@@ -470,6 +867,22 @@ def assemble_stiffness(Kg, member, i, j):
 
     Beam is here considered as a superposition of four mechanisms  -- axial bar,
     torsion bar, bending in the `x-y` plane, and bending in the `x-z` plane.
+
+    Parameters
+    ----------
+    Kg
+        Global structural stiffness matrix.
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+
+    Returns
+    -------
+    float
+        Updated global matrix is returned.
     """
     # Add stiffness in bending.
     beam_is_2d = len(i["coordinates"]) == len(j["coordinates"]) == 2
@@ -510,6 +923,22 @@ def assemble_stiffness(Kg, member, i, j):
 def assemble_mass(Mg, member, i, j):
     """
     Assemble beam mass matrix.
+
+    Parameters
+    ----------
+    Mg
+        Global structural mass matrix.
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+
+    Returns
+    -------
+    float
+        Updated global matrix is returned.
     """
     beam_is_2d = len(i["coordinates"]) == len(j["coordinates"]) == 2
     dof = concatenate([i["dof"], j["dof"]])
@@ -545,6 +974,26 @@ def beam_2d_mass(e_x, e_z, h, rho, A):
     functions.
 
     Gauss quadrature is used to compute the mass matrix.
+
+    Parameters
+    ----------
+    e_x
+        Unit vector of the local cartesian coordinate system in the direction
+        of the axis of the beam.
+    e_z
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    h
+        Length of the beam.
+    rho
+        Mass density of the material.
+    A
+        Area of the cross section.
+
+    Returns
+    -------
+    array
+        Mass matrix of the beam.
     """
     xiG, WG = gauss.rule(4)
     n = (len(e_x) + 1) * 2
@@ -581,6 +1030,35 @@ def beam_3d_mass(e_x, e_y, e_z, h, rho, A, Ix, Iy, Iz):
     $\\int \\rho Ix \\dot \\theta_x \\cdot \\dot \\theta_x dx$.
 
     Gauss quadrature is used to compute the mass matrix.
+
+    Parameters
+    ----------
+    e_x
+        Unit vector of the local cartesian coordinate system in the direction
+        of the axis of the beam.
+    e_y
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    e_z
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    h
+        Length of the beam.
+    rho
+        Mass density of the material.
+    A
+        Area of the cross section.
+    Ix
+        Second moment of area of the cross section for rotation about x.
+    Iy
+        Second moment of area of the cross section for rotation about y.
+    Iz
+        Second moment of area of the cross section for rotation about z.
+
+    Returns
+    -------
+    array
+        Mass matrix of the beam.
     """
     xiG, WG = gauss.rule(4)
     n = len(e_x) * 4
@@ -616,15 +1094,29 @@ def beam_3d_end_forces(member, i, j):
     """
     Compute the end forces of a beam element in 3d.
 
-    The end forces of the beam are forces acting on the joints `i` and `j` by the beam.
+    The end forces of the beam are forces acting on the joints `i` and `j` by
+    the beam.
 
-    Dictionary with the keys `'Ni'`, `'Qyi'`, `'Qzi'`, `'Ti'`, `'Myi'`, `'Mzi'`, `'Nj'`,
-    `'Qyj'`, `'Qzj'`, `'Tj'`, `'Myj'`, `'Mzj'`,  is returned.
+    Parameters
+    ----------
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+
+    Returns
+    -------
+    Dict
+        Dictionary with the keys `'Ni'`, `'Qyi'`, `'Qzi'`, `'Ti'`, `'Myi'`,
+        `'Mzi'`, `'Nj'`, `'Qyj'`, `'Qzj'`, `'Tj'`, `'Myj'`, `'Mzj'`,  is
+        returned.
     """
-    Ni = beam_3d_axial_force(member, i, j)
-    Nj = -Ni
-    Ti = beam_3d_torsion_moment(member, i, j)
-    Tj = -Ti
+    Ni = beam_3d_axial_force(member, i, j, 0.0)
+    Nj = -beam_3d_axial_force(member, i, j, 0.0)
+    Ti = beam_3d_torsion_moment(member, i, j, 0.0)
+    Tj = -beam_3d_torsion_moment(member, i, j, 0.0)
     Myi = beam_3d_moment(member, i, j, "y", -1.0)
     Myj = -beam_3d_moment(member, i, j, "y", +1.0)
     Mzi = beam_3d_moment(member, i, j, "z", -1.0)
@@ -651,16 +1143,28 @@ def beam_3d_end_forces(member, i, j):
 
 def beam_2d_end_forces(member, i, j):
     """
-     Compute the end forces of a beam element in 3d.
+    Compute the end forces of a beam element in 3d.
 
-     The end forces of the beam are forces acting on the joints `i` and `j` by
-     the beam.
+    The end forces of the beam are forces acting on the joints `i` and `j` by
+    the beam.
 
-     Dictionary with the keys `'Ni'`, `'Qzi'`, `'Myi'`,  `'Nj'`,
-    `'Qzj'`,  `'Myj'`,  is returned.
+    Parameters
+    ----------
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+
+    Returns
+    -------
+    Dict
+        Dictionary with the keys `'Ni'`, `'Qzi'`, `'Myi'`,  `'Nj'`, `'Qzj'`,
+        `'Myj'`,  is returned.
     """
-    Ni = beam_2d_axial_force(member, i, j)
-    Nj = -Ni
+    Ni = beam_2d_axial_force(member, i, j, 0.0)
+    Nj = -beam_2d_axial_force(member, i, j, 0.0)
     Myi = beam_2d_moment(member, i, j, -1.0)
     Myj = -beam_2d_moment(member, i, j, +1.0)
     Qzi = beam_2d_shear_force(member, i, j, -1.0)
