@@ -14,6 +14,27 @@ def truss_stiffness(e_x, h, E, A):
 
     The axial stiffness matrix is computed as $K = EA B^T B h$. Here $B$ is the
     stretch-displacement matrix, computed by `truss_strain_displacement`.
+
+    Parameters
+    ----------
+    e_x
+        Unit vector of the local cartesian coordinate system in the direction
+        of the axis of the beam.
+    h
+        Length of the beam.
+    E
+        Young's modulus of the material.
+    A
+        Area of the cross section.
+
+    Returns
+    -------
+    array
+        Member stiffness matrix.
+
+    See Also
+    --------
+    truss_strain_displacement
     """
     B = truss_strain_displacement(e_x, h)
     return E * A * outer(B.T, B) * h
@@ -30,6 +51,25 @@ def truss_2d_mass(e_x, e_z, h, rho, A):
 
     where $\\dot u$ and $\\dot w$ are the velocities in the $x$ and $z$ directions.
 
+    Parameters
+    ----------
+    e_x
+        Unit vector of the local cartesian coordinate system in the direction
+        of the axis of the beam.
+    e_z
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    h
+        Length of the beam.
+    rho
+        Mass density of the material.
+    A
+        Area of the cross section.
+
+    Returns
+    -------
+    array
+        Member mass matrix.
     """
     xiG, WG = gauss.rule(2)
     WG = [1, 1]
@@ -57,6 +97,28 @@ def truss_3d_mass(e_x, e_y, e_z, h, rho, A):
     where $\\dot u$, $\\dot v$, and $\\dot w$ are the velocities in the $x$,
     $y$, and $z$ directions.
 
+    Parameters
+    ----------
+    e_x
+        Unit vector of the local cartesian coordinate system in the direction
+        of the axis of the beam.
+    e_y
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    e_z
+        Unit vector of the local cartesian coordinate system (orthogonal to the
+        axis of the beam).
+    h
+        Length of the beam.
+    rho
+        Mass density of the material.
+    A
+        Area of the cross section.
+
+    Returns
+    -------
+    array
+        Member mass matrix.
     """
     xiG, WG = gauss.rule(2)
     n = len(e_x) * 2
@@ -82,6 +144,18 @@ def truss_strain_displacement(e_x, h):
     The dimension of the strain-displacement matrix depends on the number of
     space dimensions. The vector `e_x` is the unit vector along the truss
     member, so it could have one, two, or three components.
+
+    Parameters
+    ----------
+    e_x
+        Unit vector along the axis of the member.
+    h
+        Length of the member.
+
+    Returns
+    -------
+    array
+        Strain-displacement matrix.
     """
     return reshape(concatenate((-e_x / h, e_x / h)), (1, 2 * len(e_x)))
 
@@ -90,9 +164,21 @@ def assemble_stiffness(Kg, member, i, j):
     """
     Assemble truss stiffness matrix.
 
-    - `Kg` is the global stiffness matrix,
-    - `member` is the truss member,
-    - `i`, `j` are the joints.
+    Parameters
+    ----------
+    Kg
+        Global structural stiffness matrix.
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+
+    Returns
+    -------
+    array
+        Updated global matrix is returned.
     """
     sect = member["section"]
     E, A = sect["E"], sect["A"]
@@ -113,6 +199,22 @@ def assemble_stiffness(Kg, member, i, j):
 def assemble_mass(Mg, member, i, j):
     """
     Assemble truss mass matrix.
+
+    Parameters
+    ----------
+    Mg
+        Global structural mass matrix.
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+
+    Returns
+    -------
+    array
+        Updated global matrix is returned.
     """
     sect = member["section"]
     rho, A = sect["rho"], sect["A"]
@@ -140,6 +242,20 @@ def truss_axial_force(member, i, j):
     matrix (computed by `truss_strain_displacement`), $U$ is the displacement
     vector (so that $\\varepsilon  = BU$ is the axial strain), and $EA$ is the
     axial stiffness.
+
+    Parameters
+    ----------
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+
+    Returns
+    -------
+    float
+        Axial force is returned.
     """
     sect = member["section"]
     E, A = sect["E"], sect["A"]
