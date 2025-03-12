@@ -43,6 +43,20 @@ def rigid_link_stiffness(e_x, h, Gamma):
     Reference: APPLICATION OF RIGID LINKS  IN STRUCTURAL DESIGN MODELS,
     Sergey Yu. Fialko, International Journal for Computational Civil 
     and Structural Engineering, 13(3) 119-137 (2017). 
+
+    Parameters
+    ----------
+    e_x
+        Vector `e_x` is the direction vector along the axis of the member.
+    h
+        Length of the rigid link (distance between the length joints).
+    Gamma
+        Diagonal matrix of the penalty constants.
+
+    Returns
+    -------
+    array
+        Stiffness matrix.
     """
     if len(e_x) == 2:
         I = eye(2)
@@ -78,9 +92,23 @@ def assemble_stiffness(Kg, member, i, j):
     """
     Assemble rigid link stiffness matrix.
 
-    - `Kg` is the global stiffness matrix,
-    - `member` is the rigid link member,
-    - `i`, `j` are the joints; the first is the master, the second is the subordinate.
+    Parameters
+    ----------
+    Kg
+        Global structural stiffness matrix.
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member. This
+        is the master.
+    j
+        Dictionary that defines the data of the second joint of the member.
+        This is the subordinate joint.
+
+    Returns
+    -------
+    array
+        Updated global matrix is returned.
     """
     sect = member["section"]
     Gamma = sect["Gamma"]

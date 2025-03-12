@@ -881,7 +881,7 @@ def assemble_stiffness(Kg, member, i, j):
 
     Returns
     -------
-    float
+    array
         Updated global matrix is returned.
     """
     # Add stiffness in bending.
