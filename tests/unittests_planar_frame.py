@@ -223,8 +223,8 @@ class UnitTestsPlanarFrames(unittest.TestCase):
         model.add_beam_member(m, 2, [5, 3], s1)
         model.add_beam_member(m, 3, [4, 3], s1)
 
-        model.add_links(m, [2, 5], freedoms.U1)
-        model.add_links(m, [2, 5], freedoms.U2)
+        model.add_dof_links(m, [2, 5], freedoms.U1)
+        model.add_dof_links(m, [2, 5], freedoms.U2)
 
         model.add_load(m["joints"][2], freedoms.U1, 1000.0)
 

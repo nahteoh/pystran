@@ -28,9 +28,21 @@ def assemble_stiffness(Kg, member, i, j):
     """
     Assemble the stiffness matrix of a general spring.
 
-    - `Kg` is the global stiffness matrix,
-    - `member` is the spring member,
-    - `i`, `j` are the joints.
+    Parameters
+    ----------
+    Kg
+        Global structural stiffness matrix.
+    member
+        Dictionary that defines the data of the member.
+    i
+        Dictionary that defines the data of the first joint of the member.
+    j
+        Dictionary that defines the data of the second joint of the member.
+
+    Returns
+    -------
+    array
+        Updated global matrix is returned.
     """
     sect = member["section"]
     kind = sect["kind"]

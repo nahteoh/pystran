@@ -44,10 +44,18 @@ condition for the joint.
 
 def translation_dofs(dim):
     """
-    Return the translation degrees of freedom.
+    List the translation degrees of freedom.
 
-    The list varies according to whether `dim` implies two dimensions (2) or
-    three dimensions (3): `[U1, U2]` or `[U1, U2, U3]`.
+    Parameters
+    ----------
+    dim
+        Dimension of the model (2 or 3).
+
+    Returns
+    -------
+    list
+        The list varies according to whether `dim` implies two dimensions (2)
+        or three dimensions (3): `[U1, U2]` or `[U1, U2, U3]`.
     """
     if dim == 2:
         return [U1, U2]
@@ -57,10 +65,18 @@ def translation_dofs(dim):
 
 def rotation_dofs(dim):
     """
-    Return the rotation degrees of freedom.
+    List the rotation degrees of freedom.
 
-    The list varies according to whether `dim` implies two dimensions (2) or
-    three dimensions (3): `[UR3]` or `[UR1, UR2, UR3]`.
+    Parameters
+    ----------
+    dim
+        Dimension of the model (2 or 3).
+
+    Returns
+    -------
+    list
+        The list varies according to whether `dim` implies two dimensions (2)
+        or three dimensions (3): `[UR3]` or `[UR1, UR2, UR3]`.
     """
     if dim == 2:
         return [UR3]
@@ -70,25 +86,53 @@ def rotation_dofs(dim):
 
 def translation_and_rotation_dofs(dim):
     """
-    Return the translation and rotation degrees of freedom.
+    List both the translation and rotation degrees of freedom.
 
-    See `translation_dofs` and `rotation_dofs`.
+    Parameters
+    ----------
+    dim
+        Dimension of the model (2 or 3).
+
+    Returns
+    -------
+    list
+        The list varies according to whether `dim` implies two dimensions (2)
+        or three dimensions (3).
+
+    See Also
+    --------
+    translation_dofs
+    rotation_dofs
     """
     return translation_dofs(dim) + rotation_dofs(dim)
 
 
 def prescribed_dofs_and_values(dim, dof, value):
     """
-    Compute prescribed degrees of freedom and values for a particular support type.
+    Compute prescribed degrees of freedom and values for a particular support
+    type.
 
-    For a single `dof` and `value`, return just the tuple of the `[dof]` and
-    `[value]`.
+    Parameters
+    ----------
+    dim
+        Dimension of the model (2 or 3).
+    dof
+        One of the designations of a degree of freedom. Either individual (U1,
+        ...), or collective (ALL_DOFS, ...).
+    value
+        A single number, prescribed by the user.
 
-    For `dof` equal to `ALL_DOFS`, return the translation and rotation degrees
-    of freedom and zero values.
+    Returns
+    -------
+    tuple of lists
+        For a single `dof` and `value`, return just the tuple of the `[dof]` and
+        `[value]`.
 
-    For `dof` equal to `TRANSLATION_DOFS`, return the translation degrees of
-    freedom and zero values.
+        For `dof` equal to `ALL_DOFS`, return the translation and rotation degrees
+        of freedom and zero values.
+
+        For `dof` equal to `TRANSLATION_DOFS`, return the translation degrees of
+        freedom and zero values.
     """
     if dof == ALL_DOFS:
         return translation_and_rotation_dofs(dim), [

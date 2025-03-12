@@ -98,9 +98,9 @@ plots.show(m)
 # Next we add the link between the two joints that form the hinge. The hinge is
 # ball joint, meaning all three translations are the same for joints at the
 # hinge.
-model.add_links(m, ["N_H1", "N_H2"], freedoms.U1)
-model.add_links(m, ["N_H1", "N_H2"], freedoms.U2)
-model.add_links(m, ["N_H1", "N_H2"], freedoms.U3)
+model.add_dof_links(m, ["N_H1", "N_H2"], freedoms.U1)
+model.add_dof_links(m, ["N_H1", "N_H2"], freedoms.U2)
+model.add_dof_links(m, ["N_H1", "N_H2"], freedoms.U3)
 
 # The supports are next. The original source refers to the supports at N_A and
 # N_B.

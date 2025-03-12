@@ -34,7 +34,6 @@ from pystran.geometry import (
     herm_basis,
     interpolate,
 )
-from pystran import freedoms
 
 
 # fig = plt.figure(figsize=(9,9))
@@ -127,14 +126,19 @@ def setup(m, set_limits=False):
     """
     Setup the plot.
 
-    - `m` = model dictionary.
+    Parameters
+    ----------
+    m
+        Model dictionary.
+    set_limits
+        Optional: set the limits of the graphics manually or not? Default is
+        False.
 
-    Optional:
-
-    - `set_limits` = set the limits of the graphics manually or not?
-        Default is False.
-
-    This function creates a figure and an axis object. The axes are returned.
+    Returns
+    -------
+    axes
+        This function creates a figure and an axis object. The axes are
+        returned.
     """
     fig = plt.figure()
     if m["dim"] == 3:
@@ -153,7 +157,10 @@ def plot_members(m):
     """
     Plot the members of the structure.
 
-    - `m` = model dictionary.
+    Parameters
+    ----------
+    m
+        Model dictionary.
 
     All truss, rigid link, and beam members will be included.
     """
@@ -285,11 +292,12 @@ def plot_deformations(m, scale=0.0):
     """
     Plot the deformation of the structure.
 
-    - `m` = model dictionary.
-
-    Optional:
-
-    - `scale` = scale factor for the arrows. Default is 0.0, which
+    Parameters
+    ----------
+    m
+        Model dictionary.
+    scale
+        Optional: scale factor for the deformation. Default is 0.0, which
         means compute this internally.
 
     All truss, rigid links, and beam members will be included. Truss members
@@ -375,9 +383,12 @@ def _plot_member_ids_3d(m):
 
 def plot_member_ids(m):
     """
-    Plot the member numbers.
+    Plot the member identifiers.
 
-    - `m` = model dictionary.
+    Parameters
+    ----------
+    m
+        Model dictionary.
     """
     if m["dim"] == 3:
         ax = _plot_member_ids_3d(m)
@@ -388,9 +399,12 @@ def plot_member_ids(m):
 
 def plot_joint_ids(m):
     """
-    Plot the joint numbers.
+    Plot the joint identifiers.
 
-    - `m` = model dictionary.
+    Parameters
+    ----------
+    m
+        Model dictionary.
     """
     ax = plt.gca()
     for j in m["joints"].values():
@@ -485,13 +499,15 @@ def plot_bending_moments(m, scale=0.0, axis="y"):
     """
     Plot the bending moments in the beam members.
 
-    - `m` = model dictionary.
-
-    Optional:
-
-    - `scale` = scale factor for the ordinate. Default is
+    Parameters
+    ----------
+    m
+        Model dictionary.
+    scale
+        Optional: scale factor for the ordinate. Default is
         0.0, which means the scale will be computed internally.
-    - `axis` = "y" or "z" (default is "z", which is suitable for 2d beams).
+    axis
+        Either "y" or "z" (default is "z", which is suitable for 2d beams).
     """
 
     def fun(member, i, j, xi):
@@ -568,16 +584,18 @@ def plot_shear_forces(m, scale=0.0, axis="z"):
     """
     Plot the shear forces in the beam members.
 
-    - `m` = model dictionary.
-
-    Optional:
-
-    - `scale` = scale factor for the ordinate. Default is 0.0, which means the
-      scale will be computed internally.
-    - `axis` = "y" or "z" (default is "z", which is suitable for 2d beams).
+    Parameters
+    ----------
+    m
+        Model dictionary.
+    scale
+        Optional: scale factor for the ordinate. Default is
+        0.0, which means the scale will be computed internally.
+    axis
+        Either "y" or "z" (default is "z", which is suitable for 2d beams).
     """
 
-    def fun(member, i, j, xi):
+    def fun(member, i, j, _):
         if m["dim"] == 3:
             return beam_3d_shear_force(member, i, j, axis, 0.0)
         else:
@@ -604,7 +622,7 @@ def _plot_2d_beam_axial_forces(ax, member, i, j, scale):
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
     for _, xi in enumerate(linspace(-1, +1, n)):
-        N = beam_2d_axial_force(member, i, j)
+        N = beam_2d_axial_force(member, i, j, 0.0)
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
@@ -621,7 +639,7 @@ def _plot_2d_beam_axial_forces(ax, member, i, j, scale):
 def _plot_2d_truss_axial_forces(ax, member, i, j, scale):
     _, e_z, _ = member_2d_geometry(i, j)
     ci, cj = i["coordinates"], j["coordinates"]
-    N = truss_axial_force(member, i, j)
+    N = truss_axial_force(member, i, j, 0.0)
     n = 13
     for _, xi in enumerate(linspace(-1, +1, n)):
         x = interpolate(xi, ci, cj)
@@ -665,12 +683,14 @@ def plot_axial_forces(m, scale=0.0):
     """
     Plot the axial forces in the members.
 
-    - `m` = model dictionary.
+    Parameters
+    ----------
+    m
+        Model dictionary.
+    scale
+        Optional: scale factor for the ordinate. Default is
+        0.0, which means the scale will be computed internally.
 
-    Optional:
-
-    - `scale` = scale factor for the ordinate. Default is 0.0, which means the
-      scale will be computed internally.
     """
 
     def funb(member, i, j, _):
@@ -717,7 +737,7 @@ def _plot_3d_beam_torsion_moments(ax, member, i, j, scale):
     n = 13
     dirv = e_z
     for _, xi in enumerate(linspace(-1, +1, n)):
-        T = beam_3d_torsion_moment(member, i, j)
+        T = beam_3d_torsion_moment(member, i, j, 0.0)
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
@@ -738,17 +758,19 @@ def plot_torsion_moments(m, scale=0.0):
     """
     Plot the torsion moments in the 3D beam members.
 
-    - `m` = model dictionary.
+    Parameters
+    ----------
+    m
+        Model dictionary.
+    scale
+        Optional: scale factor for the ordinate. Default is
+        0.0, which means the scale will be computed internally.
 
-    Optional:
-
-    - `scale` = scale factor for the ordinate. Default is 0.0, which means the
-      scale will be computed internally.
     """
 
     def fun(member, i, j, _):
         if m["dim"] == 3:
-            return beam_3d_torsion_moment(member, i, j)
+            return beam_3d_torsion_moment(member, i, j, 0.0)
         else:
             return 0.0
 
@@ -770,16 +792,18 @@ def plot_member_orientation(m, scale=0.0):
     """
     Plot the member orientations as cartesian triplets.
 
-    - `m` = model dictionary,
-
-    Optional:
-
-    - `scale` = scale factor for the member orientation vectors. Default is
-      0.0, which means the scale will be computed internally.
-
     The vectors are shown as red (x), green (y), and blue (z) lines that
     represent the basis vectors of a local cartesian coordinate system for each
     member.
+
+    Parameters
+    ----------
+    m
+        Model dictionary.
+    scale
+        Optional: scale factor for the Cartesian vector lengths. Default is
+        0.0, which means the scale will be computed internally.
+
     """
     if scale == 0.0:
         cd = characteristic_dimension(m)
@@ -848,8 +872,6 @@ def plot_member_orientation(m, scale=0.0):
 def _largest_mag_at_joints(m, fun):
     """
     Find the maximum magnitude of a joint quantity.
-
-    - `m` = model dictionary.
     """
     maxmag = 0.0
     for j in m["joints"].values():
@@ -865,12 +887,14 @@ def plot_applied_forces(m, scale=0.0):
     """
     Plot the applied forces at the joints.
 
-    - `m` = model dictionary.
+    Parameters
+    ----------
+    m
+        Model dictionary.
+    scale
+        Optional: scale factor for the arrows. Forces are rendered with single
+        arrows. Default is 0.0, which means compute this internally.
 
-    Optional:
-
-    - `scale` = scale factor for the arrows. Forces are rendered with single
-      arrows. Default is 0.0, which means compute this internally.
     """
     ax = plt.gca()
     dim = m["dim"]
@@ -926,14 +950,16 @@ def plot_applied_moments(m, scale=0.0, radius=0.0):
     """
     Plot the applied moments at the joints.
 
-    - `m` = model dictionary.
-
-    Optional:
-
-    - `scale` = scale factor for the arrows. Moments are rendered with double
-      arrows. Default is 0.0, which means compute this internally.
-    - `radius`  = radius of the circle to represent the moment (2D only).
-      Default is 0.0, which means compute this internally.
+    Parameters
+    ----------
+    m
+        Model dictionary.
+    scale
+        Optional: scale factor for the arrows. Moments are rendered with double
+        arrows. Default is 0.0, which means compute this internally.
+    radius
+        Radius of the circle to represent the moment (2D only). Default is 0.0,
+        which means compute this internally.
     """
     ax = plt.gca()
     dim = m["dim"]
@@ -1002,13 +1028,15 @@ def plot_translation_supports(m, scale=0.0, shortest_arrow=1.0e-6):
     """
     Plot the translation supports at the joints.
 
-    - `m` = model dictionary,
-
-    Optional:
-
-    - `scale` = scale factor for the arrows. Supports are rendered as
-      arrows. Default is 0.0, which means the scale will be calculated internally.
-    - `shortest_arrow` = how long should the shortest arrow be? Default is 1.0e-6.
+    Parameters
+    ----------
+    m
+        Model dictionary.
+    scale
+        Optional: scale factor for the arrows. Moments are rendered with double
+        arrows. Default is 0.0, which means compute this internally.
+    shortest_arrow
+        How long should the shortest arrow be? Default is 1.0e-6.
     """
     ax = plt.gca()
     dim = m["dim"]
@@ -1068,17 +1096,18 @@ def plot_rotation_supports(m, scale=0.0, radius=0.0, shortest_arrow=1.0e-6):
     """
     Plot the rotation supports at the joints.
 
-    - `m` = model dictionary.
-
-    Optional:
-
-    - `scale` = scale factor for the arrows. Prescribed rotations are rendered
-      with double arrows in 3D; with a circular arc in 2D. Default scale is
-      0.0, which means the scale is calculated internally.
-    - `radius` = radius of the circle (2D only). Default radius is
-      0.0, which means the scale is calculated internally.
-    - `shortest_arrow` = how long should the shortest arrow be? Default is
-      1.0e-6.
+    Parameters
+    ----------
+    m
+        Model dictionary.
+    scale
+        Optional: scale factor for the arrows. Moments are rendered with double
+        arrows. Default is 0.0, which means compute this internally.
+    radius
+        Radius of the circle (2D only). Default radius is 0.0, which means
+        the scale is calculated internally.
+    shortest_arrow
+        How long should the shortest arrow be? Default is 1.0e-6.
     """
     ax = plt.gca()
     dim = m["dim"]
@@ -1153,7 +1182,10 @@ def show(m):
     """
     Show the plot.
 
-    - `m` = model dictionary.
+    Parameters
+    ----------
+    m
+        Model dictionary.
 
     """
     ax = plt.gca()

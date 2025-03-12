@@ -13,10 +13,32 @@ def truss_section(name, E=0.0, A=0.0, rho=0.0, CTE=0.0):
     """
     Define truss section.
 
-    - `E`= Young's modulus,
-    - `A`= cross-sectional area,
-    - `rho`= mass density,
-    - `CTE`= coefficient of thermal expansion.
+    The parameters can be defined either as regular list of values or
+    variables, or in the keyword=value style.
+
+    Parameters
+    ----------
+    E
+        Young's modulus.
+    A
+        Cross-sectional area.
+    rho
+        Mass density.
+    CTE
+        Coefficient of thermal expansion.
+
+    Returns
+    -------
+    Dict
+        Dictionary that holds the data for this section.
+
+    Examples
+    --------
+    >>> s1 = section.truss_section("steel", E, A)
+
+    >>> sr = section.truss_section("sr", E=E, A=Ar, CTE=0.0)
+
+    >>> sr = section.truss_section("sr", E=E, A=Ar)
     """
     s = dict()
     s["name"] = name
@@ -31,12 +53,32 @@ def beam_2d_section(name, E=0.0, A=0.0, I=0.0, rho=0.0, CTE=0.0):
     """
     Define 2d beam section.
 
-    - `E`= Young's modulus,
-    - `A`= cross-sectional area,
-    - `I`= central moment of inertia of the cross-section about the `y`
-    coordinate axis (i.e. the axis perpendicular to the plane of the bending, `x-z`).
-    - `rho`= mass density,
-    - `CTE`= coefficient of thermal expansion.
+    The parameters can be defined either as regular list of values or
+    variables, or in the keyword=value style.
+
+    Parameters
+    ----------
+    E
+        Young's modulus.
+    A
+        Cross-sectional area.
+    I
+        Central moment of inertia of the cross-section about the `y`
+        coordinate axis (i.e. the axis perpendicular to the plane of the
+        bending, `x-z`).
+    rho
+        Mass density.
+    CTE
+        Coefficient of thermal expansion.
+
+    Returns
+    -------
+    Dict
+        Dictionary that holds the data for this section.
+
+    Examples
+    --------
+    >>> sbar = section.beam_2d_section("sbar", E=E, rho=rho, A=A, I=Iy)
     """
     s = dict()
     s["name"] = name
@@ -52,8 +94,23 @@ def rigid_link_section(name, Gamma):
     """
     Define a rigid link section.
 
-    - `Gamma`: diagonal matrix of penalty coefficients; zero coefficient means
-      the degrees of freedom are not linked.
+    The parameters can be defined either as regular list of values or
+    variables, or in the keyword=value style.
+
+    Parameters
+    ----------
+    Gamma
+        Diagonal matrix of penalty coefficients; zero coefficient means
+        the degrees of freedom are not linked.
+
+    Returns
+    -------
+    Dict
+        Dictionary that holds the data for this section.
+
+    Examples
+    --------
+    >>> sr = section.rigid_link_section("sr", Gamma=1e8 * numpy.diagflat([1.0, 1.0, 1.0]))
     """
     s = dict()
     s["name"] = name
@@ -65,11 +122,29 @@ def spring_section(name, kind, direction, stiffness_coefficient=1.0):
     """
     Define a section for a general extension or torsion spring.
 
-    - `kind`: `"extension"` or `"torsion"`. The connected joints either react
-      to displacement or to rotation.
-    - `direction`: the spring acts *along* this direction for extension
-      springs, or about this direction for torsion springs.
-    - `stiffness_coefficient`: stiffness coefficient of the spring.
+    The parameters can be defined either as regular list of values or
+    variables, or in the keyword=value style.
+
+    Parameters
+    ----------
+    kind
+        Either `"extension"` or `"torsion"`. The connected joints either react
+        to displacement or to rotation.
+    direction
+        The spring acts *along* this direction for extension springs, or about
+        this direction for torsion springs.
+    stiffness_coefficient
+        Stiffness coefficient of the spring.
+
+    Returns
+    -------
+    Dict
+        Dictionary that holds the data for this section.
+
+    Examples
+    --------
+    >>> section.spring_section("EXT_A", "extension", [0, 1, 0], K),
+
     """
     s = dict()
     s["name"] = name
@@ -95,15 +170,42 @@ def beam_3d_section(
     """
     Define 3d beam section.
 
-    - `E`, `G`= Young's and shear modulus,
-    - `rho`= mass density,
-    - `A`= cross-sectional area,
-    - `Ix`= central moment of inertia of the cross-section about the local `x`.
-    - `Iy`, `Iz`= central moment of inertia of the cross-section about the local `y` and local `z`
-    coordinate axis,
-    - `J`= St Venant torsion constant.
-    - `xz_vector`= vector that lies in the local `x` and `z` coordinate plane,
-    - `CTE`= coefficient of thermal expansion.
+    The parameters can be defined either as regular list of values or
+    variables, or in the keyword=value style.
+
+    Parameters
+    ----------
+    E
+        Young's modulus.
+    G
+        Shear modulus.
+    A
+        Cross-sectional area.
+    rho
+        Mass density.
+    A
+        Cross-sectional area.
+    Ix
+        Central moment of inertia of the cross-section about the local `x`.
+    Iy `
+        Iz`= central moment of inertia of the cross-section about the local `y` and local `z`
+    coordinate axis.
+    J
+        St Venant torsion constant.
+    xz_vector
+        Vector that lies in the local `x-z` coordinate plane.
+    CTE
+        Coefficient of thermal expansion.
+
+    Returns
+    -------
+    Dict
+        Dictionary that holds the data for this section.
+
+    Examples
+    --------
+    >>> sb = section.beam_3d_section("sb", E=E, G=G, A=A, Ix=Ix, Iy=Iy, Iz=Iz, J=J)
+
     """
     s = dict()
     s["name"] = name
@@ -122,7 +224,19 @@ def beam_3d_section(
 
 def circular_tube(innerradius, outerradius):
     """
-    Returns the area, moments of inertia and torsion constant for a hollow circle (tube).
+    Calculate cross section characteristics for a hollow circle (tube).
+
+    Parameters
+    ----------
+    innerradius
+        Inner radius of the tube.
+    outerradius
+        Outer radius of the tube.
+
+    Returns
+    -------
+    tuple of A, Ix, Iy, Iz, J
+        Area, moments of inertia and torsion constant.
     """
     Rext = outerradius
     Rint = innerradius
@@ -136,9 +250,24 @@ def circular_tube(innerradius, outerradius):
 
 def i_beam(H, B, tf, tw):
     """
-    Returns the area, moments of inertia and torsion constant for an I-beam.
+    Calculate cross section characteristics for an I-beam.
 
-    The axis parallel to the flanges is `y`, the axis parallel to the web is `z`.
+    Parameters
+    ----------
+    H
+        Height of the cross section, i.e. dimension along z. The axis parallel
+        to the flanges is `y`, the axis parallel to the web is `z`.
+    B
+        Width of the flanges.
+    tf
+        Thickness of the flanges.
+    tw
+        Thickness of the web.
+
+    Returns
+    -------
+    tuple of A, Ix, Iy, Iz, J
+        Area, moments of inertia and torsion constant.
     """
     A = B * H - (B - tw) * (H - 2 * tf)
     Iy = (B / 12) * H**3 - ((B - tw) / 12) * (H - 2 * tf) ** 3
@@ -152,12 +281,25 @@ def i_beam(H, B, tf, tw):
     return A, Ix, Iy, Iz, J
 
 
-def square_tube(H, B, th, tb):
+def rect_tube(H, B, th, tb):
     """
-    Returns the area, moments of inertia and torsion constant for a square tube.
+    Calculate cross section characteristics for an rectangular tube.
 
-    The axis parallel to the `B` dimension is `y`, the axis parallel to the `H`
-    dimension is `z`.
+    Parameters
+    ----------
+    H
+        Height of the cross section, i.e. dimension along z.
+    B
+        Width of the cross section, i.e. dimension along y.
+    th
+        Thickness of the walls along the height.
+    tb
+        Thickness of the walls along the width.
+
+    Returns
+    -------
+    tuple of A, Ix, Iy, Iz, J
+        Area, moments of inertia and torsion constant.
     """
     Bi, Hi = (B - 2 * tb), (H - 2 * th)
     A = B * H - Bi * Hi
@@ -170,11 +312,19 @@ def square_tube(H, B, th, tb):
 
 def rectangle(H, B):
     """
-    Returns the area, moments of inertia and torsion constant for a solid
-    rectangular section.
+    Calculate cross section characteristics for a solid rectangle.
 
-    The axis parallel to the `B` dimension is `y`, the axis parallel to the `H`
-    dimension is `z`.
+    Parameters
+    ----------
+    H
+        Height of the cross section, i.e. dimension along z.
+    B
+        Width of the cross section, i.e. dimension along y.
+
+    Returns
+    -------
+    tuple of A, Ix, Iy, Iz, J
+        Area, moments of inertia and torsion constant.
     """
     a = max(H, B)
     b = min(H, B)
