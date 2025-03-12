@@ -9,7 +9,15 @@ def rule(numpts):
     """
     Set up Gauss quadrature points and weights for a given number of points.
 
-    The number of points can be varied between 1 and 7.
+    Parameters
+    ----------
+    numpts
+        The number of points can be varied between 1 and 7.
+
+    Returns
+    -------
+    tuple of two arrays
+        Array of locations and array of weights.
     """
     if numpts == 1:
         return array([0.0]), array([2.0])
