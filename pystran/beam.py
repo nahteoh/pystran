@@ -11,24 +11,30 @@ from pystran import truss
 
 
 def beam_3d_xz_shape_fun(xi):
-    """
+    r"""
     Compute the beam shape functions for deflection in the `x-z` plane.
 
     Parameters
     ----------
     xi
-        Parametric coordinate (from -1 to +1) from the first joint to the second.
+        Parametric coordinate (from -1 to +1) from the first joint to the
+        second.
 
     Returns
     -------
     array
-        An array of shape function values is returned (i.e. $[N_1(\\xi), ..., N_4(\\xi)]$).
+        An array of shape function values is returned (i.e. :math:`[N_1(\xi),
+        ..., N_4(\xi)]`).
+
+    See Also
+    --------
+    herm_basis
     """
     return herm_basis(xi)
 
 
 def beam_3d_xz_shape_fun_xi2(xi):
-    """
+    r"""
     Compute the second derivative of the beam shape functions for deflection in
     the `x-z` plane.
 
@@ -42,13 +48,13 @@ def beam_3d_xz_shape_fun_xi2(xi):
     -------
     array
         An array of second derivatives of shape functions is returned (i.e.
-        $[d^2N_1(\\xi)/d\\xi^2, ..., d^2N_4(\\xi)/d\\xi^2]$).
+        :math:`[d^2N_1(\xi)/d\xi^2, ..., d^2N_4(\xi)/d\xi^2]`).
     """
     return herm_basis_xi2(xi)
 
 
 def beam_3d_xy_shape_fun(xi):
-    """
+    r"""
     Compute the beam shape functions for deflection in the x-y plane.
 
     Parameters
@@ -63,7 +69,7 @@ def beam_3d_xy_shape_fun(xi):
         The signs of the shape functions that go with the rotations (i.e. the
         second and fourth) need to be reversed relative to the x-z plane of
         bending: An array of second derivatives of shape functions is returned
-        (i.e. $[N_1(\\xi), -N_2(\\xi), N_3(\\xi), -N_4(\\xi)]$).
+        (i.e. :math:`[N_1(\xi), -N_2(\xi), N_3(\xi), -N_4(\xi)]`).
     """
     N = herm_basis(xi)
     N[1] *= -1.0
@@ -72,7 +78,7 @@ def beam_3d_xy_shape_fun(xi):
 
 
 def beam_3d_xy_shape_fun_xi2(xi):
-    """
+    r"""
     Compute the second derivative of the beam shape functions for deflection in
     the `x-y` plane.
 
@@ -87,8 +93,8 @@ def beam_3d_xy_shape_fun_xi2(xi):
     array
         The signs of the shape functions that go with the rotations (i.e. the
         second and fourth) need to be reversed: An array of second derivatives
-        of shape functions is returned (i.e. $[d^2N_1(\\xi)/d\\xi^2,
-        -d^2N_2(\\xi)/d\\xi^2, d^2N_3(\\xi)/d\\xi^2, -d^2N_4(\\xi)/d\\xi^2]$).
+        of shape functions is returned (i.e. :math:`[d^2N_1(\xi)/d\xi^2,
+        -d^2N_2(\xi)/d\xi^2, d^2N_3(\xi)/d\xi^2, -d^2N_4(\xi)/d\xi^2]`).
     """
     d2Ndxi2 = herm_basis_xi2(xi)
     d2Ndxi2[1] *= -1.0
@@ -97,7 +103,7 @@ def beam_3d_xy_shape_fun_xi2(xi):
 
 
 def beam_3d_xz_shape_fun_xi3(xi):
-    """
+    r"""
     Compute the third derivative of the beam shape functions with respect to
     `xi` for deflection in the `x-z` plane.
 
@@ -111,13 +117,13 @@ def beam_3d_xz_shape_fun_xi3(xi):
     -------
     array
         An array of third derivatives of shape functions is returned (i.e.
-        $[d^3N_1(\\xi)/d\\xi^3, ..., d^3N_4(\\xi)/d\\xi^3]$).
+        :math:`[d^3N_1(\xi)/d\xi^3, ..., d^3N_4(\xi)/d\xi^3]`).
     """
     return herm_basis_xi3(xi)
 
 
 def beam_3d_xy_shape_fun_xi3(xi):
-    """
+    r"""
     Compute the third derivative of the beam shape functions with respect to
     `xi` for deflection in the `x-y` plane.
 
@@ -132,8 +138,8 @@ def beam_3d_xy_shape_fun_xi3(xi):
     array
         The signs of the shape functions that go with the rotations (i.e. the
         second and fourth) need to be reversed: An array of third derivatives
-        of shape functions is returned (i.e. $[d^3N_1(\\xi)/d\\xi^3,
-        -d^3N_2(\\xi)/d\\xi^3, d^3N_3(\\xi)/d\\xi^3, -d^3N_4(\\xi)/d\\xi^3]$).
+        of shape functions is returned (i.e. :math:`[d^3N_1(\xi)/d\xi^3,
+        -d^3N_2(\xi)/d\xi^3, d^3N_3(\xi)/d\xi^3, -d^3N_4(\xi)/d\xi^3]`).
     """
     d3Ndxi3 = herm_basis_xi3(xi)
     d3Ndxi3[1] *= -1.0
@@ -142,17 +148,19 @@ def beam_3d_xy_shape_fun_xi3(xi):
 
 
 def beam_2d_bending_stiffness(e_z, h, E, I_y):
-    """
+    r"""
     Compute 2d beam stiffness matrix.
 
     Two-point Gauss quadrature is used to compute the stiffness matrix.
 
     The formula reads
 
-    $K = (h/2) \\int_{-1}^{+1} EI_y B^T B  d\\xi$,
+    .. math::
 
-    where $B$ is the curvature-displacement matrix (computed by
-    `beam_2d_curv_displ_matrix`), and $h/2$ is the Jacobian. `I_y` is the
+        K = (h/2) \int_{-1}^{+1} EI_y B^T B  d\xi,
+
+    where :math:`B` is the curvature-displacement matrix (computed by
+    `beam_2d_curv_displ_matrix`), and :math:`h/2` is the Jacobian. `I_y` is the
     second moment of area about the `y` axis (which is orthogonal to the plane
     of bending).
 
@@ -183,14 +191,14 @@ def beam_2d_bending_stiffness(e_z, h, E, I_y):
 
 
 def beam_3d_xz_curv_displ_matrix(e_y, e_z, h, xi):
-    """
+    r"""
     Compute beam curvature-displacement matrix in the local `x-z` plane (i.e.
     bending about the `y` axis).
 
-    The curvature $d^2w/dx^2$ is computed in the local coordinate system of the
-    beam as $d^2w/dx^2 = B U$. Here $B$ is the curvature-displacement matrix and
-    $U$ is the displacement vector. All three displacement components and all
-    three rotation components at each joint are assumed, so the matrix $B$ has
+    The curvature :math:`d^2w/dx^2` is computed in the local coordinate system of the
+    beam as :math:`d^2w/dx^2 = B U`. Here :math:`B` is the curvature-displacement matrix and
+    :math:`U` is the displacement vector. All three displacement components and all
+    three rotation components at each joint are assumed, so the matrix :math:`B` has
     one row and twelve columns.
 
     Parameters
@@ -222,14 +230,14 @@ def beam_3d_xz_curv_displ_matrix(e_y, e_z, h, xi):
 
 
 def beam_3d_xy_curv_displ_matrix(e_y, e_z, h, xi):
-    """
+    r"""
     Compute beam curvature-displacement matrix in the local `x-y` plane (i.e.
     bending about the `z` axis).
 
-    The curvature $d^2v/dx^2$ is computed in the local coordinate system of the
-    beam as $d^2v/dx^2 = B U$. Here $B$ is the curvature-displacement matrix and
-    $U$ is the displacement vector. All three displacement components and all
-    three rotation components at each joint are assumed, so the matrix $B$ has
+    The curvature :math:`d^2v/dx^2` is computed in the local coordinate system of the
+    beam as :math:`d^2v/dx^2 = B U`. Here :math:`B` is the curvature-displacement matrix and
+    :math:`U` is the displacement vector. All three displacement components and all
+    three rotation components at each joint are assumed, so the matrix :math:`B` has
     one row and twelve columns.
 
     Parameters
@@ -261,7 +269,7 @@ def beam_3d_xy_curv_displ_matrix(e_y, e_z, h, xi):
 
 
 def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
-    """
+    r"""
     Compute 3d beam stiffness matrices for bending in the planes `x-y` and
     `x-z`.
 
@@ -269,16 +277,20 @@ def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
 
     The formula reads
 
-    $K = (h/2) \\int_{-1}^{+1} EI_y B_{xz}^T B_{xz}  d\\xi$,
+    .. math::
+
+        K = (h/2) \int_{-1}^{+1} EI_y B_{xz}^T B_{xz}  d\xi,
 
     for bending in the `x-z` plane, and
 
-    $K = (h/2) \\int_{-1}^{+1} EI_z B_{xy}^T B_{xy}  d\\xi$,
+    .. math::
 
-    where $B_{xz}$ is the curvature-displacement matrix for bending in the `x-z`
-    plane (computed by `beam_3d_xz_curv_displ_matrix`), $B_{xy}$ is the
+        K = (h/2) \int_{-1}^{+1} EI_z B_{xy}^T B_{xy}  d\xi,
+
+    where :math:`B_{xz}` is the curvature-displacement matrix for bending in the `x-z`
+    plane (computed by `beam_3d_xz_curv_displ_matrix`), :math:`B_{xy}` is the
     curvature-displacement matrix for bending in the `x-y` plane (computed by
-    `beam_3d_xy_curv_displ_matrix`), and $h/2$ is the Jacobian. `I_y` is the
+    `beam_3d_xy_curv_displ_matrix`), and :math:`h/2` is the Jacobian. `I_y` is the
     second moment of area about the `y` axis, and `I_z`  is the second moment of
     area about the `z` axis.
 
@@ -305,6 +317,12 @@ def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
     -------
     array
         Stiffness matrix of the beam.
+
+    See Also
+    --------
+        beam_3d_xy_curv_displ_matrix
+
+        beam_3d_xz_curv_displ_matrix
     """
     xiG, WG = gauss.rule(2)
     Kxy = zeros((12, 12))
@@ -319,16 +337,16 @@ def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
 
 
 def beam_2d_curv_displ_matrix(e_z, h, xi):
-    """
+    r"""
     Compute 2d beam curvature-displacement matrix.
 
     Here the curvatures is with respect to the physical coordinate measured
     along the member (local `x`).
 
-    The curvature $d^2w/dx^2$ is computed in the local coordinate system of the
-    beam as $d^2w/dx^2 = B U$. Here $B$ is the curvature-displacement matrix and
-    $U$ is the displacement vector. Two displacement components and one rotation
-    component at each joint are assumed, so the matrix $B$ has one row and six
+    The curvature :math:`d^2w/dx^2` is computed in the local coordinate system of the
+    beam as :math:`d^2w/dx^2 = B U`. Here :math:`B` is the curvature-displacement matrix and
+    :math:`U` is the displacement vector. Two displacement components and one rotation
+    component at each joint are assumed, so the matrix :math:`B` has one row and six
     columns.
 
     Parameters
@@ -357,17 +375,17 @@ def beam_2d_curv_displ_matrix(e_z, h, xi):
 
 
 def beam_2d_3rd_deriv_displ_matrix(e_z, h):
-    """
+    r"""
     Compute beam third derivative-displacement matrix.
 
     Here the third derivative is with respect to the physical coordinate
     measured along the member (local `x`).
 
-    The third derivative $d^3w/dx^3$ is computed in the local coordinate system
-    of the beam as $d^3w/dx^3 = B U$. Here $B$ is the
-    third-derivative-displacement matrix and $U$ is the displacement vector.
+    The third derivative :math:`d^3w/dx^3` is computed in the local coordinate system
+    of the beam as :math:`d^3w/dx^3 = B U`. Here :math:`B` is the
+    third-derivative-displacement matrix and :math:`U` is the displacement vector.
     Two displacement components and one rotation component at each joint are
-    assumed, so the matrix $B$ has one row and six columns. Note that this
+    assumed, so the matrix :math:`B` has one row and six columns. Note that this
     matrix is constant (independent of the location along the beam).
 
     Parameters
@@ -393,18 +411,18 @@ def beam_2d_3rd_deriv_displ_matrix(e_z, h):
 
 
 def beam_3d_xz_3rd_deriv_displ_matrix(e_y, e_z, h):
-    """
+    r"""
     Compute 3d beam third derivative-displacement matrix for displacements in
     the `x-z` plane.
 
     Here the third derivative is with respect to the physical coordinate
     measured along the member (local `x`).
 
-    The third derivative $d^3w/dx^3$ is computed in the local coordinate system
-    of the beam as $d^3w/dx^3 = B U$. Here $B$ is the
-    third-derivative-displacement matrix and $U$ is the displacement vector.
+    The third derivative :math:`d^3w/dx^3` is computed in the local coordinate system
+    of the beam as :math:`d^3w/dx^3 = B U`. Here :math:`B` is the
+    third-derivative-displacement matrix and :math:`U` is the displacement vector.
     All three displacement components and all three rotation components at each
-    joint are assumed, so the matrix $B$ has one row and twelve columns. Note
+    joint are assumed, so the matrix :math:`B` has one row and twelve columns. Note
     that this matrix is constant (independent of the location along the beam).
 
     Parameters
@@ -433,18 +451,18 @@ def beam_3d_xz_3rd_deriv_displ_matrix(e_y, e_z, h):
 
 
 def beam_3d_xy_3rd_deriv_displ_matrix(e_y, e_z, h):
-    """
+    r"""
     Compute 3d beam third derivative-displacement matrix for displacements in
     the `x-y` plane.
 
     Here the third derivative is with respect to the physical coordinate
     measured along the member (local `x`).
 
-    The third derivative $d^3v/dx^3$ is computed in the local coordinate system
-    of the beam as $d^3v/dx^3 = B U$. Here $B$ is the
-    third-derivative-displacement matrix and $U$ is the displacement vector.
+    The third derivative :math:`d^3v/dx^3` is computed in the local coordinate system
+    of the beam as :math:`d^3v/dx^3 = B U`. Here :math:`B` is the
+    third-derivative-displacement matrix and :math:`U` is the displacement vector.
     All three displacement components and all three rotation components at each
-    joint are assumed, so the matrix $B$ has one row and twelve columns. Note
+    joint are assumed, so the matrix :math:`B` has one row and twelve columns. Note
     that this matrix is constant (independent of the location along the beam).
 
     Parameters
@@ -473,13 +491,13 @@ def beam_3d_xy_3rd_deriv_displ_matrix(e_y, e_z, h):
 
 
 def beam_2d_moment(member, i, j, xi):
-    """
+    r"""
     Compute 2d beam moment based on the displacements stored at the joints.
     The moment is computed at the parametric location `xi` along the beam.
 
-    The moment is mathematically defined as $M = -EI d^2w/dx^2$.
+    The moment is mathematically defined as :math:`M = -EI d^2w/dx^2`.
 
-    The curvature is computed with the curvature-displacement matrix $B$ by the function
+    The curvature is computed with the curvature-displacement matrix :math:`B` by the function
     `beam_2d_curv_displ_matrix`.
 
     Parameters
@@ -498,6 +516,10 @@ def beam_2d_moment(member, i, j, xi):
     -------
     float
         The moment resultant.
+
+    See Also
+    --------
+    beam_2d_curv_displ_matrix
     """
     _, e_z, h = geometry.member_2d_geometry(i, j)
     sect = member["section"]
@@ -509,16 +531,16 @@ def beam_2d_moment(member, i, j, xi):
 
 
 def beam_3d_moment(member, i, j, axis, xi):
-    """
+    r"""
     Compute 3d beam moment based on the displacements stored at the joints. The
     moment is computed at the parametric location `xi` along the beam. The
     moment acts about the axis specified by the string `axis` (`'y'` or `'z'`).
 
-    The moments are mathematically defined as $M_y = -EI_y d^2w/dx^2$ for
-    bending about the `y` axis, and $M_z = +EI_z d^2v/dx^2$ for bending about
+    The moments are mathematically defined as :math:`M_y = -EI_y d^2w/dx^2` for
+    bending about the `y` axis, and :math:`M_z = +EI_z d^2v/dx^2` for bending about
     the `z` axis.
 
-    The curvatures are computed with  curvature-displacement matrices $B$ by the
+    The curvatures are computed with  curvature-displacement matrices :math:`B` by the
     functions `beam_3d_xz_curv_displ_matrix` and `beam_3d_xy_curv_displ_matrix`,
     respectively.
 
@@ -556,13 +578,13 @@ def beam_3d_moment(member, i, j, axis, xi):
 
 
 def beam_3d_torsion_moment(member, i, j, xi):
-    """
+    r"""
     Compute 3d beam torsion moment based on the displacements stored at the
     joints. The moment is uniform along the beam.
 
-    The moment is mathematically defined as $T = GJ d\\theta_x/dx$. The rate of
-    change of the axial rotation, $d\\theta_x/dx$, is computed with the
-    torsion-displacement matrix $B$, obtained by the function
+    The moment is mathematically defined as :math:`T = GJ d\theta_x/dx`. The rate of
+    change of the axial rotation, :math:`d\theta_x/dx`, is computed with the
+    torsion-displacement matrix :math:`B`, obtained by the function
     `beam_3d_torsion_displ_matrix`.
 
     The torsion moment is uniform along the beam. Hence, `xi` does not matter.
@@ -768,12 +790,12 @@ def beam_3d_stretch_displ_matrix(e_x, h, xi):
 
 
 def beam_2d_3d_axial_stiffness(e_x, h, E, A):
-    """
+    r"""
     Compute axial stiffness matrix.
 
     This function works both for 2D and 3D beams.
 
-    The axial stiffness matrix is computed as $K = EA B^T B h$. Here $B$ is the
+    The axial stiffness matrix is computed as :math:`K = EA B^T B h`. Here :math:`B` is the
     stretch-displacement matrix, computed by `beam_3d_stretch_displ_matrix`.
 
     Parameters
@@ -802,10 +824,10 @@ def beam_2d_3d_axial_stiffness(e_x, h, E, A):
 
 
 def beam_3d_torsion_stiffness(e_x, h, G, J):
-    """
+    r"""
     Compute torsion stiffness matrix.
 
-    The torsion stiffness matrix is computed as $K = GJ B^T B h$. Here $B$ is
+    The torsion stiffness matrix is computed as :math:`K = GJ B^T B h`. Here :math:`B` is
     the torsion-displacement matrix, computed by `beam_3d_torsion_displ_matrix`.
 
     Parameters
@@ -956,21 +978,22 @@ def assemble_mass(Mg, member, i, j):
 
 
 def beam_2d_mass(e_x, e_z, h, rho, A):
-    """
+    r"""
     Compute beam mass matrix.
 
     The mass matrix is consistent, which means that it is computed as discrete
     form of the kinetic energy of the element,
 
-    $\\int \\rho A \\left(\\dot u \\cdot \\dot u +  \\dot w \\cdot \\dot
-    w\\right)dx$
+    .. math::
 
-    where $\\dot u$ and $\\dot w$ are the velocities in the $x$ and $z$
+        \int \rho A \left(\dot u \cdot \dot u +  \dot w \cdot \dot    w\right)dx
+
+    where :math:`\dot u` and  :math:`\dot w` are the velocities in the :math:`x` and :math:`z`
     directions. Note that the rotational velocities of the cross sections do not
     play a role.
 
-    The velocity $\\dot u$ is assumed to very linearly along the element, and
-    the velocity $\\dot w$ is assumed to vary according to the Hermite shape
+    The velocity :math:`\dot u` is assumed to vary linearly along the element, and
+    the velocity :math:`\dot w` is assumed to vary according to the Hermite shape
     functions.
 
     Gauss quadrature is used to compute the mass matrix.
@@ -1009,25 +1032,28 @@ def beam_2d_mass(e_x, e_z, h, rho, A):
 
 
 def beam_3d_mass(e_x, e_y, e_z, h, rho, A, Ix, Iy, Iz):
-    """
+    r"""
     Compute beam mass matrix.
 
     The mass matrix is consistent, which means that it is computed as discrete
     form of the kinetic energy of the element,
 
-    $\\int \\rho A \\left(\\dot u \\cdot \\dot u + \\dot v \\cdot \\dot v + \\dot w \\cdot \\dot
-    w\\right)dx$
+    .. math::
 
-    where $\\dot u$, $\\dot v$, and $\\dot w$ are the velocities in the $x$, $y$, and $z$
+        \int \rho A \left(\dot u \cdot \dot u + \dot v \cdot \dot v + \dot w \cdot \dot    w\right)dx
+
+    where :math:`\dot u`, :math:`\dot v`, and :math:`\dot w` are the velocities in the :math:`x`, :math:`y`, and :math:`z`
     directions.
 
-    The velocity $\\dot u$ is assumed to very linearly along the element, and
-    the velocity $\\dot v$, $\\dot w$ is assumed to vary according to the Hermite shape
-    functions. Rotations about $y$ and $z$ are ignored in the kinetic energy.
+    The velocity :math:`\dot u` is assumed to vary linearly along the element, and
+    the velocity :math:`\dot v`, :math:`\dot w` is assumed to vary according to the Hermite shape
+    functions. Rotations about :math:`y` and :math:`z` are ignored in the kinetic energy.
 
     For spinning of the beam about its axis, the kinetic energy is given by the formula
 
-    $\\int \\rho Ix \\dot \\theta_x \\cdot \\dot \\theta_x dx$.
+    .. math::
+
+        \int \rho I_x \dot \theta_x \cdot \dot \theta_x dx.
 
     Gauss quadrature is used to compute the mass matrix.
 
