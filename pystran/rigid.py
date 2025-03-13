@@ -14,29 +14,30 @@ def rigid_link_stiffness(e_x, h, Gamma):
 
     The stiffness matrix is computed as
 
-    $$
-    K =\begin{bmatrix} 
-          C^T\Gamma C & -C^T\Gamma  \\
-          -\Gamma C & \Gamma \\
-       \end{bmatrix}.
-    $$
+    .. math::
+        K =\begin{bmatrix} 
+            C^T\Gamma C & -C^T\Gamma  \\
+            -\Gamma C & \Gamma \\
+        \end{bmatrix}.
+    
 
-    Here $C$ is a matrix computed from the vector    $r = h e_x$, 
+    Here :math:`C` is a matrix computed from the vector  :math:`r = h e_x`, 
     which is the difference between the location of 
     the subordinate and the location of the master.
 
     In three dimensions
-    $$
-    C =\begin{bmatrix} 
-          1 & \widetilde{r} \\
-          0 & 1 \\
-       \end{bmatrix}.
-    $$
-    Here $ \widetilde{r}$ is a skew matrix corresponding to the 
-    vector $r$, and $0$ and $1$ stand for $3\times3$ zero 
+    
+    .. math::
+        C =\begin{bmatrix} 
+            1 & \widetilde{r} \\
+            0 & 1 \\
+        \end{bmatrix}.
+    
+    Here :math:` \widetilde{r}` is a skew matrix corresponding to the 
+    vector :math:`r`, and :math:`0` and :math:`1` stand for :math:`3\times3` zero 
     and identity matrices respectively.
 
-    Further, $\Gamma$ is a diagonal matrix, such that 
+    Further, :math:`\Gamma` is a diagonal matrix, such that 
     the diagonal entries provide penalty on the difference 
     between the individual degrees of freedom.
 

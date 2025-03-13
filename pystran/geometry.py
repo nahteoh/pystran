@@ -7,7 +7,7 @@ from numpy.linalg import norm, cross
 
 
 def delt(ci, cj):
-    """
+    r"""
     Compute oriented vector from the first to the second location.
 
     Parameters
@@ -25,7 +25,7 @@ def delt(ci, cj):
 
 
 def vlen(ci, cj):
-    """
+    r"""
     Compute distance from the first to the second point.
 
     Parameters
@@ -38,13 +38,14 @@ def vlen(ci, cj):
     Returns
     -------
     float
+        This is :math:`\| c_j - c_i \|`.
     """
     return norm(delt(ci, cj))
 
 
 def lin_basis(xi):
-    """
-    Compute linear basis functions for an interval $-1\\le\\xi\\le+1$.
+    r"""
+    Compute linear basis functions for an interval :math:`-1\le\xi\le+1:math:`.
 
     Parameters
     ----------
@@ -55,13 +56,13 @@ def lin_basis(xi):
     Returns
     -------
     array
-        The matrix of basis functions.
+        The matrix of basis functions (i.e. :math:`[N_1(\xi), N_2(\xi)]`).
     """
     return array([(xi - 1) / (-1 - 1), (xi - -1) / (1 - -1)])
 
 
 def interpolate(xi, q1, q2):
-    """
+    r"""
     Interpolate linearly between two quantities.
 
     Parameters
@@ -70,16 +71,16 @@ def interpolate(xi, q1, q2):
         Parametric coordinate (from -1 to +1) from the first joint to the
         second.
     q1
-        The quantity at $\\xi=-1$.
+        The quantity at :math:`\xi=-1`.
     q2
-        The quantity at $\\xi=+1`.
+        The quantity at :math:`\xi=+1`.
     """
     N = lin_basis(xi)
     return N[0] * q1 + N[1] * q2
 
 
 def herm_basis(xi):
-    """
+    r"""
     Compute the Hermite basis functions.
 
     Parameters
@@ -90,7 +91,7 @@ def herm_basis(xi):
     Returns
     -------
     array
-        An array of basis function values is returned (i.e. $[N_1(\\xi), ..., N_4(\\xi)]$).
+        An array of basis function values is returned (i.e. :math:`[N_1(\xi), ..., N_4(\xi)]`).
     """
     return array(
         [
@@ -103,8 +104,8 @@ def herm_basis(xi):
 
 
 def herm_basis_xi(xi):
-    """
-    Compute the first derivative wrt $\\xi$ of the Hermite basis functions.
+    r"""
+    Compute the first derivative wrt `\xi` of the Hermite basis functions.
 
     Parameters
     ----------
@@ -115,7 +116,7 @@ def herm_basis_xi(xi):
     -------
     array
         An array of first derivatives of shape functions is returned (i.e.
-        $[dN_1(\\xi)/d\\xi, ..., dN_4(\\xi)/d\\xi]$).
+        :math:`[dN_1(\xi)/d\xi, ..., dN_4(\xi)/d\xi]`).
     """
     return array(
         [
@@ -128,8 +129,8 @@ def herm_basis_xi(xi):
 
 
 def herm_basis_xi2(xi):
-    """
-    Compute the second derivative wrt $\\xi$ of the Hermite basis functions.
+    r"""
+    Compute the second derivative wrt `\xi` of the Hermite basis functions.
 
     Parameters
     ----------
@@ -140,14 +141,14 @@ def herm_basis_xi2(xi):
     -------
     array
         An array of second derivatives of shape functions is returned (i.e.
-        $[d^2N_1(\\xi)/d\\xi^2, ..., d^2N_4(\\xi)/d\\xi^2]$).
+        :math:`[d^2N_1(\xi)/d\xi^2, ..., d^2N_4(\xi)/d\xi^2]`).
     """
     return array([(6 * xi) / 4, (2 - 6 * xi) / 4, (-6 * xi) / 4, (-2 - 6 * xi) / 4])
 
 
 def herm_basis_xi3(xi):
-    """
-    Compute the third derivative wrt $\\xi$ of the Hermite basis functions.
+    r"""
+    Compute the third derivative wrt `\xi` of the Hermite basis functions.
 
     Parameters
     ----------
@@ -158,7 +159,7 @@ def herm_basis_xi3(xi):
     -------
     array
         An array of third derivatives of shape functions is returned (i.e.
-        $[d^3N_1(\\xi)/d\\xi^3, ..., d^3N_4(\\xi)/d\\xi^3]$).
+        :math:`[d^3N_1(\xi)/d\xi^3, ..., d^3N_4(\xi)/d\xi^3]`).
     """
     return array([(6) / 4, (-6) / 4, (-6) / 4, (-6) / 4])
 

@@ -9,11 +9,12 @@ from pystran import gauss
 
 
 def truss_stiffness(e_x, h, E, A):
-    """
+    r"""
     Compute truss stiffness matrix.
 
-    The axial stiffness matrix is computed as $K = EA B^T B h$. Here $B$ is the
-    stretch-displacement matrix, computed by `truss_strain_displacement`.
+    The axial stiffness matrix is computed as :math:`K = EA B^T B h`. Here
+    :math:`B` is the stretch-displacement matrix, computed by
+    `truss_strain_displacement`.
 
     Parameters
     ----------
@@ -41,15 +42,17 @@ def truss_stiffness(e_x, h, E, A):
 
 
 def truss_2d_mass(e_x, e_z, h, rho, A):
-    """
+    r"""
     Compute 2d truss mass matrix.
 
     The mass matrix is consistent, which means that it is computed as discrete
     form of the kinetic energy of the element,
 
-    $\\int \\rho A \\left(\\dot u \\cdot \\dot u +  \\dot w \\cdot \\dot w\\right)dx$
+    .. math::
+        \int \rho A \left(\dot u \cdot \dot u +  \dot w \cdot \dot w\right)dx
 
-    where $\\dot u$ and $\\dot w$ are the velocities in the $x$ and $z$ directions.
+    where :math:`\dot u` and :math:`\dot w` are the velocities in the :math:`x` and
+    :math:`z` directions.
 
     Parameters
     ----------
@@ -85,17 +88,17 @@ def truss_2d_mass(e_x, e_z, h, rho, A):
 
 
 def truss_3d_mass(e_x, e_y, e_z, h, rho, A):
-    """
+    r"""
     Compute 3d truss mass matrix.
 
     The mass matrix is consistent, which means that it is computed as discrete
     form of the kinetic energy of the element,
 
-    $\\int \\rho A \\left(\\dot u \\cdot \\dot u + \\dot v \\cdot \\dot v +
-    \\dot w \\cdot \\dot w\\right)dx$
+    .. math::
+        \int \rho A \left(\dot u \cdot \dot u + \dot v \cdot \dot v +    \dot w \cdot \dot w\right)dx
 
-    where $\\dot u$, $\\dot v$, and $\\dot w$ are the velocities in the $x$,
-    $y$, and $z$ directions.
+    where :math:`\dot u`, :math:`\dot v`, and :math:`\dot w` are the velocities
+    in the :math:`x`, :math:`y`, and :math:`z` directions.
 
     Parameters
     ----------
@@ -135,11 +138,11 @@ def truss_3d_mass(e_x, e_y, e_z, h, rho, A):
 
 
 def truss_strain_displacement(e_x, h):
-    """
+    r"""
     Compute truss strain-displacement matrix.
 
-    The axial strain is computed as $\\varepsilon = B u$, using the strain
-    displacement matrix $B$ and the displacement vector $u$.
+    The axial strain is computed as :math:`\varepsilon = B u`, using the strain
+    displacement matrix :math:`B` and the displacement vector :math:`u`.
 
     The dimension of the strain-displacement matrix depends on the number of
     space dimensions. The vector `e_x` is the unit vector along the truss
@@ -235,13 +238,13 @@ def assemble_mass(Mg, member, i, j):
 
 
 def truss_axial_force(member, i, j):
-    """
+    r"""
     Compute truss axial force based on the displacements stored at the joints.
 
-    The force is computed as $N = EA B U$, where $B$ is the strain-displacement
-    matrix (computed by `truss_strain_displacement`), $U$ is the displacement
-    vector (so that $\\varepsilon  = BU$ is the axial strain), and $EA$ is the
-    axial stiffness.
+    The force is computed as :math:`N = EA B U`, where :math:`B` is the
+    strain-displacement matrix (computed by `truss_strain_displacement`),
+    :math:`U` is the displacement vector (so that :math:`\varepsilon  = BU` is
+    the axial strain), and :math:`EA` is the axial stiffness.
 
     Parameters
     ----------

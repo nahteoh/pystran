@@ -546,36 +546,37 @@ def solve_statics(m):
 
     This function solves the equation of static equilibrium
 
-    $$ K \cdot U = F $$
+    .. math::
+        K \cdot U = F 
 
-    Here $K$ is the stiffness matrix, $U$ is the displacement vector, and $F$
-    is the vector of forces acting on the joints.
+    Here :math:`K` is the stiffness matrix, :math:`U` is the displacement
+    vector, and :math:`F` is the vector of forces acting on the joints.
 
-    Note that the degrees of freedom can be partitioned 
-    into 'free' and prescribed (given as 'data').
+    Note that the degrees of freedom can be partitioned into 'free' and
+    prescribed (given as 'data').
 
-    $$ 
-    \left[ \begin{array}{cc} 
-    K_{ff} & K_{fd} \\
-    K_{df} & K_{dd} \\
-    \end{array}\right] \cdot \left[ \begin{array}{cc} 
-    U_{f} \\
-    U_{d} \\
-    \end{array}\right] = \left[ \begin{array}{cc} 
-    L_{f} \\
-    L_{d} + R\\
-    \end{array}\right] 
-    $$
+    .. math::
+        \left[ \begin{array}{cc} 
+        K_{ff} & K_{fd} \\
+        K_{df} & K_{dd} \\
+        \end{array}\right] \cdot \left[ \begin{array}{cc} 
+        U_{f} \\
+        U_{d} \\
+        \end{array}\right] = \left[ \begin{array}{cc} 
+        L_{f} \\
+        L_{d} + R\\
+        \end{array}\right] 
+    
 
-    Here $L_f$ is the vector of active loads applied to the free degrees of freedom,
-    and $L_d$  is the vector of active loads applied to the data degrees of freedom.
-    The reactions $R$ due to supports act on the prescribed (data) degrees of freedom.
+    Here :math:`L_f` is the vector of active loads applied to the free degrees of
+    freedom, and :math:`L_d`  is the vector of active loads applied to the data
+    degrees of freedom. The reactions :math:`R` due to supports act on the prescribed
+    (data) degrees of freedom.
 
     The system of equations is solved for the free degrees of freedom as
 
-    $$ 
-    K_{ff} \cdot U_{f} = -K_{fd} \cdot U_{d} +L_{f}  
-    $$
+    .. math::
+        K_{ff} \cdot U_{f} = -K_{fd} \cdot U_{d} +L_{f} 
     
 
     Parameters
@@ -635,32 +636,32 @@ def statics_reactions(m):
 
     The partitioned system of balanced equations reads
 
-    $$ 
-    \left[ \begin{array}{cc} 
-    K_{ff} & K_{fd} \\
-    K_{df} & K_{dd} \\
-    \end{array}\right] \cdot \left[ \begin{array}{cc} 
-    U_{f} \\
-    U_{d} \\
-    \end{array}\right] = \left[ \begin{array}{cc} 
-    L_{f} \\
-    L_{d} + R\\
-    \end{array}\right] 
-    $$
+    .. math::
+        \left[ \begin{array}{cc} 
+        K_{ff} & K_{fd} \\
+        K_{df} & K_{dd} \\
+        \end{array}\right] \cdot \left[ \begin{array}{cc} 
+        U_{f} \\
+        U_{d} \\
+        \end{array}\right] = \left[ \begin{array}{cc} 
+        L_{f} \\
+        L_{d} + R\\
+        \end{array}\right] 
+    
 
-    Here $L_f$ is the vector of active loads applied to the free degrees of freedom,
-    and $L_d$  is the vector of active loads applied to the data degrees of freedom.
-    The reactions $R$ due to supports act on the prescribed (data) degrees of freedom.
+    Here :math:`L_f` is the vector of active loads applied to the free degrees
+    of freedom, and :math:`L_d`  is the vector of active loads applied to the data
+    degrees of freedom. The reactions :math:`R` due to supports act on the prescribed
+    (data) degrees of freedom.
 
     The system of equations is solved for the reactions as
 
-    $$ 
-    R = K_{ff} \cdot U_{f} + K_{fd} \cdot U_{d} -L_{d}  
-    $$
+    .. math::
+        R = K_{ff} \cdot U_{f} + K_{fd} \cdot U_{d} -L_{d} 
     
-    once $U_f$ has been solved for in the `solve_statics` step.
+    once :math:`U_f` has been solved for in the `solve_statics` step.
 
-    The reactions are distributed to the joints, and can be retrieved from 
+    The reactions are distributed to the joints, and can be retrieved from
     individual joint dictionaries as `j['reactions']`.
 
     Parameters
@@ -707,10 +708,12 @@ def solve_free_vibration(m):
     `m["frequencies"]`).
 
     The equation of free vibration is
-    $$
-    K \cdot V = \omega^2 M \cdot V
-    $$
-    where $M$ is the mass matrix, $V$ is the eigenvector, and $\omega$ is the angular frequency.
+
+    .. math::
+        K \cdot V = \omega^2 M \cdot V
+
+    where :math:`M` is the mass matrix, :math:`V` is the eigenvector, and
+    :math:`\omega` is the angular frequency.
 
     `number_dofs` must be called before this function.
 
@@ -762,8 +765,9 @@ def set_solution(m, V):
     m
         The model.
     V
-        The displacement vector. Either of length `m["nfreedof"]` for only the free degrees
-        of freedom, or of length `m["ntotaldof"]` for the total number of degrees of freedom.
+        The displacement vector. Either of length `m["nfreedof"]` for only the
+        free degrees of freedom, or of length `m["ntotaldof"]` for the total
+        number of degrees of freedom.
 
     Returns
     -------
