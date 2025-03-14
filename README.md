@@ -1,13 +1,14 @@
 # pystran: Python for Structural Analysis
 
 A simple structural analysis tool in Python, for structures consisting of truss
-and beam members, both in two dimensions and in three dimensions.
+and beam members, springs, and rigid bodies, both in two dimensions and in three dimensions.
 
 
 ![Alt pystran capabilities in graphic abstract](docs/splash.png)
 
 ## News
 
+- 03/13/2025: Update documentation for the sphinx system.
 - 03/10/2025: Add rigid links and general springs.
 
 
@@ -42,13 +43,14 @@ and beam members, both in two dimensions and in three dimensions.
 
 ## Requirements
 
+`pystran` depends on the following Python packages: 
 - NumPy
 - SciPy
 - Matplotlib
 
-These requirements can be easily satisfied by running the examples in the [Spyder](docs/spyder/spyder.md) IDE.
+These requirements can be easily satisfied by running the examples in the [Spyder IDE](docs/spyder/spyder.md).
 
-Optionally, if documentation is desired:
+Optionally, if documentation is desired, install also:
 
 - sphinx 
 
@@ -70,12 +72,12 @@ It is also possible to run simulations using a [plain Python in a terminal](docs
 ## Tutorials
 
 Step-by-step tutorials are available in the [`tutorials`](./tutorials) folder. 
-Run tutorials in the `pystran/tutorials` for example in the terminal as 
+For example, run tutorials in the `pystran/tutorials` in the terminal  as 
 ```
-01_three_bars_tut.py
+py tutorials/01_three_bars_tut.py
 ```
 
-Or, [use Spyder](docs/spyder/spyder.md).
+Or, [use Spyder](docs/spyder/spyder.md), which makes the whole process a lot easier to set up.
 
 
 ## Testing
@@ -84,7 +86,7 @@ In the `pystran/tests` folder, run
 ```
 py unittests_planar_truss.py 
 ```
-or analogously for the other unit test files.
+and analogously for the other unit test files.
 
 ## <a name="past-news"></a>Past news
 
