@@ -662,7 +662,7 @@ def _plot_3d_truss_beam_axial_forces(ax, member, i, j, scale):
     n = 13
     dirv = e_z
     for _, xi in enumerate(linspace(-1, +1, n)):
-        N = beam_3d_axial_force(member, i, j)
+        N = beam_3d_axial_force(member, i, j, 0.0)
         x = interpolate(xi, ci, cj)
         xs = zeros(2)
         ys = zeros(2)
@@ -695,12 +695,12 @@ def plot_axial_forces(m, scale=0.0):
 
     def funb(member, i, j, _):
         if m["dim"] == 3:
-            return beam_3d_axial_force(member, i, j)
+            return beam_3d_axial_force(member, i, j, 0.0)
         else:
-            return beam_2d_axial_force(member, i, j)
+            return beam_2d_axial_force(member, i, j, 0.0)
 
     def funt(member, i, j):
-        return truss_axial_force(member, i, j)
+        return truss_axial_force(member, i, j, 0.0)
 
     if scale == 0.0:
         cd = characteristic_dimension(m)

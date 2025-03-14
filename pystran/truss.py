@@ -237,7 +237,7 @@ def assemble_mass(Mg, member, i, j):
     return assemble.assemble(Mg, dof, m)
 
 
-def truss_axial_force(member, i, j):
+def truss_axial_force(member, i, j, xi):
     r"""
     Compute truss axial force based on the displacements stored at the joints.
 
@@ -254,6 +254,9 @@ def truss_axial_force(member, i, j):
         Dictionary that defines the data of the first joint of the member.
     j
         Dictionary that defines the data of the second joint of the member.
+    xi
+        Location along the bar in terms of the parameter coordinate. Unused, as
+        the force along the bar is constant.
 
     Returns
     -------

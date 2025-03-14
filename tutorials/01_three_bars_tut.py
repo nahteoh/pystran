@@ -125,7 +125,7 @@ for b in m["truss_members"].values():
 for b in m["truss_members"].values():
     connectivity = b["connectivity"]
     i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-    N = truss.truss_axial_force(b, i, j)
+    N = truss.truss_axial_force(b, i, j, 0.0)
     print("N = ", N)
 
 # These are the reference values of the forces from the book.
