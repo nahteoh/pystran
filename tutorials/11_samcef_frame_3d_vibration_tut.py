@@ -115,6 +115,8 @@ model.add_beam_member(m, 16, [24, 21], shoriz)
 nref = 3
 for i in range(16):
     model.refine_member(m, i + 1, nref)
+# If you wish to see the results for a single element per member, comment out
+# those three lines above.
 
 # Solve the problem.
 model.number_dofs(m)
@@ -122,12 +124,15 @@ model.number_dofs(m)
 print(f"Number of degrees of freedom: {m['nfreedof']}")
 model.solve_free_vibration(m)
 
-# The textbook cites the following frequencies (apparently for a single element
+# The textbook cites the following frequencies (for a single finite element
 # per member):
 reffs = [3.08, 4.65, 7.87, 8.23]
+# Our results will be slightly lower, is because we use multiple elements per
+# member.
 
 # Plot the modes and compare the frequencies. The mode shapes correlate with
 # those published in the reference.
+print("Note: we use multiple elements per member. Our frequencies will be lower.")
 for mode in range(0, 4):
     print(f"Mode {mode}: {m['frequencies'][mode]:.3f} Hz")
     print("  Reference: ", reffs[mode])

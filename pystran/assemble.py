@@ -5,17 +5,17 @@ Define utility for assembling.
 from numpy import arange
 
 
-def assemble(Kg, dof, k):
+def assemble(kg, dof, k):
     """
     Assemble local matrix into a global matrix.
 
-    Assemble local (stiffness or mass) matrix `k` into global (stiffness or
-    mass) matrix `Kg`, using the array of degrees of freedom, `dof`, for both
-    the rows and columns. In other words, `k` must be symmetric.
+    Assemble local (stiffness or mass) matrix ``k`` into global (stiffness or
+    mass) matrix ``kg``, using the array of degrees of freedom, ``dof``, for both
+    the rows and columns. In other words, ``k`` must be symmetric.
 
     Parameters
     ----------
-    Kg
+    kg
         Global matrix.
     dof
         Array of degrees of freedom.
@@ -24,10 +24,10 @@ def assemble(Kg, dof, k):
 
     Returns
     -------
-    Kg
+    kg
     """
     for r in arange(len(dof)):
         for c in arange(len(dof)):
             gr, gc = dof[r], dof[c]
-            Kg[gr, gc] += k[r, c]
-    return Kg
+            kg[gr, gc] += k[r, c]
+    return kg

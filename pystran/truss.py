@@ -14,7 +14,7 @@ def truss_stiffness(e_x, h, E, A):
 
     The axial stiffness matrix is computed as :math:`K = EA B^T B h`. Here
     :math:`B` is the stretch-displacement matrix, computed by
-    `truss_strain_displacement`.
+    :func:`truss_strain_displacement`.
 
     Parameters
     ----------
@@ -35,7 +35,7 @@ def truss_stiffness(e_x, h, E, A):
 
     See Also
     --------
-    truss_strain_displacement
+    :func:`truss_strain_displacement`
     """
     B = truss_strain_displacement(e_x, h)
     return E * A * outer(B.T, B) * h
@@ -45,7 +45,7 @@ def truss_2d_mass(e_x, e_z, h, rho, A):
     r"""
     Compute 2d truss mass matrix.
 
-    The mass matrix is consistent, which means that it is computed as discrete
+    The mass matrix is consistent, which means that it is computed from the discrete
     form of the kinetic energy of the element,
 
     .. math::
@@ -91,11 +91,11 @@ def truss_3d_mass(e_x, e_y, e_z, h, rho, A):
     r"""
     Compute 3d truss mass matrix.
 
-    The mass matrix is consistent, which means that it is computed as discrete
+    The mass matrix is consistent, which means that it is computed from the discrete
     form of the kinetic energy of the element,
 
     .. math::
-        \int \rho A \left(\dot u \cdot \dot u + \dot v \cdot \dot v +    \dot w \cdot \dot w\right)dx
+        \int \rho A \left(\dot u \cdot \dot u + \dot v \cdot \dot v + \dot w \cdot \dot w\right)dx
 
     where :math:`\dot u`, :math:`\dot v`, and :math:`\dot w` are the velocities
     in the :math:`x`, :math:`y`, and :math:`z` directions.
@@ -145,8 +145,8 @@ def truss_strain_displacement(e_x, h):
     displacement matrix :math:`B` and the displacement vector :math:`u`.
 
     The dimension of the strain-displacement matrix depends on the number of
-    space dimensions. The vector `e_x` is the unit vector along the truss
-    member, so it could have one, two, or three components.
+    space dimensions. The vector :math:`e_x` is the unit vector along the truss
+    member, and it could have two or three components.
 
     Parameters
     ----------
@@ -242,7 +242,7 @@ def truss_axial_force(member, i, j):
     Compute truss axial force based on the displacements stored at the joints.
 
     The force is computed as :math:`N = EA B U`, where :math:`B` is the
-    strain-displacement matrix (computed by `truss_strain_displacement`),
+    strain-displacement matrix (computed by :func:`truss_strain_displacement`),
     :math:`U` is the displacement vector (so that :math:`\varepsilon  = BU` is
     the axial strain), and :math:`EA` is the axial stiffness.
 
