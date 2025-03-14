@@ -17,7 +17,7 @@ def create(dim=2):
     Parameters
     ----------
     dim
-        Supply the dimension of the model (2 or 3)._
+        Supply the dimension of the model (2 or 3).
 
     Returns
     -------
@@ -62,7 +62,7 @@ def add_joint(m, jid, coordinates, dof=None):
         input is converted to an array.
     dof
         Optional: the degrees of freedom of the joint as a list (or a
-        tuple). If provided, do not use `number_dofs` later on.
+        tuple). If provided, do not use :func:`number_dofs` later on.
 
     Returns
     -------
@@ -222,9 +222,9 @@ def add_support(j, dof, value=0.0):
     Parameters
     ----------
     j
-        The joint (obtained from the model as `m["joints"][jid]`).
+        The joint (obtained from the model as ``m["joints"][jid]``).
     dof
-        The degree of freedom (0, 1, ...). Refer to the module `freedoms`.
+        The degree of freedom (0, 1, ...). Refer to the module ``freedoms``.
     value
         The signed magnitude of the support motion (default is zero).
 
@@ -250,7 +250,7 @@ def add_load(j, dof, value):
     Parameters
     ----------
     j
-        The joint (obtained from the model as `m["joints"][jid]`).
+        The joint (obtained from the model as ``m["joints"][jid]``).
     dof
         The degree of freedom (0, 1, ...).
     value
@@ -278,9 +278,9 @@ def add_mass(j, dof, value):
     Parameters
     ----------
     j
-        The joint (obtained from the model as `m["joints"][jid]`).
+        The joint (obtained from the model as ``m["joints"][jid]``).
     dof
-        The degree of freedom (0, 1, ...). Refer to the module `freedoms`.
+        The degree of freedom (0, 1, ...). Refer to the module ``freedoms``.
     value
         The magnitude of the added mass.
 
@@ -299,8 +299,8 @@ def add_mass(j, dof, value):
 
 def add_dof_links(m, jids, dof):
     """
-    Add degree-of-freedom links between all joints in the list `jids` in the
-    direction `dof`.
+    Add degree-of-freedom links between all joints in the list ``jids`` in the
+    direction ``dof``.
 
     Parameters
     ----------
@@ -435,8 +435,8 @@ def number_dofs(m):
     All current information about degrees of freedom will be replaced when this
     function is done.
 
-    After this function returns, `m["nfreedof"]` will be the number of free
-    degrees of freedom, and `m["ntotaldof"]` will be the total number of degrees
+    After this function returns, ``m["nfreedof"]`` will be the number of free
+    degrees of freedom, and ``m["ntotaldof"]`` will be the total number of degrees
     of freedom.
 
     The degrees of freedom are numbered in the order of free and then
@@ -542,7 +542,7 @@ def solve_statics(m):
     r"""
     Solve the static equilibrium of the discrete model.
 
-    `number_dofs` must be called before this function.
+    :func:`number_dofs` must be called before this function.
 
     This function solves the equation of static equilibrium
 
@@ -590,7 +590,7 @@ def solve_statics(m):
 
     See Also
     --------
-    number_dofs
+    :func:`number_dofs`
     """
     nt, nf = m["ntotaldof"], m["nfreedof"]
     if nt <= 0:
@@ -650,19 +650,19 @@ def statics_reactions(m):
     
 
     Here :math:`L_f` is the vector of active loads applied to the free degrees
-    of freedom, and :math:`L_d`  is the vector of active loads applied to the data
-    degrees of freedom. The reactions :math:`R` due to supports act on the prescribed
-    (data) degrees of freedom.
+    of freedom, and :math:`L_d`  is the vector of active loads applied to the
+    data degrees of freedom. The reactions :math:`R` due to supports act on the
+    prescribed (data) degrees of freedom.
 
     The system of equations is solved for the reactions as
 
     .. math::
         R = K_{ff} \cdot U_{f} + K_{fd} \cdot U_{d} -L_{d} 
     
-    once :math:`U_f` has been solved for in the `solve_statics` step.
+    once :math:`U_f` has been solved for in the :func:`solve_statics` step.
 
     The reactions are distributed to the joints, and can be retrieved from
-    individual joint dictionaries as `j['reactions']`.
+    individual joint dictionaries as ``j['reactions']``.
 
     Parameters
     ----------
@@ -703,9 +703,9 @@ def solve_free_vibration(m):
     Solve the free vibration of the discrete model.
 
     The free vibration eigenvalue problem is solved for the eigenvalues and
-    eigenvectors (can be retrieved as  `m["eigvals"]` and `m["eigvecs"]`). The
+    eigenvectors (can be retrieved as  ``m["eigvals"]`` and ``m["eigvecs"]``). The
     frequencies are computed from the eigenvalues (can be retrieved as
-    `m["frequencies"]`).
+    ``m["frequencies"]``).
 
     The equation of free vibration is
 
@@ -715,7 +715,7 @@ def solve_free_vibration(m):
     where :math:`M` is the mass matrix, :math:`V` is the eigenvector, and
     :math:`\omega` is the angular frequency.
 
-    `number_dofs` must be called before this function.
+    :func:`number_dofs` must be called before this function.
 
     Parameters
     ----------
@@ -765,8 +765,8 @@ def set_solution(m, V):
     m
         The model.
     V
-        The displacement vector. Either of length `m["nfreedof"]` for only the
-        free degrees of freedom, or of length `m["ntotaldof"]` for the total
+        The displacement vector. Either of length ``m["nfreedof"]`` for only the
+        free degrees of freedom, or of length ``m["ntotaldof"]`` for the total
         number of degrees of freedom.
 
     Returns
@@ -796,7 +796,7 @@ def free_body_check(m):
     All the active forces and moments together with the reactions at all the
     supports should sum to zero.
 
-    `statics_reactions` must be called before this function as this calculation
+    :func:`statics_reactions` must be called before this function as this calculation
     relies on the presence of reactions at the joints.
 
     Parameters
@@ -887,12 +887,12 @@ def free_body_check(m):
 
 def refine_member(m, mid, n):
     """
-    Refine a beam member by replacing it with `n` new members.
+    Refine a beam member by replacing it with ``n`` new members.
 
     The new joints are numbered starting from zero, and the joint identifier is
     composed of the member identifier plus the serial number of the new joint.
 
-    There new member identifiers are stored under the key `"descendants"` in
+    There new member identifiers are stored under the key ``"descendants"`` in
     the refined member. The refined member is removed from the list of beam
     members.
 

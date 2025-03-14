@@ -105,7 +105,7 @@ def herm_basis(xi):
 
 def herm_basis_xi(xi):
     r"""
-    Compute the first derivative wrt `\xi` of the Hermite basis functions.
+    Compute the first derivative wrt :math:`\xi` of the Hermite basis functions.
 
     Parameters
     ----------
@@ -130,7 +130,7 @@ def herm_basis_xi(xi):
 
 def herm_basis_xi2(xi):
     r"""
-    Compute the second derivative wrt `\xi` of the Hermite basis functions.
+    Compute the second derivative wrt :math:`\xi` of the Hermite basis functions.
 
     Parameters
     ----------
@@ -148,7 +148,7 @@ def herm_basis_xi2(xi):
 
 def herm_basis_xi3(xi):
     r"""
-    Compute the third derivative wrt `\xi` of the Hermite basis functions.
+    Compute the third derivative wrt :math:`\xi` of the Hermite basis functions.
 
     Parameters
     ----------
@@ -165,12 +165,12 @@ def herm_basis_xi3(xi):
 
 
 def member_2d_geometry(i, j):
-    """
+    r"""
     Compute 2d member geometry.
 
-    A local coordinate system is attached to the member such that the `x` axis
-    is along the member axis. The deformation of the member is considered in
-    the x-z plane.
+    A local coordinate system is attached to the member such that the :math:`x`
+    axis is along the member axis. The deformation of the member is considered
+    in the :math:`x-z` plane.
 
     Parameters
     ----------
@@ -182,15 +182,15 @@ def member_2d_geometry(i, j):
     Returns
     -------
     tuple of e_x, e_z, h
-        Vector `e_x` is the direction vector along the axis of the member.
-        `e_z` is the direction vector perpendicular to the axis of the member.
-        These two vectors form a left-handed coordinate system (consistent with
-        the sign convention in the book): The deflection `w` is measured
-        positive downwards, while the `x` coordinate is measured left to right.
-        So in two dimensions `e_x` and `e_z` form a left-handed coordinate
-        system. In reality, the complete coordinate system is right-handed, as
-        the not-used basis vector is `e_y`, which points out of the plane of
-        the screen (page).
+        Vector :math:`e_x` is the direction vector along the axis of the
+        member. :math:`e_z` is the direction vector perpendicular to the axis
+        of the member. These two vectors form a left-handed coordinate system
+        (consistent with the sign convention in the book): The deflection
+        :math:`w` is measured positive downwards, while the :math:`x`
+        coordinate is measured left to right. So in two dimensions :math:`e_x`
+        and :math:`e_z` form a left-handed coordinate system. In reality, the
+        complete coordinate system is right-handed, as the not-used basis
+        vector is :math:`e_y`, which points out of the plane of the screen (page).
     """
     e_x = delt(i["coordinates"], j["coordinates"])
     h = vlen(i["coordinates"], j["coordinates"])
@@ -202,16 +202,16 @@ def member_2d_geometry(i, j):
 
 
 def member_3d_geometry(i, j, xz_vector):
-    """
+    r"""
     Compute 3d member geometry.
 
-    A local coordinate system is attached to the member such that the `x` axis
-    is along the member axis. The deformation of the member is considered in
-    the `x-y` and `x-z` plane.
+    A local coordinate system is attached to the member such that the :math:`x`
+    axis is along the member axis. The deformation of the member is considered
+    in the :math:`x-y` and :math:`x-z` plane.
 
-    The plane `x-z` is defined by the vector `xz_vector` and the member axis
-    (i.e. `e_x`). Therefore, the vector `xz_vector` must not be parallel to the
-    member axis.
+    The plane :math:`x-z` is defined by the vector ``xz_vector`` and the member
+    axis (i.e. :math:`e_x`). Therefore, the vector ``xz_vector`` must not be
+    parallel to the member axis.
 
     Parameters
     ----------
@@ -220,7 +220,7 @@ def member_3d_geometry(i, j, xz_vector):
     j
         Dictionary holding data for second joint.
     xz_vector
-        The vector that defines the `x-z` plane of the member-local
+        The vector that defines the :math:`x-z` plane of the member-local
         coordinate system. It does not need to be of unit length, but it must
         not be parallel to the member axis. This vector is not defined for a
         truss member, and will be passed in as empty. Heuristics will be then
@@ -229,10 +229,10 @@ def member_3d_geometry(i, j, xz_vector):
     Returns
     -------
     tuple of e_x, e_y, e_z, h
-        Vector `e_x` is the direction vector along the axis of the member.
-        `e_z` is the direction vector perpendicular to the axis of the member.
-        These two vectors form a right-handed coordinate system, completed by
-        `e_y`.
+        Vector :math:`e_x` is the direction vector along the axis of the
+        member. :math:`e_z` is the direction vector perpendicular to the axis
+        of the member. These two vectors form a right-handed coordinate system,
+        completed by :math:`e_y`.
     """
     e_x = delt(i["coordinates"], j["coordinates"])
     h = vlen(i["coordinates"], j["coordinates"])
