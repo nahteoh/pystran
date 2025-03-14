@@ -5,7 +5,7 @@ The functions in the package are documented. The documentation in nicely formatt
 First of all, install sphinx and a good theme:
 ```
 pip install sphinx
-pip install sphinx_rtd_theme
+pip install pydata_sphinx_theme
 ```
 
 In the `pystran` folder, run

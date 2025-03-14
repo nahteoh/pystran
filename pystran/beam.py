@@ -28,7 +28,7 @@ def beam_3d_xz_shape_fun(xi):
 
     See Also
     --------
-    herm_basis
+    :func:`pystran.geometry.herm_basis`
     """
     return herm_basis(xi)
 
@@ -49,6 +49,10 @@ def beam_3d_xz_shape_fun_xi2(xi):
     array
         An array of second derivatives of shape functions is returned (i.e.
         :math:`[d^2N_1(\xi)/d\xi^2, ..., d^2N_4(\xi)/d\xi^2]`).
+
+    See Also
+    --------
+    :func:`pystran.geometry.herm_basis`
     """
     return herm_basis_xi2(xi)
 
@@ -70,6 +74,10 @@ def beam_3d_xy_shape_fun(xi):
         second and fourth) need to be reversed relative to the :math:`x-z`
         plane of bending: An array of second derivatives of shape functions is
         returned (i.e. :math:`[N_1(\xi), -N_2(\xi), N_3(\xi), -N_4(\xi)]`).
+
+    See Also
+    --------
+    :func:`pystran.geometry.herm_basis`
     """
     N = herm_basis(xi)
     N[1] *= -1.0
@@ -95,6 +103,10 @@ def beam_3d_xy_shape_fun_xi2(xi):
         second and fourth) need to be reversed: An array of second derivatives
         of shape functions is returned (i.e. :math:`[d^2N_1(\xi)/d\xi^2,
         -d^2N_2(\xi)/d\xi^2, d^2N_3(\xi)/d\xi^2, -d^2N_4(\xi)/d\xi^2]`).
+
+    See Also
+    --------
+    :func:`pystran.geometry.herm_basis`
     """
     d2Ndxi2 = herm_basis_xi2(xi)
     d2Ndxi2[1] *= -1.0
@@ -118,6 +130,10 @@ def beam_3d_xz_shape_fun_xi3(xi):
     array
         An array of third derivatives of shape functions is returned (i.e.
         :math:`[d^3N_1(\xi)/d\xi^3, ..., d^3N_4(\xi)/d\xi^3]`).
+
+    See Also
+    --------
+    :func:`pystran.geometry.herm_basis`
     """
     return herm_basis_xi3(xi)
 
@@ -140,6 +156,10 @@ def beam_3d_xy_shape_fun_xi3(xi):
         second and fourth) need to be reversed: An array of third derivatives
         of shape functions is returned (i.e. :math:`[d^3N_1(\xi)/d\xi^3,
         -d^3N_2(\xi)/d\xi^3, d^3N_3(\xi)/d\xi^3, -d^3N_4(\xi)/d\xi^3]`).
+
+    See Also
+    --------
+    :func:`pystran.geometry.herm_basis`
     """
     d3Ndxi3 = herm_basis_xi3(xi)
     d3Ndxi3[1] *= -1.0
@@ -625,7 +645,7 @@ def beam_2d_axial_force(member, i, j, xi):
     Compute 2d beam axial force based on the displacements stored at the
     joints.
 
-    Refer to the function :func:`truss.truss_strain_displacement` that computes
+    Refer to the function :func:`pystran.truss.truss_strain_displacement` that computes
     the strain-displacement matrix for a truss member.
 
     The axial force is uniform along the beam. Hence, ``xi`` does not matter.
@@ -646,6 +666,10 @@ def beam_2d_axial_force(member, i, j, xi):
     -------
     float
         The force resultant.
+
+    See Also
+    --------
+    :func:`pystran.truss.truss_strain_displacement`
     """
     sect = member["section"]
     e_x, _, h = geometry.member_2d_geometry(i, j)
@@ -788,7 +812,7 @@ def beam_3d_stretch_displ_matrix(e_x, h, xi):
 
     See Also
     --------
-    :func:`truss.truss_strain_displacement`
+    :func:`pystran.truss.truss_strain_displacement`
     """
     return truss.truss_strain_displacement(e_x, h)
 
@@ -855,7 +879,7 @@ def beam_3d_torsion_stiffness(e_x, h, G, J):
 
     See Also
     --------
-    beam_3d_torsion_displ_matrix
+    :func:`beam_3d_torsion_displ_matrix`
     """
     B = beam_3d_torsion_displ_matrix(e_x, h, 0.0)  # single-point integration
     return G * J * outer(B.T, B) * h

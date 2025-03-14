@@ -35,7 +35,7 @@ def truss_stiffness(e_x, h, E, A):
 
     See Also
     --------
-    truss_strain_displacement
+    :func:`truss_strain_displacement`
     """
     B = truss_strain_displacement(e_x, h)
     return E * A * outer(B.T, B) * h

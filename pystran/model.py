@@ -234,7 +234,7 @@ def add_support(j, dof, value=0.0):
 
     See Also
     --------
-    pystran.freedoms
+    `pystran.freedoms`
     """
     if "supports" not in j:
         j["supports"] = {}
@@ -262,7 +262,7 @@ def add_load(j, dof, value):
 
     See Also
     --------
-    pystran.freedoms
+    `pystran.freedoms`
     """
     if "loads" not in j:
         j["loads"] = {}
@@ -290,7 +290,7 @@ def add_mass(j, dof, value):
 
     See Also
     --------
-    pystran.freedoms
+    `pystran.freedoms`
     """
     if "masses" not in j:
         j["masses"] = {}
@@ -317,7 +317,7 @@ def add_dof_links(m, jids, dof):
 
     See Also
     --------
-    pystran.freedoms
+    `pystran.freedoms`
     """
     # Now add the mutual links between the joints
     for jid1 in jids:
@@ -675,7 +675,7 @@ def statics_reactions(m):
 
     See Also
     --------
-    solve_statics
+    :func:`solve_statics`
     """
     K = m["K"]
     U = m["U"]
@@ -728,7 +728,7 @@ def solve_free_vibration(m):
 
     See Also
     --------
-    number_dofs
+    :func:`number_dofs`
     """
     nf = m["nfreedof"]
     # Assemble global stiffness matrix and mass matrix
@@ -775,7 +775,7 @@ def set_solution(m, V):
 
     See Also
     --------
-    number_dofs
+    :func:`number_dofs`
     """
     nf = m["nfreedof"]
     nt = m["ntotaldof"]
@@ -811,7 +811,7 @@ def free_body_check(m):
 
     See Also
     --------
-    statics_reactions
+    :func:`statics_reactions`
     """
     if m["dim"] == 2:
         nrbm = 3  # Number of rigid body modes: assume 2 translations, 1 rotation

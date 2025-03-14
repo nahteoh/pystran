@@ -46,11 +46,13 @@ and beam members, both in two dimensions and in three dimensions.
 - SciPy
 - Matplotlib
 
-Optionally:
-
-- pdoc3 (if documentation is desired)
-
 These requirements can be easily satisfied by running the examples in the [Spyder](docs/spyder/spyder.md) IDE.
+
+Optionally, if documentation is desired:
+
+- sphinx 
+
+More details about the generation of the documentation are [here](docs/make_docs.md).
 
 ## Running
 
@@ -75,13 +77,6 @@ Run tutorials in the `pystran/tutorials` for example in the terminal as
 
 Or, [use Spyder](docs/spyder/spyder.md).
 
-## Documentation
-
-The functions in the package are documented. The documentation in nicely formatted form can be obtained by running `pdoc3`. In the `pystran` folder, run
-```
-pdoc .\pystran\ --config latex_math=True  --output html --html --force
-```
-which will create an `./html` folder. double click the `index.html` file in that folder.
 
 ## Testing
 
