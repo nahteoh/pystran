@@ -14,7 +14,7 @@ def truss_section(name, E=0.0, A=0.0, rho=0.0, CTE=0.0):
     Define truss section.
 
     The parameters can be defined either as regular list of values or
-    variables, or in the keyword=value style.
+    variables, or in the ``keyword=value`` style.
 
     Parameters
     ----------
@@ -50,11 +50,11 @@ def truss_section(name, E=0.0, A=0.0, rho=0.0, CTE=0.0):
 
 
 def beam_2d_section(name, E=0.0, A=0.0, I=0.0, rho=0.0, CTE=0.0):
-    """
+    r"""
     Define 2d beam section.
 
     The parameters can be defined either as regular list of values or
-    variables, or in the keyword=value style.
+    variables, or in the ``keyword=value`` style.
 
     Parameters
     ----------
@@ -63,9 +63,9 @@ def beam_2d_section(name, E=0.0, A=0.0, I=0.0, rho=0.0, CTE=0.0):
     A
         Cross-sectional area.
     I
-        Central moment of inertia of the cross-section about the `y`
+        Central moment of inertia of the cross-section about the :math:`y`
         coordinate axis (i.e. the axis perpendicular to the plane of the
-        bending, `x-z`).
+        bending, :math:`x-z`).
     rho
         Mass density.
     CTE
@@ -95,7 +95,7 @@ def rigid_link_section(name, Gamma):
     Define a rigid link section.
 
     The parameters can be defined either as regular list of values or
-    variables, or in the keyword=value style.
+    variables, or in the ``keyword=value`` style.
 
     Parameters
     ----------
@@ -123,12 +123,12 @@ def spring_section(name, kind, direction, stiffness_coefficient=1.0):
     Define a section for a general extension or torsion spring.
 
     The parameters can be defined either as regular list of values or
-    variables, or in the keyword=value style.
+    variables, or in the ``keyword=value`` style.
 
     Parameters
     ----------
     kind
-        Either `"extension"` or `"torsion"`. The connected joints either react
+        Either ``"extension"`` or ``"torsion"``. The connected joints either react
         to displacement or to rotation.
     direction
         The spring acts *along* this direction for extension springs, or about
@@ -167,11 +167,11 @@ def beam_3d_section(
     xz_vector=(0, 0, 1),
     CTE=0.0,
 ):
-    """
+    r"""
     Define 3d beam section.
 
     The parameters can be defined either as regular list of values or
-    variables, or in the keyword=value style.
+    variables, or in the ``keyword=value`` style.
 
     Parameters
     ----------
@@ -186,14 +186,18 @@ def beam_3d_section(
     A
         Cross-sectional area.
     Ix
-        Central moment of inertia of the cross-section about the local `x`.
-    Iy `
-        Iz`= central moment of inertia of the cross-section about the local `y` and local `z`
-    coordinate axis.
+        Central moment of inertia of the cross-section about the local
+        :math:`x`.
+    Iy
+        Central moment of inertia of the cross-section about the local
+        :math:`y`.
+    Iz
+        Central moment of inertia of the cross-section about the local
+        :math:`z`.
     J
         St Venant torsion constant.
     xz_vector
-        Vector that lies in the local `x-z` coordinate plane.
+        Vector that lies in the local :math:`x-z` coordinate plane.
     CTE
         Coefficient of thermal expansion.
 
@@ -256,7 +260,7 @@ def i_beam(H, B, tf, tw):
     ----------
     H
         Height of the cross section, i.e. dimension along z. The axis parallel
-        to the flanges is `y`, the axis parallel to the web is `z`.
+        to the flanges is :math:`y`, the axis parallel to the web is :math:`z`.
     B
         Width of the flanges.
     tf
@@ -288,9 +292,9 @@ def rect_tube(H, B, th, tb):
     Parameters
     ----------
     H
-        Height of the cross section, i.e. dimension along z.
+        Height of the cross section, i.e. dimension along :math:`z`.
     B
-        Width of the cross section, i.e. dimension along y.
+        Width of the cross section, i.e. dimension along :math:`y`.
     th
         Thickness of the walls along the height.
     tb
@@ -317,9 +321,9 @@ def rectangle(H, B):
     Parameters
     ----------
     H
-        Height of the cross section, i.e. dimension along z.
+        Height of the cross section, i.e. dimension along :math:`z`.
     B
-        Width of the cross section, i.e. dimension along y.
+        Width of the cross section, i.e. dimension along :math:`y`.
 
     Returns
     -------

@@ -48,9 +48,9 @@ def rigid_link_stiffness(e_x, h, Gamma):
     Parameters
     ----------
     e_x
-        Vector `e_x` is the direction vector along the axis of the member.
+        Vector :math:`e_x` is the direction vector along the axis of the member.
     h
-        Length of the rigid link (distance between the length joints).
+        Length of the rigid link (distance between the joints).
     Gamma
         Diagonal matrix of the penalty constants.
 
