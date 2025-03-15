@@ -81,7 +81,7 @@ def interpolate(xi, q1, q2):
 
 def herm_basis(xi):
     r"""
-    Compute the Hermite basis functions.
+    Compute the cubic Hermite basis functions for an interval :math:`-1\le\xi\le+1:math:`.
 
     Parameters
     ----------
@@ -117,6 +117,10 @@ def herm_basis_xi(xi):
     array
         An array of first derivatives of shape functions is returned (i.e.
         :math:`[dN_1(\xi)/d\xi, ..., dN_4(\xi)/d\xi]`).
+
+    See Also
+    --------
+    :func:`herm_basis`
     """
     return array(
         [
@@ -142,6 +146,10 @@ def herm_basis_xi2(xi):
     array
         An array of second derivatives of shape functions is returned (i.e.
         :math:`[d^2N_1(\xi)/d\xi^2, ..., d^2N_4(\xi)/d\xi^2]`).
+
+    See Also
+    --------
+    :func:`herm_basis`
     """
     return array([(6 * xi) / 4, (2 - 6 * xi) / 4, (-6 * xi) / 4, (-2 - 6 * xi) / 4])
 
@@ -160,6 +168,10 @@ def herm_basis_xi3(xi):
     array
         An array of third derivatives of shape functions is returned (i.e.
         :math:`[d^3N_1(\xi)/d\xi^3, ..., d^3N_4(\xi)/d\xi^3]`).
+
+    See Also
+    --------
+    :func:`herm_basis`
     """
     return array([(6) / 4, (-6) / 4, (-6) / 4, (-6) / 4])
 
@@ -207,11 +219,15 @@ def member_3d_geometry(i, j, xz_vector):
 
     A local coordinate system is attached to the member such that the :math:`x`
     axis is along the member axis. The deformation of the member is considered
-    in the :math:`x-y` and :math:`x-z` plane.
+    in the three dimensional space.
 
     The plane :math:`x-z` is defined by the vector ``xz_vector`` and the member
-    axis (i.e. :math:`e_x`). Therefore, the vector ``xz_vector`` must not be
-    parallel to the member axis.
+    axis (i.e. :math:`e_x`), in other words :math:`e_x` is given by the axis of
+    the member, and the vector :math:`e_y` is the normalized cross product of the
+    ``xz_vector`` and :math:`e_x`. Therefore, the vector ``xz_vector`` must
+    not be parallel to the member axis.
+
+    The third vector, :math:`e_z`, completes the Cartesian basis.
 
     Parameters
     ----------
@@ -230,9 +246,10 @@ def member_3d_geometry(i, j, xz_vector):
     -------
     tuple of e_x, e_y, e_z, h
         Vector :math:`e_x` is the direction vector along the axis of the
-        member. :math:`e_z` is the direction vector perpendicular to the axis
-        of the member. These two vectors form a right-handed coordinate system,
-        completed by :math:`e_y`.
+        member, and  :math:`e_y` and :math:`e_z` are the direction vectors
+        perpendicular to the axis of the member. These three vectors form a
+        right-handed Cartesian coordinate system. :math:`h` is the length of
+        the member.
     """
     e_x = delt(i["coordinates"], j["coordinates"])
     h = vlen(i["coordinates"], j["coordinates"])
