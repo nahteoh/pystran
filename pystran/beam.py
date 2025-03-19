@@ -1003,7 +1003,7 @@ def assemble_mass(Mg, member, i, j):
         m = beam_2d_mass(e_x, e_z, h, rho, A)
     else:
         e_x, e_y, e_z, h = geometry.member_3d_geometry(i, j, sect["xz_vector"])
-        Ix, Iy, Iz = sect["Ix"], sect["Iy"], sect["Iz"]
+        Ix = sect["Ix"]
         m = beam_3d_mass(e_x, e_y, e_z, h, rho, A, Ix)
     Mg = assemble.assemble(Mg, dof, m)
     return Mg
@@ -1056,11 +1056,11 @@ def beam_2d_mass(e_x, e_z, h, rho, A):
     m = zeros((n, n))
     for xi, W in zip(xiG, WG):
         N = geometry.lin_basis(xi)
-        extN = concatenate([N[0] * e_x, [0.0], N[1] * e_x, [0.0]])
-        m += rho * A * outer(extN, extN) * W * (h / 2)
+        Nu = concatenate([N[0] * e_x, [0.0], N[1] * e_x, [0.0]])
+        m += rho * A * outer(Nu, Nu) * W * (h / 2)
         N = geometry.herm_basis(xi)
-        extN = concatenate([N[0] * e_z, [(h / 2) * N[1]], N[2] * e_z, [(h / 2) * N[3]]])
-        m += rho * A * outer(extN, extN) * W * (h / 2)
+        Nw = concatenate([N[0] * e_z, [(h / 2) * N[1]], N[2] * e_z, [(h / 2) * N[3]]])
+        m += rho * A * outer(Nw, Nw) * W * (h / 2)
     return m
 
 
