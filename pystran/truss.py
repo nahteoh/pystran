@@ -80,10 +80,10 @@ def truss_2d_mass(e_x, e_z, h, rho, A):
     m = zeros((n, n))
     for q in range(2):
         N = geometry.lin_basis(xiG[q])
-        extN = concatenate([N[0] * e_x, N[1] * e_x])
-        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
-        extN = concatenate([N[0] * e_z, N[1] * e_z])
-        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
+        Nu = array([N[0], 0.0, N[1], 0.0])
+        m += rho * A * outer(Nu, Nu) * WG[q] * (h / 2)
+        Nv = array([0.0, N[0], 0.0, N[1]])
+        m += rho * A * outer(Nv, Nv) * WG[q] * (h / 2)
     return m
 
 
@@ -128,12 +128,12 @@ def truss_3d_mass(e_x, e_y, e_z, h, rho, A):
     m = zeros((n, n))
     for q in range(2):
         N = geometry.lin_basis(xiG[q])
-        extN = concatenate([N[0] * e_x, N[1] * e_x])
-        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
-        extN = concatenate([N[0] * e_y, N[1] * e_y])
-        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
-        extN = concatenate([N[0] * e_z, N[1] * e_z])
-        m += rho * A * outer(extN, extN) * WG[q] * (h / 2)
+        Nu = array([N[0], 0.0, 0.0, N[1], 0.0, 0.0])
+        m += rho * A * outer(Nu, Nu) * WG[q] * (h / 2)
+        Nv = array([0.0, N[0], 0.0, 0.0, N[1], 0.0])
+        m += rho * A * outer(Nv, Nv) * WG[q] * (h / 2)
+        Nw = array([0.0, 0.0, N[0], 0.0, 0.0, N[1]])
+        m += rho * A * outer(Nw, Nw) * WG[q] * (h / 2)
     return m
 
 
