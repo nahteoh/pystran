@@ -782,7 +782,7 @@ def set_solution(m, V):
     if len(V) == nf:
         m["U"][0:nf] = V
     elif len(V) == nt:
-        m["U"][0:nf] = V
+        m["U"][0:nt] = V
     else:
         raise RuntimeError("Invalid vector length")
     for joint in m["joints"].values():
