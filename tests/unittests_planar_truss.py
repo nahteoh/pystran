@@ -188,7 +188,7 @@ class UnitTestsPlanarTrusses(unittest.TestCase):
         ):
             connectivity = member["connectivity"]
             i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-            N = truss.truss_axial_force(member, i, j)
+            N = truss.truss_axial_force(member, i, j, 0.0)
             # print("N = ", N)
             N_T = E * A * CTE * DeltaT[member["mid"]]
             # print("N - N_T = ", N - N_T)
