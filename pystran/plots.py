@@ -2,6 +2,7 @@
 Implement simple plots for truss and beam structures.
 """
 
+from math import sqrt
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch
 from matplotlib.patches import Arc, RegularPolygon
@@ -153,7 +154,28 @@ def setup(m, set_limits=False):
     return ax
 
 
-def plot_members(m):
+def _area_extrema(all_members):
+    min_area = numpy.inf
+    max_area = 0.0
+    for members in all_members:
+        for member in members:
+            A = member["section"]["A"]
+            min_area = min(A, min_area)
+            max_area = max(A, max_area)
+    return min_area, max_area
+
+
+def _linewidth(a, min_area, max_area, minlw, maxlw):
+    _a = sqrt(a)
+    _mna = sqrt(min_area)
+    _mxa = sqrt(max_area)
+    if _mna >= _mxa:
+        return minlw
+    else:
+        return (_a - _mna) / (_mxa - _mna) * maxlw + (_a - _mxa) / (_mna - _mxa) * minlw
+
+
+def plot_members(m, visualize_area=True):
     """
     Plot the members of the structure.
 
@@ -164,17 +186,31 @@ def plot_members(m):
 
     All truss, rigid link, and beam members will be included.
     """
+    all_members = [m[k].values() for k in ["truss_members", "beam_members"] if k in m]
+    min_area, max_area = _area_extrema(all_members)
+    area = lambda member: member["section"]["A"]
+    minlw, maxlw = 2, 10
+
+    def lw(member):
+        if visualize_area:
+            return _linewidth(area(member), min_area, max_area, minlw, maxlw)
+        else:
+            return 2
+
     ax = plt.gca()
     if m["dim"] == 3:
-        all_members = [
-            m[k].values() for k in ["truss_members", "beam_members"] if k in m
-        ]
         for members in all_members:
             for member in members:
                 connectivity = member["connectivity"]
                 i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
                 ci, cj = i["coordinates"], j["coordinates"]
-                plt.plot([ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], "k-")
+                plt.plot(
+                    [ci[0], cj[0]],
+                    [ci[1], cj[1]],
+                    [ci[2], cj[2]],
+                    "k-",
+                    linewidth=lw(member),
+                )
         if "rigid_link_members" in m:
             for member in m["rigid_link_members"].values():
                 connectivity = member["connectivity"]
@@ -184,15 +220,12 @@ def plot_members(m):
                     [ci[0], cj[0]], [ci[1], cj[1]], [ci[2], cj[2]], "k-", linewidth=3
                 )
     else:
-        all_members = [
-            m[k].values() for k in ["truss_members", "beam_members"] if k in m
-        ]
         for members in all_members:
             for member in members:
                 connectivity = member["connectivity"]
                 i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
                 ci, cj = i["coordinates"], j["coordinates"]
-                plt.plot([ci[0], cj[0]], [ci[1], cj[1]], "k-")
+                plt.plot([ci[0], cj[0]], [ci[1], cj[1]], "k-", linewidth=lw(member))
         if "rigid_link_members" in m:
             for member in m["rigid_link_members"].values():
                 connectivity = member["connectivity"]
