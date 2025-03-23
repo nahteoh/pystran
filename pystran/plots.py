@@ -175,7 +175,7 @@ def _linewidth(a, min_area, max_area, minlw, maxlw):
         return (_a - _mna) / (_mxa - _mna) * maxlw + (_a - _mxa) / (_mna - _mxa) * minlw
 
 
-def plot_members(m, visualize_area=True):
+def plot_members(m, max_area=0.0, max_linewidth=2, min_area=0.0, min_linewidth=2):
     """
     Plot the members of the structure.
 
@@ -183,19 +183,29 @@ def plot_members(m, visualize_area=True):
     ----------
     m
         Model dictionary.
+    max_area
+        For the purposes of mapping the cross sectional area to the thickness,
+        consider this to be the maximum. Default is 0.0 (which means it is
+        computed internally).
+    max_linewidth
+        Use this as the maximum line width corresponding to the maximum area
+        (default 2).
+    min_area
+        For the purposes of mapping the cross sectional area to the thickness,
+        consider this to be the minimum. Default is 0.0.
+    min_linewidth
+        Use this as the minimum line width corresponding to the minimum area
+        (default 2).
 
     All truss, rigid link, and beam members will be included.
     """
     all_members = [m[k].values() for k in ["truss_members", "beam_members"] if k in m]
-    min_area, max_area = _area_extrema(all_members)
+    _, max_area = _area_extrema(all_members)
     area = lambda member: member["section"]["A"]
-    minlw, maxlw = 2, 10
+    minlw, maxlw = min_linewidth, max_linewidth
 
     def lw(member):
-        if visualize_area:
-            return _linewidth(area(member), min_area, max_area, minlw, maxlw)
-        else:
-            return 2
+        return _linewidth(area(member), min_area, max_area, minlw, maxlw)
 
     ax = plt.gca()
     if m["dim"] == 3:
