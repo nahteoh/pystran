@@ -185,7 +185,7 @@ def plot_members(m, max_area=0.0, max_linewidth=2, min_area=0.0, min_linewidth=2
         Model dictionary.
     max_area
         For the purposes of mapping the cross sectional area to the thickness,
-        consider this to be the maximum. Default is 0.0 (which means it is
+        consider this to be the maximum. Default is 0.0 (which means it should be
         computed internally).
     max_linewidth
         Use this as the maximum line width corresponding to the maximum area
@@ -200,7 +200,8 @@ def plot_members(m, max_area=0.0, max_linewidth=2, min_area=0.0, min_linewidth=2
     All truss, rigid link, and beam members will be included.
     """
     all_members = [m[k].values() for k in ["truss_members", "beam_members"] if k in m]
-    _, max_area = _area_extrema(all_members)
+    if max_area == 0.0:
+        _, max_area = _area_extrema(all_members)
     area = lambda member: member["section"]["A"]
     minlw, maxlw = min_linewidth, max_linewidth
 
