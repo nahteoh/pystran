@@ -515,9 +515,10 @@ def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
     _, e_y, e_z, _ = member_3d_geometry(i, j, sect["xz_vector"])
     ci, cj = i["coordinates"], j["coordinates"]
     n = 13
-    dirv = e_y
+    # The moments are plotted so that they are adjacent to fibers in tension.
+    dirv = -e_y  # y<0 are in tension for M>0
     if axis == "y":
-        dirv = e_z
+        dirv = +e_z  # z>0 are in tension for M>0
     for _, xi in enumerate(linspace(-1, +1, n)):
         M = beam_3d_moment(member, i, j, axis, xi)
         x = interpolate(xi, ci, cj)
