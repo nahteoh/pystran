@@ -9,7 +9,7 @@ from pystran import freedoms
 
 def _spring_2d_stiffness(kind, direction, stiffness_coefficient):
     if kind == "torsion":
-        return array([sc])
+        return array([stiffness_coefficient])
     else:
         k1 = stiffness_coefficient * outer(direction, direction)
         return concatenate(
@@ -17,7 +17,7 @@ def _spring_2d_stiffness(kind, direction, stiffness_coefficient):
         )
 
 
-def _spring_3d_stiffness(kind, direction, stiffness_coefficient):
+def _spring_3d_stiffness(direction, stiffness_coefficient):
     k1 = stiffness_coefficient * outer(direction, direction)
     return concatenate(
         [concatenate([k1, -k1], axis=1), concatenate([-k1, k1], axis=1)], axis=0
@@ -52,7 +52,7 @@ def assemble_stiffness(Kg, member, i, j):
     if dim == 2:
         k = _spring_2d_stiffness(kind, direction, stiffness_coefficient)
     else:
-        k = _spring_3d_stiffness(kind, direction, stiffness_coefficient)
+        k = _spring_3d_stiffness(direction, stiffness_coefficient)
     if kind == "extension":
         dr = freedoms.translation_dofs(dim)
         dof = [i["dof"][d] for d in dr] + [j["dof"][d] for d in dr]

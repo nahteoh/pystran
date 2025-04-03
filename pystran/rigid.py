@@ -2,10 +2,9 @@
 Define rigid link mechanical quantities.
 """
 
-from numpy import reshape, outer, concatenate, zeros, dot, array, eye
+from numpy import concatenate, zeros, dot, array, eye
 from pystran import geometry
 from pystran import assemble
-from pystran import gauss
 
 
 def rigid_link_stiffness(e_x, h, Gamma):

@@ -245,7 +245,7 @@ def plot_members(m, max_area=0.0, max_linewidth=2, min_area=0.0, min_linewidth=2
     return ax
 
 
-def _plot_truss_or_rigid_link(ax, member, i, j, scale):
+def _plot_truss_or_rigid_link_deflection(ax, i, j, scale):
     di, dj = i["displacements"], j["displacements"]
     ci, cj = i["coordinates"], j["coordinates"]
     if len(ci) == 3:
@@ -263,7 +263,7 @@ def _plot_truss_or_rigid_link(ax, member, i, j, scale):
         )
 
 
-def _plot_2d_beam_deflection(ax, member, i, j, scale):
+def _plot_2d_beam_deflection(ax, i, j, scale):
     di, dj = i["displacements"], j["displacements"]
     ci, cj = i["coordinates"], j["coordinates"]
     e_x, e_z, h = member_2d_geometry(i, j)
@@ -365,12 +365,12 @@ def plot_deformations(m, scale=0.0):
         for member in m["truss_members"].values():
             connectivity = member["connectivity"]
             i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-            _plot_truss_or_rigid_link(ax, member, i, j, scale)
+            _plot_truss_or_rigid_link_deflection(ax, i, j, scale)
     if "rigid_link_members" in m:
         for member in m["rigid_link_members"].values():
             connectivity = member["connectivity"]
             i, j = m["joints"][connectivity[0]], m["joints"][connectivity[1]]
-            _plot_truss_or_rigid_link(ax, member, i, j, scale)
+            _plot_truss_or_rigid_link_deflection(ax, i, j, scale)
     if "beam_members" in m:
         for member in m["beam_members"].values():
             connectivity = member["connectivity"]
@@ -378,7 +378,7 @@ def plot_deformations(m, scale=0.0):
             if m["dim"] == 3:
                 _plot_3d_beam_deflection(ax, member, i, j, scale)
             else:
-                _plot_2d_beam_deflection(ax, member, i, j, scale)
+                _plot_2d_beam_deflection(ax, i, j, scale)
     return ax
 
 
@@ -752,7 +752,8 @@ def plot_axial_forces(m, scale=0.0):
             _largest_mag_on_beam_members(m, funb),
             _largest_mag_on_truss_members(m, funt),
         )
-        scale = cd / 5 / maxmag
+        if maxmag != 0.0:
+            scale = cd / 5 / maxmag
 
     ax = plt.gca()
     if "truss_members" in m:
