@@ -15,7 +15,11 @@ pystran documentation
 Description
 ============
 
-This package is intended for educational purposes.
+A simple structural analysis tool in Python, for structures consisting of truss
+and beam members, springs, and rigid bodies, both in two dimensions and in
+three dimensions. This package is intended for educational purposes, and hence
+attention was paid to simplicity and clarity, and not so much to computational
+efficiency.
 
 Approach
 --------
