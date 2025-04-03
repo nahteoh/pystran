@@ -28,6 +28,9 @@ def assemble_stiffness(Kg, member, i, j):
     """
     Assemble the stiffness matrix of a general spring.
 
+    The details of the calculation depend on whether the spring is in two
+    dimensions or in three dimensions.
+
     Parameters
     ----------
     Kg

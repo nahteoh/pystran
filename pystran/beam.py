@@ -167,22 +167,22 @@ def beam_3d_xy_shape_fun_xi3(xi):
     return d3Ndxi3
 
 
-def beam_2d_bending_stiffness(e_z, h, E, I_y):
+def beam_2d_bending_stiffness(e_z, h, E, I):
     r"""
     Compute 2d beam stiffness matrix.
-
-    Two-point Gauss quadrature is used to compute the stiffness matrix.
 
     The formula reads
 
     .. math::
 
-        K = (h/2) \int_{-1}^{+1} EI_y B^T B  d\xi,
+        K = (h/2) \int_{-1}^{+1} EI B^T B  d\xi,
 
     where :math:`B` is the curvature-displacement matrix (computed by
-    ``beam_2d_curv_displ_matrix``), and :math:`h/2` is the Jacobian. :math:`I_y` is the
+    ``beam_2d_curv_displ_matrix``), and :math:`h/2` is the Jacobian. :math:`I` is the
     second moment of area about the :math:`y` axis (which is orthogonal to the plane
     of bending).
+
+    Two-point Gauss quadrature is used to compute the stiffness matrix.
 
     Parameters
     ----------
@@ -193,7 +193,7 @@ def beam_2d_bending_stiffness(e_z, h, E, I_y):
         Length of the beam.
     E
         Young's modulus of elasticity.
-    I_y
+    I
         Second moment of area for bending about the :math:`y`-axis (i.e. bending in the
         :math:`x-z` plane).
 
@@ -201,12 +201,17 @@ def beam_2d_bending_stiffness(e_z, h, E, I_y):
     -------
     array
         Stiffness matrix of the beam.
+
+
+    See Also
+    --------
+    :func:`beam_2d_curv_displ_matrix`
     """
     xiG, WG = gauss.rule(2)
     K = zeros((6, 6))
     for xi, W in zip(xiG, WG):
         B = beam_2d_curv_displ_matrix(e_z, h, xi)
-        K += E * I_y * outer(B.T, B) * W * (h / 2)
+        K += E * I * outer(B.T, B) * W * (h / 2)
     return K
 
 
@@ -293,8 +298,6 @@ def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
     Compute 3d beam stiffness matrices for bending in the planes :math:`x-y`
     and :math:`x-z`.
 
-    Two-point Gauss quadrature is used to compute the stiffness matrices.
-
     The formula reads
 
     .. math::
@@ -315,6 +318,8 @@ def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
     Jacobian. :math:`I_y` is the second moment of area about the :math:`y`
     axis, and :math:`I_z`  is the second moment of area about the :math:`z`
     axis. The overall matrix is the sum of these two contributions.
+
+    Appropriate Gauss quadrature formulas are used to compute the stiffness matrix.
 
     Parameters
     ----------
@@ -342,7 +347,8 @@ def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
 
     See Also
     --------
-    :func:`beam_3d_xy_curv_displ_matrix`, :func:`beam_3d_xz_curv_displ_matrix`
+    :func:`beam_3d_xy_curv_displ_matrix`
+    :func:`beam_3d_xz_curv_displ_matrix`
     """
     xiG, WG = gauss.rule(2)
     Kxy = zeros((12, 12))
@@ -946,6 +952,7 @@ def assemble_stiffness(Kg, member, i, j):
 
     See Also
     --------
+    :func:`assemble.assemble`
     :func:`beam_2d_3d_axial_stiffness`
     :func:`beam_2d_bending_stiffness`
     :func:`beam_3d_bending_stiffness`
@@ -1015,6 +1022,7 @@ def assemble_mass(Mg, member, i, j):
 
     See Also
     --------
+    :func:`assemble.assemble`
     :func:`beam_2d_mass`
     :func:`beam_3d_mass`
     """

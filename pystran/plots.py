@@ -133,7 +133,8 @@ def setup(m, set_limits=False):
         Model dictionary.
     set_limits
         Optional: set the limits of the graphics manually or not? Default is
-        False.
+        ``False``. If ``True``, the bounding box of the structure and its
+        characteristic dimension are used to calculate the limits of the plot.
 
     Returns
     -------

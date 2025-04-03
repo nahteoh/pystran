@@ -94,7 +94,7 @@ def add_truss_member(m, mid, connectivity, sect):
     connectivity
         The list (or a tuple) of the joint identifiers.
     sect
-        Section of appropriate type.
+        Section of appropriate type (i.e. a truss section).
 
     Returns
     -------
@@ -127,12 +127,17 @@ def add_beam_member(m, mid, connectivity, sect):
     connectivity
         The list (or a tuple) of the joint identifiers.
     sect
-        Section of appropriate type.
+        Section of appropriate type (2d or 3d beam section).
 
     Returns
     -------
     dict
         Newly created member.
+
+    See Also
+    --------
+    :func:`section.beam_2d_section`
+    :func:`section.beam_3d_section`
     """
     if "beam_members" not in m:
         m["beam_members"] = {}
@@ -163,12 +168,16 @@ def add_rigid_link_member(m, mid, connectivity, sect):
         subordinate), the second is the *subordinate* (its motion follows that of
         the master).
     sect
-        Section of appropriate type.
+        Section of appropriate type (i.e. rigid link section).
 
     Returns
     -------
     dict
         Newly created member.
+
+    See Also
+    --------
+    :func:`rigid_link_section`
     """
     if "rigid_link_members" not in m:
         m["rigid_link_members"] = {}
@@ -196,12 +205,16 @@ def add_spring_member(m, mid, connectivity, sect):
     connectivity
         The list (or a tuple) of the joint identifiers.
     sect
-        Section of appropriate type.
+        Section of appropriate type (i.e. a spring section).
 
     Returns
     -------
     dict
         Newly created member.
+
+    See Also
+    --------
+    :func:`spring_section`
     """
     if "spring_members" not in m:
         m["spring_members"] = {}
@@ -662,7 +675,7 @@ def statics_reactions(m):
     once :math:`U_f` has been solved for in the :func:`solve_statics` step.
 
     The reactions are distributed to the joints, and can be retrieved from
-    individual joint dictionaries as ``j['reactions']``.
+    individual joint dictionaries ``j`` as ``j['reactions']``.
 
     Parameters
     ----------
@@ -892,7 +905,7 @@ def refine_member(m, mid, n):
     The new joints are numbered starting from zero, and the joint identifier is
     composed of the member identifier plus the serial number of the new joint.
 
-    There new member identifiers are stored under the key ``"descendants"`` in
+    The new member identifiers are stored under the key ``"descendants"`` in
     the refined member. The refined member is removed from the list of beam
     members.
 
