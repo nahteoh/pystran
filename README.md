@@ -50,9 +50,9 @@ and beam members, springs, and rigid bodies, both in two dimensions and in three
 
 These requirements can be easily satisfied by running the examples in the [Spyder IDE](docs/spyder/spyder.md).
 
-Optionally, if documentation is desired, install also:
+## Documentation
 
-- sphinx 
+Documentation of the package is provided in these [HTML page](https://petrkryslucsd.github.io/pystran).
 
 More details about the generation of the documentation are [here](docs/make_docs.md).
 
