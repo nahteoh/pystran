@@ -52,7 +52,7 @@ These requirements can be easily satisfied by running the examples in the [Spyde
 
 ## Documentation
 
-Documentation of the package is provided in these [HTML page](https://petrkryslucsd.github.io/pystran).
+Documentation of the package is provided in these [HTML pages](https://petrkryslucsd.github.io/pystran).
 
 More details about the generation of the documentation are [here](docs/make_docs.md).
 
