@@ -45,7 +45,7 @@ def vlen(ci, cj):
 
 def lin_basis(xi):
     r"""
-    Compute linear basis functions for an interval :math:`-1\le\xi\le+1:math:`.
+    Compute linear basis functions for an interval :math:`-1\le\xi\le+1`.
 
     Parameters
     ----------
@@ -81,7 +81,7 @@ def interpolate(xi, q1, q2):
 
 def herm_basis(xi):
     r"""
-    Compute the cubic Hermite basis functions for an interval :math:`-1\le\xi\le+1:math:`.
+    Compute the cubic Hermite basis functions for an interval :math:`-1\le\xi\le+1`.
 
     Parameters
     ----------
