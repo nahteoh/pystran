@@ -44,4 +44,4 @@ jobs:
           sphinx-build -M html source build
       - name: Run ghp-import
         run: |
-          ghp-import -n -p -f docs/_build/html
+          ghp-import -n -p -f docs/build/html
