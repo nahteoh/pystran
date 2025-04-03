@@ -918,9 +918,15 @@ def assemble_stiffness(Kg, member, i, j):
     """
     Assemble beam stiffness matrix.
 
-    Beam is here considered as a superposition of four mechanisms  -- axial
-    bar, torsion bar, bending in the :math:`x-y` plane, and bending in the
-    :math:`x-z` plane.
+    The stiffness matrix depends on whether the beam is considered in two
+    dimensions or in three dimensions.
+
+    In two dimensions, the beam stiffness matrix is a superposition of two
+    mechanisms: axial bar plus bending in the :math:`x-z` plane.
+
+    In three dimensions, beam stiffness is a superposition of four mechanisms
+    -- axial bar, torsion bar, bending in the :math:`x-y` plane, and bending in
+    the :math:`x-z` plane.
 
     Parameters
     ----------
@@ -937,6 +943,13 @@ def assemble_stiffness(Kg, member, i, j):
     -------
     array
         Updated global matrix is returned.
+
+    See Also
+    --------
+    :func:`beam_2d_3d_axial_stiffness`
+    :func:`beam_2d_bending_stiffness`
+    :func:`beam_3d_bending_stiffness`
+    :func:`beam_3d_torsion_stiffness`
     """
     # Add stiffness in bending.
     beam_is_2d = len(i["coordinates"]) == len(j["coordinates"]) == 2
@@ -978,6 +991,12 @@ def assemble_mass(Mg, member, i, j):
     """
     Assemble beam mass matrix.
 
+    The mass matrix of two-dimensional beam takes into account axial vibration
+    and transverse vibration separately.
+
+    In three dimensions, in addition to axial vibration, transverse vibration
+    in two principal planes, torsional vibration is also taken into account.
+
     Parameters
     ----------
     Mg
@@ -993,6 +1012,11 @@ def assemble_mass(Mg, member, i, j):
     -------
     float
         Updated global matrix is returned.
+
+    See Also
+    --------
+    :func:`beam_2d_mass`
+    :func:`beam_3d_mass`
     """
     beam_is_2d = len(i["coordinates"]) == len(j["coordinates"]) == 2
     dof = concatenate([i["dof"], j["dof"]])
