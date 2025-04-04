@@ -182,6 +182,10 @@ def assemble_stiffness(Kg, member, i, j):
     -------
     array
         Updated global matrix is returned.
+
+    See Also
+    --------
+    :func:`pystran.assemble.assemble`
     """
     sect = member["section"]
     E, A = sect["E"], sect["A"]
@@ -218,6 +222,10 @@ def assemble_mass(Mg, member, i, j):
     -------
     array
         Updated global matrix is returned.
+
+    See Also
+    --------
+    :func:`pystran.assemble.assemble`
     """
     sect = member["section"]
     rho, A = sect["rho"], sect["A"]

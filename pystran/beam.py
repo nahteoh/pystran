@@ -178,7 +178,7 @@ def beam_2d_bending_stiffness(e_z, h, E, I):
         K = (h/2) \int_{-1}^{+1} EI B^T B  d\xi,
 
     where :math:`B` is the curvature-displacement matrix (computed by
-    ``beam_2d_curv_displ_matrix``), and :math:`h/2` is the Jacobian. :math:`I` is the
+    :func:`beam_2d_curv_displ_matrix`), and :math:`h/2` is the Jacobian. :math:`I` is the
     second moment of area about the :math:`y` axis (which is orthogonal to the plane
     of bending).
 
@@ -312,9 +312,9 @@ def beam_3d_bending_stiffness(e_y, e_z, h, E, Iy, Iz):
 
     for bending in the :math:`x-y` plane. Here :math:`B_{xz}` is the
     curvature-displacement matrix for bending in the :math:`x-z` plane
-    (computed by ``beam_3d_xz_curv_displ_matrix``), :math:`B_{xy}` is the
+    (computed by :func:`beam_3d_xz_curv_displ_matrix`), :math:`B_{xy}` is the
     curvature-displacement matrix for bending in the :math:`x-y` plane
-    (computed by ``beam_3d_xy_curv_displ_matrix``), and :math:`h/2` is the
+    (computed by :func:`beam_3d_xy_curv_displ_matrix`), and :math:`h/2` is the
     Jacobian. :math:`I_y` is the second moment of area about the :math:`y`
     axis, and :math:`I_z`  is the second moment of area about the :math:`z`
     axis. The overall matrix is the sum of these two contributions.
@@ -952,7 +952,7 @@ def assemble_stiffness(Kg, member, i, j):
 
     See Also
     --------
-    :func:`assemble.assemble`
+    :func:`pystran.assemble.assemble`
     :func:`beam_2d_3d_axial_stiffness`
     :func:`beam_2d_bending_stiffness`
     :func:`beam_3d_bending_stiffness`
@@ -1022,7 +1022,7 @@ def assemble_mass(Mg, member, i, j):
 
     See Also
     --------
-    :func:`assemble.assemble`
+    :func:`pystran.assemble.assemble`
     :func:`beam_2d_mass`
     :func:`beam_3d_mass`
     """
