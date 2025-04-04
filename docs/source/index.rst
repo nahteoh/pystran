@@ -26,7 +26,7 @@ Approach
 
 The approach is based on classical weighted residual formulation (Galerkin).
 The formulations are derived in the `"Finite element modeling with shells and
-beams" book <http://hogwarts.ucsd.edu/~pkrysl/femstructures-book/>`.
+beams" book <http://hogwarts.ucsd.edu/~pkrysl/femstructures-book/>`_.
 
 The approach here is modern as opposed to classic.
 
