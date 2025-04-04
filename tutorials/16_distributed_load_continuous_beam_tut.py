@@ -87,7 +87,7 @@ for j in m["joints"].values():
 # moment, q*h**2/12 = 2000 * 8**2 / 12 = 10666.66 [Nm].
 plots.setup(m)
 plots.plot_members(m)
-ax = plots.plot_bending_moments(m, 0.0005)
+ax = plots.plot_bending_moments(m, scale=0.0005)
 ax.set_title("Moments")
 plots.show(m)
 
@@ -157,7 +157,7 @@ model.number_dofs(m)
 model.solve_statics(m)
 plots.setup(m)
 plots.plot_members(m)
-ax = plots.plot_bending_moments(m, 0.0005)
+ax = plots.plot_bending_moments(m, scale=0.0005)
 ax.set_title("Moments")
 plots.show(m)
 # Clearly, the bending moments are more accurate with the multiple elements per
@@ -217,7 +217,7 @@ model.number_dofs(m)
 model.solve_statics(m)
 plots.setup(m)
 plots.plot_members(m)
-ax = plots.plot_bending_moments(m, 0.0005)
+ax = plots.plot_bending_moments(m, scale=0.0005)
 ax.set_title("Moments")
 plots.show(m)
 # The bending moment representation can be made arbitrarily accurate by

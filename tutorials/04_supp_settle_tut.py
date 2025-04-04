@@ -120,13 +120,13 @@ plots.show(m)
 # These are the bending moments.
 plots.setup(m)
 plots.plot_members(m)
-ax = plots.plot_bending_moments(m, 0.5)
+ax = plots.plot_bending_moments(m)
 ax.set_title("Moments")
 plots.show(m)
 
 # And these are the shear forces.
 plots.setup(m)
 plots.plot_members(m)
-ax = plots.plot_shear_forces(m, 5.5)
+ax = plots.plot_shear_forces(m)
 ax.set_title("Shear forces")
 plots.show(m)

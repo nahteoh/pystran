@@ -541,7 +541,7 @@ def _plot_3d_beam_moments(ax, member, i, j, axis, scale):
     return ax
 
 
-def plot_bending_moments(m, scale=0.0, axis="y"):
+def plot_bending_moments(m, axis="y", scale=0.0):
     """
     Plot the bending moments in the beam members.
 
@@ -549,11 +549,11 @@ def plot_bending_moments(m, scale=0.0, axis="y"):
     ----------
     m
         Model dictionary.
+    axis
+        Either "y" or "z" (default is "z", which is suitable for 2d beams).
     scale
         Optional: scale factor for the ordinate. Default is
         0.0, which means the scale will be computed internally.
-    axis
-        Either "y" or "z" (default is "z", which is suitable for 2d beams).
     """
 
     def fun(member, i, j, xi):
@@ -626,7 +626,7 @@ def _plot_3d_beam_shear_forces(ax, member, i, j, axis, scale):
     return ax
 
 
-def plot_shear_forces(m, scale=0.0, axis="z"):
+def plot_shear_forces(m, axis="z", scale=0.0):
     """
     Plot the shear forces in the beam members.
 
@@ -634,11 +634,11 @@ def plot_shear_forces(m, scale=0.0, axis="z"):
     ----------
     m
         Model dictionary.
+    axis
+        Either "y" or "z" (default is "z", which is suitable for 2d beams).
     scale
         Optional: scale factor for the ordinate. Default is
         0.0, which means the scale will be computed internally.
-    axis
-        Either "y" or "z" (default is "z", which is suitable for 2d beams).
     """
 
     def fun(member, i, j, _):

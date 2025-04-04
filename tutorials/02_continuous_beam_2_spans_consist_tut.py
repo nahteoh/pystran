@@ -116,13 +116,13 @@ plots.show(m)
 # The bending moment can be compared with the curvature of the beam.
 plots.setup(m)
 plots.plot_members(m)
-ax = plots.plot_bending_moments(m, 0.0001)
+ax = plots.plot_bending_moments(m, scale=2e-4)
 ax.set_title("Moments")
 plots.show(m)
 
 # The shear forces are the slopes of the moment diagram.
 plots.setup(m)
 plots.plot_members(m)
-ax = plots.plot_shear_forces(m, 0.0001)
+ax = plots.plot_shear_forces(m)
 ax.set_title("Shear forces")
 plots.show(m)
