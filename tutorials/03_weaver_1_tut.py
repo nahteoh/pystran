@@ -281,3 +281,19 @@ ax = plots.plot_axial_forces(m)
 ax.set_title("Axial forces")
 ax.view_init(elev=137, azim=-67, roll=30)
 plots.show(m)
+
+
+# We have computed the reactions above. Now we can visualize them.
+ax = plots.setup(m)
+plots.plot_members(m)
+ax = plots.plot_reaction_forces(m)
+ax.set_title("Reaction forces")
+ax.view_init(elev=137, azim=-67, roll=30)
+plots.show(m)
+
+ax = plots.setup(m)
+plots.plot_members(m)
+ax = plots.plot_reaction_moments(m)
+ax.set_title("Reaction moments")
+ax.view_init(elev=137, azim=-67, roll=30)
+plots.show(m)

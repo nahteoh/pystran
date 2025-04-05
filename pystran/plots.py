@@ -1243,3 +1243,144 @@ def show(m):
         ax.set_ylabel("Y")
         ax.set_zlabel("Z")
     plt.show()
+
+
+def plot_reaction_forces(m, scale=0.0):
+    """
+    Plot the reaction forces at the joints.
+
+    Parameters
+    ----------
+    m
+        Model dictionary.
+    scale
+        Optional: scale factor for the arrows. Forces are rendered with single
+        arrows. Default is 0.0, which means compute this internally.
+
+    """
+    ax = plt.gca()
+    dim = m["dim"]
+    cd = characteristic_dimension(m)
+
+    def fun(j):
+        if "reactions" in j and j["reactions"]:
+            return [v for (d, v) in j["reactions"].items() if d < dim]
+        else:
+            return [0]
+
+    if scale == 0.0:
+        maxmag = _largest_mag_at_joints(m, fun)
+        if maxmag != 0:
+            scale = cd / 2 / maxmag
+    for j in m["joints"].values():
+        if "reactions" in j and j["reactions"]:
+            for d in j["reactions"].keys():
+                F = zeros((dim,))
+                if d < dim:
+                    F[d] = j["reactions"][d]
+                if norm(F) > 0:
+                    if dim == 2:
+                        x, y = j["coordinates"]
+                        u, v = F
+                        ax.arrow(
+                            x,
+                            y,
+                            scale * u,
+                            scale * v,
+                            head_width=cd / 20,
+                            head_length=cd / 20,
+                            color="green",
+                        )
+                    else:
+                        x, y, z = j["coordinates"]
+                        u, v, w = F
+                        ax.arrow3D(
+                            x,
+                            y,
+                            z,
+                            scale * u,
+                            scale * v,
+                            scale * w,
+                            mutation_scale=20,
+                            arrowstyle="-|>",
+                            color="green",
+                        )
+    return ax
+
+
+def plot_reaction_moments(m, scale=0.0, radius=0.0):
+    """
+    Plot the reaction moments at the joints.
+
+    Parameters
+    ----------
+    m
+        Model dictionary.
+    scale
+        Optional: scale factor for the arrows. Moments are rendered with double
+        arrows. Default is 0.0, which means compute this internally.
+    radius
+        Radius of the circle to represent the moment (2D only). Default is 0.0,
+        which means compute this internally.
+    """
+    ax = plt.gca()
+    dim = m["dim"]
+    ndpn = ndof_per_joint(m)
+    cd = characteristic_dimension(m)
+
+    def fun(j):
+        if "reactions" in j and j["reactions"]:
+            return [v for (d, v) in j["reactions"].items() if d >= dim]
+        else:
+            return [0]
+
+    if scale == 0.0:
+        maxmag = _largest_mag_at_joints(m, fun)
+        if maxmag != 0:
+            scale = cd / 2 / maxmag
+    if radius <= 0.0:
+        radius = cd / 10
+    for j in m["joints"].values():
+        if "reactions" in j and j["reactions"]:
+            for d in j["reactions"].keys():
+                M = zeros((ndpn - dim,))
+                if d >= dim:
+                    M[d - dim] = j["reactions"][d]
+                if norm(M) > 0:
+                    if dim == 2:
+                        x, y = j["coordinates"]
+                        if M > 0:
+                            st = -110
+                            dl = 210
+                            sense = +1
+                        else:
+                            st = 80
+                            dl = 210
+                            sense = -1
+                        _drawcirc(ax, radius, x, y, st, dl, sense, color_="green")
+                    else:
+                        x, y, z = j["coordinates"]
+                        u, v, w = M
+                        ax.arrow3D(
+                            x,
+                            y,
+                            z,
+                            scale * u,
+                            scale * v,
+                            scale * w,
+                            mutation_scale=20,
+                            arrowstyle="-|>",
+                            color="green",
+                        )
+                        ax.arrow3D(
+                            x,
+                            y,
+                            z,
+                            scale * 0.9 * u,
+                            scale * 0.9 * v,
+                            scale * 0.9 * w,
+                            mutation_scale=20,
+                            arrowstyle="-|>",
+                            color="green",
+                        )
+    return ax

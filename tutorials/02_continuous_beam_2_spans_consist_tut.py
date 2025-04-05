@@ -126,3 +126,11 @@ plots.plot_members(m)
 ax = plots.plot_shear_forces(m)
 ax.set_title("Shear forces")
 plots.show(m)
+
+# The reaction forces can be plotted after the reactions have been computed.
+model.statics_reactions(m)
+plots.setup(m)
+plots.plot_members(m)
+ax = plots.plot_reaction_forces(m)
+ax.set_title("Reaction forces")
+plots.show(m)
