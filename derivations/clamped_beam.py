@@ -33,7 +33,7 @@ sol = solve([Eq(w.subs(x, -h/2), 0), Eq(wp.subs(x, -h/2), 0),
 print(sol)
 
 # So now we can construct the true curve of deflection where 
-# all coefficients are now known.
+# all coefficients are at this point known.
 
 w = w.subs(sol)
 print(w)
