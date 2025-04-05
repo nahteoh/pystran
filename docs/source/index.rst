@@ -55,23 +55,23 @@ Features and limitations
 --------
 
 - The package analyzes two-dimensional and three-dimensional structures made up
-  of truss (axial) members and beams (even in combination), rigid links, and
+  of truss (axial) members and beams (possibly in combination), rigid links, and
   general springs. Concentrated masses can be added at joints.
 - Linear statics and dynamics (free vibration) solvers are included.
 - Only elastic models can be solved.
 - For beams, only the Bernoulli-Euler model is implemented, so no shear
   deformation is taken into account.
 - Only straight members are treated.
-- It is assumed that there is no coupling between the bending actions in the
-  two orthogonal planes.
+- It is assumed that the cross sections are doubly symmetric, and there is no coupling between the bending actions in the
+  two orthogonal principal planes.
 - Coupling of axial and bending action is not implemented. This means that the
   neutral axis must pass through the centroid.
 - Warping of the cross sections is not modelled, hence only free torsion
   effects are included.
 - Member loading is not considered. All member loading needs to be converted to
-  nodal forces.
-- Internal hinges can be modelled with linked joints. No member end releases
-  are implemented.
+  nodal forces by the user.
+- Member end releases (hinges)
+  are not implemented. Internal hinges can be modelled with linked joints. 
 - Degrees of freedom are only along the global Cartesian axes. Skew supports
   are not included (except with a penalty method based on springs)
 - Offsets of the beams from the joints are currently not implemented.
