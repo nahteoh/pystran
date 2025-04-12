@@ -25,7 +25,7 @@ A = 1000.0 * numpy.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
 print("A = ", A)
 
 # We can access the type of the elements of the matrix and its shape:
-print("Type ({A.dtype}) and shape ({A.shape}) of A")
+print(f"Type ({A.dtype}) and shape ({A.shape}) of A")
 
 # Individual elements (entries) of the matrix can be accessed by their indices:
 print("Top left - A[0, 0] = ", A[0, 0])
@@ -54,9 +54,6 @@ print("Length of B = ", math.sqrt(numpy.dot(B, B)))
 C = numpy.array([3, 2])
 
 print("B + C = ", B + C)
-
-C = -B[9:0:-1]
-print(C)
 
 # The diagonal of the square matrix A
 print("A = ", A)
@@ -107,7 +104,10 @@ G = numpy.random.rand(4, 3)
 print("F = ", F)
 print("G = ", G)
 # We cannot multiply F and G because they do not have compatible shapes.
-print("F*G = ", numpy.dot(F, G))
+try:
+    print("F*G = ", numpy.dot(F, G))
+except ValueError:
+    print('Incompatible!')       
 # But we can multiply F and G.T because they have compatible shapes.
 print("F*G.T = ", numpy.dot(F, G.T))
 
@@ -126,7 +126,10 @@ print("K*K inverse = ", numpy.dot(K, numpy.linalg.inv(K)))
 
 # Some matrices are known to be singular, i.e., their inverse does not exist.
 K = 0.1 * numpy.outer(B, B)
-numpy.linalg.inv(K)
+try:
+    numpy.linalg.inv(K)
+except ValueError:
+    print('Yep, singular!')
 
 # That should not surprise us: all the rows in the matrix are linearly
 # dependent on the first one.
@@ -140,12 +143,12 @@ with numpy.printoptions(precision=3):
 
 K = numpy.array(
     [
-        [266.78537329, 69.68537329, -197.1, 0.0, -69.68537329, -69.68537329, 0.0, 0.0],
-        [69.68537329, 168.23537329, 0.0, 0.0, -69.68537329, -69.68537329, 0.0, -98.55],
+        [266.78, 69.68, -197.1, 0.0, -69.68, -69.68, 0.0, 0.0],
+        [69.68, 168.23, 0.0, 0.0, -69.68, -69.68, 0.0, -98.55],
         [-197.1, 0.0, 197.1, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        [-69.68537329, -69.68537329, 0.0, 0.0, 69.68537329, 69.68537329, 0.0, 0.0],
-        [-69.68537329, -69.68537329, 0.0, 0.0, 69.68537329, 69.68537329, 0.0, 0.0],
+        [-69.68, -69.68, 0.0, 0.0, 69.68, 69.68, 0.0, 0.0],
+        [-69.68, -69.68, 0.0, 0.0, 69.68, 69.68, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, -98.55, 0.0, 0.0, 0.0, 0.0, 0.0, 98.55],
     ]
@@ -178,5 +181,7 @@ with numpy.printoptions(precision=3):
 with numpy.printoptions(precision=3):
     print("Kdd = ", Kdd)
 
+# The eigenvalues of the matrix can be instructive.
 Kinfo = numpy.linalg.eig(K)
-Kinfo.eigenvalues
+print(Kinfo.eigenvalues)
+# The matrix K is singular: look at that zero eigenvalue.
