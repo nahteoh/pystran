@@ -555,8 +555,6 @@ def solve_statics(m):
     r"""
     Solve the static equilibrium of the discrete model.
 
-    :func:`number_dofs` must be called before this function.
-
     This function solves the equation of static equilibrium
 
     .. math::
@@ -565,8 +563,8 @@ def solve_statics(m):
     Here :math:`K` is the stiffness matrix, :math:`U` is the displacement
     vector, and :math:`F` is the vector of forces acting on the joints.
 
-    Note that the degrees of freedom can be partitioned into 'free' and
-    prescribed (given as 'data').
+    Note that the degrees of freedom can be partitioned into 'free' (unknown)
+    and 'data' (given, i.e. prescribed).
 
     .. math::
         \left[ \begin{array}{cc} 
@@ -581,16 +579,20 @@ def solve_statics(m):
         \end{array}\right] 
     
 
-    Here :math:`L_f` is the vector of active loads applied to the free degrees of
-    freedom, and :math:`L_d`  is the vector of active loads applied to the data
-    degrees of freedom. The reactions :math:`R` due to supports act on the prescribed
-    (data) degrees of freedom.
+    Here :math:`L_f` is the vector of active loads applied to the free degrees
+    of freedom, and :math:`L_d`  is the vector of active loads applied to the
+    data degrees of freedom. The reactions :math:`R` due to supports act on the
+    prescribed (data) degrees of freedom.
 
     The system of equations is solved for the free degrees of freedom as
 
     .. math::
         K_{ff} \cdot U_{f} = -K_{fd} \cdot U_{d} +L_{f} 
     
+    Note: :func:`number_dofs` must be called before this function to number the
+    degrees of freedom, automatically. Alternatively, the user may specify the
+    numbers of the degrees of freedom when defining the joints: the manual way.
+
 
     Parameters
     ----------
@@ -647,7 +649,7 @@ def statics_reactions(m):
     r"""
     Compute the reactions in the static equilibrium of the discrete model.
 
-    The partitioned system of balanced equations reads
+    The partitioned system of the balance equations reads
 
     .. math::
         \left[ \begin{array}{cc} 
