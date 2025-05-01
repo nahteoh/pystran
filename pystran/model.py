@@ -607,11 +607,11 @@ def solve_statics(m):
     --------
     :func:`number_dofs`
     """
+    if !("ntotaldof" in m)  or m["ntotaldof"] <= 0:
+        raise RuntimeError("No degrees of freedom: the numbers of degrees of freedom need to be generated")
+    if !("nfreedof" in m)  or m["nfreedof"] <= 0:
+        raise RuntimeError("No free degrees of freedom: nothing to compute")
     nt, nf = m["ntotaldof"], m["nfreedof"]
-    if nt <= 0:
-        raise RuntimeError("No degrees of freedom")
-    if nf <= 0:
-        raise RuntimeError("No free degrees of freedom")
 
     # Assemble global stiffness matrix
     K = _build_stiffness_matrix(m)
